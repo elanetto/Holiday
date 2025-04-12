@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom"
-import { AiFillHome } from "react-icons/ai";
-import { FaInfoCircle } from "react-icons/fa";
-import { MdContactMail } from "react-icons/md";
+// import { AiFillHome } from "react-icons/ai";
+import { FaUser } from "react-icons/fa";
+import { FaCheckCircle } from "react-icons/fa";
 
 // Choose icons here: https://react-icons.github.io/react-icons/
 
@@ -19,13 +19,10 @@ export function Header () {
                     <nav>
                         <ul className="flex gap-8 text-2xl">
                             <li className="hover:text-pink-800">
-                                <AiFillHome />
+                                <FaUser />
                             </li>
                             <li className="hover:text-pink-800">
-                                <FaInfoCircle />
-                            </li>
-                            <li className="hover:text-pink-800">
-                                <MdContactMail />
+                                <FaCheckCircle />
                             </li>
                         </ul>
                     </nav>
