@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom"
 import { FaUser } from "react-icons/fa"
 import { FaCheckCircle } from "react-icons/fa"
+import { SearchBar } from "../../SearchBar";
 
 export function Header () {
 
@@ -12,7 +13,7 @@ export function Header () {
                 <Link to="/" className="text-3xl font-bold text-pink-600 hover:text-pink-800">Logo</Link>
             </div>
             <div>
-                <p className="text-gray-500 italic">Search thingy</p>
+                <SearchBar />
             </div>
             <div>
                 <nav>
