@@ -10,38 +10,28 @@ const VenueList = ({ venues = [] }) => {
 
 	const limit = 21;
 
-	// Update sorted venues and total pages when data or sorting changes
+	// Sort venues and calculate pages
 	useEffect(() => {
-        if (!venues.length) {
-            setSortedVenues([]);
-            setTotalPages(1);
-            return;
-        }
-    
-        const sorted = [...venues].sort((a, b) => {
-            const aVal = a[sortBy] ?? 0;
-            const bVal = b[sortBy] ?? 0;
-            return sortOrder === "asc" ? aVal - bVal : bVal - aVal;
-        });
-    
-        setSortedVenues(sorted);
-    
-        const total = Math.ceil(sorted.length / limit);
-        setTotalPages(total);
-    }, [venues, sortBy, sortOrder]);
-    
-    // Separate effect for handling out-of-bounds page
-    useEffect(() => {
-        if (page > totalPages) {
-            setPage(1);
-        }
-    }, [page, totalPages]);
-    
+		if (!venues.length) {
+			setSortedVenues([]);
+			setTotalPages(1);
+			return;
+		}
 
-	// Ensure current page stays within total pages
+		const sorted = [...venues].sort((a, b) => {
+			const aVal = a[sortBy] ?? 0;
+			const bVal = b[sortBy] ?? 0;
+			return sortOrder === "asc" ? aVal - bVal : bVal - aVal;
+		});
+
+		setSortedVenues(sorted);
+		setTotalPages(Math.max(1, Math.ceil(sorted.length / limit)));
+	}, [venues, sortBy, sortOrder]);
+
+	// Keep page in bounds
 	useEffect(() => {
 		if (page > totalPages) {
-			setPage(totalPages || 1);
+			setPage(totalPages);
 		}
 	}, [page, totalPages]);
 
