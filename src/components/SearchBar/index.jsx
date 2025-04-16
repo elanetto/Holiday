@@ -1,23 +1,32 @@
 import { useState } from "react";
+import { useSearch } from "../../contexts/useSearch";
 
 export const SearchBar = () => {
+	const { setSearchFilters } = useSearch();
 	const [location, setLocation] = useState("");
 	const [checkIn, setCheckIn] = useState("");
 	const [checkOut, setCheckOut] = useState("");
 	const [guests, setGuests] = useState(1);
 
 	const handleSearch = () => {
-		console.log({
+		console.log("Clicked search with:", {
 			location,
 			checkIn,
 			checkOut,
 			guests,
 		});
-		// Here you'll probably want to navigate or fetch search results
+
+		setSearchFilters({
+			location: location.toLowerCase(),
+			checkIn,
+			checkOut,
+			guests,
+		});
 	};
+       
 
 	return (
-		<div className="flex flex-col md:flex-row gap-2 md:gap-4 p-4 border rounded-2xl shadow">
+		<div className="flex flex-col md:flex-row gap-2 md:gap-4 p-4 border rounded-2xl shadow bg-white">
 			<input
 				type="text"
 				placeholder="Where to?"
@@ -42,14 +51,14 @@ export const SearchBar = () => {
 
 			<div className="flex items-center gap-2">
 				<button
-					onClick={() => setGuests(guests > 1 ? guests - 1 : 1)}
+					onClick={() => setGuests((g) => Math.max(g - 1, 1))}
 					className="p-2 border rounded-full"
 				>
 					-
 				</button>
 				<span>{guests}</span>
 				<button
-					onClick={() => setGuests(guests + 1)}
+					onClick={() => setGuests((g) => g + 1)}
 					className="p-2 border rounded-full"
 				>
 					+
