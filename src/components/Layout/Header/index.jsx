@@ -2,6 +2,8 @@ import { Link } from "react-router-dom"
 import { FaUser } from "react-icons/fa"
 import { FaCheckCircle } from "react-icons/fa"
 import { SearchBar } from "../../SearchBar";
+import logoUrl from '../../../assets/Logo.svg?url';
+
 
 export function Header () {
 
@@ -10,7 +12,9 @@ export function Header () {
     return (
         <header className="bg-pink-100 h-40 w-full flex justify-between items-center gap-10 p-12">
             <div>
-                <Link to="/" className="text-3xl font-bold text-pink-600 hover:text-pink-800">Logo</Link>
+                <Link to="/" className="text-3xl font-bold text-pink-600 hover:text-pink-800">
+                    <img src={logoUrl} alt="Logo for Holidaze" className="h-8" />
+                </Link>
             </div>
             <div>
                 <SearchBar />
