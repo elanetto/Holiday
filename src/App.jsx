@@ -72,6 +72,19 @@ function App() {
 				<h1 className="text-4xl font-bold text-pink-600 text-center mb-6">
 					Holidaze
 				</h1>
+
+        {/* TEST: Custom tailwind colourrs */}
+        <div className="flex text-center min-w-screen justify-center">
+          <div className="p-8 bg-goldy">Goldy</div>
+          <div className="p-8 bg-pinky">Pinky</div>
+          <div className="p-8 bg-orangey">Orangey</div>
+          <div className="p-8 bg-greeney">Greeney</div>
+          <div className="p-8 bg-lilacy">Lilacy</div>
+          <div className="p-8 bg-sunny">Sunny</div>
+          <div className="p-8 bg-creamy">Creamy</div>
+          <div className="p-8 bg-espressoy text-white">Esspressoy</div>
+        </div>
+
 				{loading ? (
 					<p className="text-center mt-10">Loading venues...</p>
 				) : (

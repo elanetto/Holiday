@@ -3,7 +3,7 @@ import { createRoot } from "react-dom/client";
 import "./index.css";
 import App from "./App.jsx";
 import Layout from "./components/Layout/index.jsx";
-import VenuePage from "./paths/VenuePage"; // 👈 import your new page
+import VenuePage from "./paths/VenuePage";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import NotFound from "./paths/NotFound/index.jsx";
 import { SearchProvider } from "../src/contexts/SearchProvider.jsx";
