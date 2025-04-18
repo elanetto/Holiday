@@ -10,7 +10,7 @@ export function Header () {
     const isLoggedIn = true; // Change this to your real logic later!
 
     return (
-        <header className="bg-pink-100 h-40 w-full flex justify-between items-center gap-10 p-12">
+        <header className="bg-creamy h-40 w-full flex justify-between items-center gap-10 p-12">
             <div>
                 <Link to="/" className="text-3xl font-bold text-pink-600 hover:text-pink-800">
                     <img src={logoUrl} alt="Logo for Holidaze" className="h-8" />
@@ -22,10 +22,10 @@ export function Header () {
             <div>
                 <nav>
                     <ul className="flex gap-8 text-2xl">
-                        <li className="hover:text-pink-800 relative">
+                        <li className="hover:text-orangey text-espressoy relative cursor-pointer">
                             <FaUser />
                             {isLoggedIn && (
-                                <FaCheckCircle className="absolute -top-2 -right-1 text-green-500 text-sm" />
+                                <FaCheckCircle className="absolute -top-2 -right-1 text-goldy text-sm" />
                             )}
                         </li>
                     </ul>

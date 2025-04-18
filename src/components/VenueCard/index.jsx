@@ -59,7 +59,7 @@ const VenueCard = ({ venue }) => {
 
 				<Link
 					to={`/venue/${id}`}
-					className="mt-auto bg-black text-white px-4 py-2 rounded-md hover:bg-gray-800 text-center"
+					className="mt-auto bg-black text-white px-4 py-2 rounded-md hover:bg-orangey hover:text-creamy text-center"
 				>
 					View Details
 				</Link>
