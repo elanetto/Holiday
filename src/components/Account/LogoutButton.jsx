@@ -1,23 +1,19 @@
 import { useNavigate } from "react-router-dom";
+import { useUser } from "../../contexts/useUser";
 
 export function LogoutButton() {
   const navigate = useNavigate();
+  const { logoutUser } = useUser();
 
   const handleLogout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("name");
-    localStorage.removeItem("email");
-    localStorage.removeItem("avatar");
-    localStorage.removeItem("isAdmin");
-
+    logoutUser();
     navigate("/login");
-    window.location.reload();
   };
 
   return (
     <button
       onClick={handleLogout}
-      className="text-sm text-espressoy hover:text-orangey transition-colors px-3 py-1"
+      className="w-full text-left px-4 py-2 hover:bg-creamy text-error transition-colors"
     >
       Logout
     </button>
