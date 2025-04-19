@@ -11,6 +11,7 @@ import RegisterPage from "./paths/Account/RegisterPage/index.jsx";
 import { Toaster } from "react-hot-toast"; 
 import LoginPage from "./paths/Account/LoginPage/index.jsx";
 import { UserProvider } from "./contexts/UserProvider.jsx";
+import AccountPage from "./paths/Account/AccountPage/index.jsx";
 
 const router = createBrowserRouter([
 	{
@@ -32,6 +33,10 @@ const router = createBrowserRouter([
       {
         path: "login",
         element: <LoginPage />,
+      },
+      {
+        path: "account",
+        element: <AccountPage />,
       },
       {
 				path: "404",

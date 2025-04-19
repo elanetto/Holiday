@@ -1,16 +1,16 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FaUser, FaCheckCircle } from "react-icons/fa";
 import { SearchBar } from "../../SearchBar";
 import logoUrl from "../../../assets/Logo.svg?url";
 import { useUser } from "../../../contexts/useUser";
-
-const FALLBACK_AVATAR = "https://raw.githubusercontent.com/elanetto/Holiday/c57b65c718a51299ee10cbd64c850fff83d4b318/src/assets/avatar/avatar_option_1.svg";
+import { PLACEHOLDER_AVATAR } from "../../../utilities/placeholders";
 
 export function Header() {
   const { isLoggedIn, avatar, logoutUser } = useUser();
   const navigate = useNavigate();
   const [showDropdown, setShowDropdown] = useState(false);
+  const dropdownRef = useRef(null);
 
   const handleLogout = () => {
     logoutUser();
@@ -18,32 +18,38 @@ export function Header() {
   };
 
   const renderUserIcon = () => {
-    if (isLoggedIn) {
-      const avatarUrl = avatar || FALLBACK_AVATAR;
-
-      return (
-        <div className="relative hover:brightness-90 transition">
-          <img
-            src={avatarUrl}
-            alt="User avatar"
-            className="w-12 h-12 rounded-full border-2 border-check object-cover"
-          />
-          <FaCheckCircle className="absolute -bottom-1 -right-1 text-check text-sm" />
-        </div>
-      );
-    }
-
-    return <FaUser className="text-3xl" />;
+    const avatarUrl = avatar || PLACEHOLDER_AVATAR;
+    return isLoggedIn ? (
+      <div className="relative hover:brightness-90 transition">
+        <img
+          src={avatarUrl}
+          alt="User avatar"
+          className="w-12 h-12 rounded-full border-2 border-check object-cover"
+        />
+        <FaCheckCircle className="absolute -bottom-1 -right-1 text-check text-sm" />
+      </div>
+    ) : (
+      <FaUser className="text-3xl" />
+    );
   };
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setShowDropdown(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   return (
     <header className="bg-creamy h-40 w-full flex justify-between items-center gap-10 p-12">
       {/* Logo */}
       <div>
-        <Link
-          to="/"
-          className="text-3xl font-bold text-pink-600 hover:text-pink-800"
-        >
+        <Link to="/" className="text-3xl font-bold text-pink-600 hover:text-pink-800">
           <img src={logoUrl} alt="Logo for Holidaze" className="h-8" />
         </Link>
       </div>
@@ -54,7 +60,7 @@ export function Header() {
       </div>
 
       {/* User Avatar or Icon */}
-      <div className="relative">
+      <div className="relative" ref={dropdownRef}>
         <nav>
           <ul className="flex gap-8 text-2xl">
             <li
