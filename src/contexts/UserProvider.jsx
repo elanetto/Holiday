@@ -9,13 +9,14 @@ export const UserProvider = ({ children }) => {
 
   useEffect(() => {
     const token = localStorage.getItem("token");
-    const avatarUrl = localStorage.getItem("avatar");
+    const avatarData = localStorage.getItem("avatar");
+    const parsedAvatar = avatarData ? JSON.parse(avatarData) : "";
     const nameData = localStorage.getItem("name");
     const adminFlag = localStorage.getItem("isAdmin") === "true";
 
     if (token) {
       setIsLoggedIn(true);
-      setAvatar(avatarUrl || "");
+      setAvatar(parsedAvatar || "");
       setName(nameData || "");
       setIsAdmin(adminFlag);
     }
