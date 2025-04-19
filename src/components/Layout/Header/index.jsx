@@ -1,69 +1,78 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FaUser, FaCheckCircle } from "react-icons/fa";
 import { SearchBar } from "../../SearchBar";
-import logoUrl from '../../../assets/Logo.svg?url';
+import logoUrl from "../../../assets/Logo.svg?url";
+import { useUser } from "../../../contexts/useUser";
+
+const FALLBACK_AVATAR = "https://raw.githubusercontent.com/elanetto/Holiday/c57b65c718a51299ee10cbd64c850fff83d4b318/src/assets/avatar/avatar_option_1.svg";
 
 export function Header() {
+  const { isLoggedIn, avatar, logoutUser } = useUser();
   const navigate = useNavigate();
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [avatarUrl, setAvatarUrl] = useState("");
   const [showDropdown, setShowDropdown] = useState(false);
 
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    const avatar = JSON.parse(localStorage.getItem("avatar") || "{}");
-
-    setIsLoggedIn(!!token && avatar?.url);
-    setAvatarUrl(avatar?.url || "");
-  }, []);
-
   const handleLogout = () => {
-    localStorage.clear();
-    setIsLoggedIn(false);
-    setAvatarUrl("");
+    logoutUser();
     navigate("/login");
+  };
+
+  const renderUserIcon = () => {
+    if (isLoggedIn) {
+      const avatarUrl = avatar || FALLBACK_AVATAR;
+
+      return (
+        <div className="relative hover:brightness-90 transition">
+          <img
+            src={avatarUrl}
+            alt="User avatar"
+            className="w-12 h-12 rounded-full border-2 border-check object-cover"
+          />
+          <FaCheckCircle className="absolute -bottom-1 -right-1 text-check text-sm" />
+        </div>
+      );
+    }
+
+    return <FaUser className="text-3xl" />;
   };
 
   return (
     <header className="bg-creamy h-40 w-full flex justify-between items-center gap-10 p-12">
+      {/* Logo */}
       <div>
-        <Link to="/" className="text-3xl font-bold text-pink-600 hover:text-pink-800">
+        <Link
+          to="/"
+          className="text-3xl font-bold text-pink-600 hover:text-pink-800"
+        >
           <img src={logoUrl} alt="Logo for Holidaze" className="h-8" />
         </Link>
       </div>
 
+      {/* Search */}
       <div>
         <SearchBar />
       </div>
 
+      {/* User Avatar or Icon */}
       <div className="relative">
         <nav>
           <ul className="flex gap-8 text-2xl">
             <li
               className="hover:text-orangey text-espressoy relative cursor-pointer"
               onClick={() => {
-                if (isLoggedIn) setShowDropdown((prev) => !prev);
-                else navigate("/login");
+                if (isLoggedIn) {
+                  setShowDropdown((prev) => !prev);
+                } else {
+                  navigate("/login");
+                }
               }}
             >
-              {isLoggedIn ? (
-                <div className="relative">
-                  <img
-                    src={avatarUrl}
-                    alt="User avatar"
-                    className="w-10 h-10 rounded-full border-2 border-goldy object-cover"
-                  />
-                  <FaCheckCircle className="absolute -bottom-1 -right-1 text-goldy text-sm" />
-                </div>
-              ) : (
-                <FaUser className="text-3xl" />
-              )}
+              {renderUserIcon()}
             </li>
           </ul>
         </nav>
 
-        {/* Fancy dropdown */}
+        {/* Dropdown */}
         {isLoggedIn && (
           <div
             className={`absolute right-0 mt-2 w-40 bg-white border border-espressoy rounded shadow-md text-sm z-50 transform transition-all duration-300 ease-out origin-top-right ${
