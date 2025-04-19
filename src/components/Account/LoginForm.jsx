@@ -37,12 +37,9 @@ export default function LoginForm() {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    const validationErrors = validateForm();
 
-    setTouched({
-      email: true,
-      password: true,
-    });
+    const validationErrors = validateForm();
+    setTouched({ email: true, password: true });
 
     if (Object.keys(validationErrors).length) {
       setErrors(validationErrors);
@@ -60,7 +57,7 @@ export default function LoginForm() {
 
       const { accessToken, venueManager, name, avatar } = res.data.data;
 
-      // Store user using context
+      // Save everything in context + localStorage
       loginUser({
         token: accessToken,
         name,
@@ -69,7 +66,8 @@ export default function LoginForm() {
         avatar: avatar?.url,
       });
 
-      // Only create and store an API key if admin
+      localStorage.setItem("isAdmin", venueManager); // Optional, if needed for non-context areas
+
       if (venueManager) {
         const apiRes = await axios.post(
           ENDPOINTS.api_key,
@@ -85,8 +83,8 @@ export default function LoginForm() {
 
       toast.success("Logged in successfully 🎉");
       launchConfetti();
-
       navigate("/account");
+
     } catch (err) {
       console.error("Login error:", err);
       setFormError("Login failed. Check your email and password.");
