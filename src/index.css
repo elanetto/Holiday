@@ -9,7 +9,9 @@
   --color-sunny: #FEB629;
   --color-creamy: #F9F2EC;
   --color-espressoy: #201309;
+
   --color-error: #F13838;
+  --color-check: #59B635;
 }
 
 @keyframes shake {
