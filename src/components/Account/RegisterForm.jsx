@@ -6,9 +6,10 @@ import { FiEye, FiEyeOff } from "react-icons/fi";
 import { ENDPOINTS } from "../../utilities/constants";
 
 const presetAvatars = [
-  "https://i.pravatar.cc/150?img=12",
-  "https://i.pravatar.cc/150?img=21",
-  "https://i.pravatar.cc/150?img=30",
+  "https://raw.githubusercontent.com/elanetto/Holiday/c57b65c718a51299ee10cbd64c850fff83d4b318/src/assets/avatar/avatar_option_1.svg",
+  "https://raw.githubusercontent.com/elanetto/Holiday/c57b65c718a51299ee10cbd64c850fff83d4b318/src/assets/avatar/avatar_option_2.svg",
+  "https://raw.githubusercontent.com/elanetto/Holiday/c57b65c718a51299ee10cbd64c850fff83d4b318/src/assets/avatar/avatar_option_3.svg",
+  "https://raw.githubusercontent.com/elanetto/Holiday/c57b65c718a51299ee10cbd64c850fff83d4b318/src/assets/avatar/avatar_option_4.svg",
 ];
 
 export default function RegisterForm() {
@@ -109,8 +110,8 @@ export default function RegisterForm() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-creamy text-center">
       <div className="bg-white p-8 rounded-t-3xl w-full max-w-md">
-        <h1 className="text-2xl font-bold text-goldy mb-2">SIGN UP</h1>
-
+        <h1 className="text-2xl font-bold text-espressoy mb-2">Sign up</h1>
+        
         <form onSubmit={handleRegister} className="space-y-4 text-left">
           {/* Username */}
           <div>
@@ -202,7 +203,7 @@ export default function RegisterForm() {
 
             {/* Avatar Preview */}
             <div className="mt-4">
-              <div className="mx-auto w-42 h-42 rounded-full border-4 border-goldy overflow-hidden mb-2">
+              <div className="mx-auto w-42 h-42 rounded-full border-2 border-espressoy overflow-hidden mb-2">
                 <img
                   src={selectedAvatar}
                   alt="Avatar preview"
@@ -222,7 +223,7 @@ export default function RegisterForm() {
                       triggerPop();
                     }}
                     className={`w-10 h-10 rounded-full border-2 overflow-hidden ${
-                      selectedAvatar === url ? "border-goldy" : "border-gray-300"
+                      selectedAvatar === url ? "border-espressoy" : "border-gray-300"
                     }`}
                   >
                     <img src={url} alt="Preset avatar option" />
@@ -268,7 +269,7 @@ export default function RegisterForm() {
 
           <button
             type="submit"
-            className="w-full bg-goldy text-white rounded-full py-2 font-semibold hover:opacity-90"
+            className="w-full bg-sunny text-espressoy rounded-full py-2 font-semibold hover:bg-orangey hover:text-white"
           >
             SIGN UP
           </button>

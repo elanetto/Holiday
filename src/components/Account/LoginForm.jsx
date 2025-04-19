@@ -84,7 +84,7 @@ export default function LoginForm() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-creamy text-center">
       <div className="bg-white p-8 rounded-t-3xl w-full max-w-md">
-        <h1 className="text-2xl font-bold text-goldy mb-2">LOG IN</h1>
+        <h1 className="text-2xl font-bold text-espressoy mb-2">LOG IN</h1>
 
         <form onSubmit={handleLogin} className="space-y-4 text-left">
           {/* Email */}
@@ -134,7 +134,7 @@ export default function LoginForm() {
 
           <button
             type="submit"
-            className="w-full bg-goldy text-white rounded-full py-2 font-semibold hover:opacity-90"
+            className="w-full bg-sunny text-espressoy rounded-full py-2 font-semibold hover:bg-orangey hover:text-white"
           >
             LOG IN
           </button>
