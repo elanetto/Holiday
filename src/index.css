@@ -9,4 +9,36 @@
   --color-sunny: #FEB629;
   --color-creamy: #F9F2EC;
   --color-espressoy: #201309;
+  --color-error: #F13838;
 }
+
+@keyframes shake {
+    0% { transform: translateX(0); }
+    20% { transform: translateX(-5px); }
+    40% { transform: translateX(5px); }
+    60% { transform: translateX(-5px); }
+    80% { transform: translateX(5px); }
+    100% { transform: translateX(0); }
+  }
+  
+  .shake {
+    animation: shake 0.3s ease-in-out;
+}
+
+@keyframes pop {
+    0% {
+      transform: scale(1);
+    }
+    40% {
+      transform: scale(1.1);
+    }
+    100% {
+      transform: scale(1);
+    }
+  }
+  
+  .avatar-pop {
+    animation: pop 0.25s ease;
+}
+  
+  
