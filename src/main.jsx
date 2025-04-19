@@ -10,6 +10,7 @@ import { SearchProvider } from "../src/contexts/SearchProvider.jsx";
 import RegisterPage from "./paths/Account/RegisterPage/index.jsx";
 import { Toaster } from "react-hot-toast"; 
 import LoginPage from "./paths/Account/LoginPage/index.jsx";
+import { UserProvider } from "./contexts/UserProvider.jsx";
 
 const router = createBrowserRouter([
 	{
@@ -46,9 +47,11 @@ const router = createBrowserRouter([
 
 createRoot(document.getElementById("root")).render(
 	<StrictMode>
-		<SearchProvider>
-			<Toaster position="top-center" reverseOrder={false} />
-			<RouterProvider router={router} />
-		</SearchProvider>
+    <UserProvider>
+      <SearchProvider>
+        <Toaster position="top-center" reverseOrder={false} />
+        <RouterProvider router={router} />
+      </SearchProvider>
+    </UserProvider>
 	</StrictMode>
 );

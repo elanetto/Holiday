@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import VenueList from "./components/VenueList";
 import { useSearch } from "./contexts/useSearch";
+import { LogoutButton } from "./components/Account/LogoutButton";
 
 function App() {
 	const [venues, setVenues] = useState([]);
@@ -69,6 +70,8 @@ function App() {
 	return (
 		<div className="min-h-screen bg-creamy w-full">
 			<div className="max-w-7xl mx-auto px-4 py-6">
+
+        <LogoutButton />
 
         {/* TEST: Custom tailwind colourrs */}
         <div className="flex justify-center snap-center items-center p-8">

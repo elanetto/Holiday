@@ -4,9 +4,12 @@ import axios from "axios";
 import { FiEye, FiEyeOff } from "react-icons/fi";
 import { toast } from "react-hot-toast";
 import { ENDPOINTS } from "../../utilities/constants";
+import { useUser } from "../../contexts/useUser";
+import { launchConfetti } from "../../utilities/confetti";
 
 export default function LoginForm() {
   const navigate = useNavigate();
+  const { loginUser } = useUser();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -50,16 +53,23 @@ export default function LoginForm() {
     setFormError("");
 
     try {
-      const res = await axios.post(ENDPOINTS.login, { email, password });
+      const res = await axios.post(`${ENDPOINTS.login}?_holidaze=true`, {
+        email,
+        password,
+      });
 
       const { accessToken, venueManager, name, avatar } = res.data.data;
 
-      localStorage.setItem("token", accessToken);
-      localStorage.setItem("name", name);
-      localStorage.setItem("email", email);
-      localStorage.setItem("isAdmin", venueManager);
-      localStorage.setItem("avatar", JSON.stringify(avatar));
+      // Store user using context
+      loginUser({
+        token: accessToken,
+        name,
+        email,
+        isAdmin: venueManager,
+        avatar: avatar?.url,
+      });
 
+      // Only create and store an API key if admin
       if (venueManager) {
         const apiRes = await axios.post(
           ENDPOINTS.api_key,
@@ -74,6 +84,8 @@ export default function LoginForm() {
       }
 
       toast.success("Logged in successfully 🎉");
+      launchConfetti();
+
       navigate("/account");
     } catch (err) {
       console.error("Login error:", err);
@@ -96,7 +108,9 @@ export default function LoginForm() {
               onChange={(e) => setEmail(e.target.value)}
               onBlur={() => handleBlur("email")}
               className={`w-full border p-2 rounded focus:outline-none transition-colors duration-300 ${
-                touched.email && errors.email ? "border-error shake" : "border-espressoy"
+                touched.email && errors.email
+                  ? "border-error shake"
+                  : "border-espressoy"
               }`}
             />
             {touched.email && errors.email && (
@@ -114,7 +128,9 @@ export default function LoginForm() {
                 onChange={(e) => setPassword(e.target.value)}
                 onBlur={() => handleBlur("password")}
                 className={`w-full border p-2 pr-10 rounded focus:outline-none transition-colors duration-300 ${
-                  touched.password && errors.password ? "border-error shake" : "border-espressoy"
+                  touched.password && errors.password
+                    ? "border-error shake"
+                    : "border-espressoy"
                 }`}
               />
               <button
@@ -142,7 +158,10 @@ export default function LoginForm() {
 
         <p className="text-sm mt-4">
           Don’t have an account?{" "}
-          <Link to="/register" className="text-goldy underline hover:text-espressoy">
+          <Link
+            to="/register"
+            className="text-goldy underline hover:text-espressoy"
+          >
             Sign up
           </Link>
         </p>
