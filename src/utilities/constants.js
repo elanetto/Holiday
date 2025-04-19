@@ -1,10 +1,17 @@
 export const API_BASE_URL = "https://v2.api.noroff.dev/holidaze";
+export const BARE_BASE = "https://v2.api.noroff.dev";
 
 export const ENDPOINTS = {
-	// Basic endpoints
+	// Basic endpoints for Holidaze
 	venues: `${API_BASE_URL}/venues`,
 	bookings: `${API_BASE_URL}/bookings`,
 	profiles: `${API_BASE_URL}/profiles`,
+
+    // User endpoints
+    auth: `${BARE_BASE}/auth`,
+    login: `${BARE_BASE}/auth/login`,
+    register: `${BARE_BASE}/auth/register`,
+    api_key: `${BARE_BASE}/auth/create-api-key`,
 
 	// 🧠 Extended helper for venues with query support
 	venuesWithQuery: ({
