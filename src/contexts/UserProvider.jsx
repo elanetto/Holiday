@@ -6,6 +6,7 @@ export const UserProvider = ({ children }) => {
   const [avatar, setAvatar] = useState("");
   const [name, setName] = useState("");
   const [isAdmin, setIsAdmin] = useState(false);
+  const [apiKey, setApiKey] = useState("");
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -13,12 +14,14 @@ export const UserProvider = ({ children }) => {
     const parsedAvatar = avatarData ? JSON.parse(avatarData) : "";
     const nameData = localStorage.getItem("name");
     const adminFlag = localStorage.getItem("isAdmin") === "true";
+    const storedApiKey = localStorage.getItem("apiKey");
 
     if (token) {
       setIsLoggedIn(true);
       setAvatar(parsedAvatar || "");
       setName(nameData || "");
       setIsAdmin(adminFlag);
+      setApiKey(storedApiKey || "");
     }
   }, []);
 
@@ -27,11 +30,13 @@ export const UserProvider = ({ children }) => {
     localStorage.setItem("avatar", JSON.stringify(user.avatar));
     localStorage.setItem("name", user.name);
     localStorage.setItem("isAdmin", user.isAdmin);
+    localStorage.setItem("apiKey", user.apiKey);
 
     setIsLoggedIn(true);
     setAvatar(user.avatar?.url || user.avatar || "");
     setName(user.name || "");
     setIsAdmin(!!user.isAdmin);
+    setApiKey(user.apiKey || "");
   };
 
   const logoutUser = () => {
@@ -40,11 +45,20 @@ export const UserProvider = ({ children }) => {
     setAvatar("");
     setName("");
     setIsAdmin(false);
+    setApiKey("");
   };
 
   return (
     <UserContext.Provider
-      value={{ isLoggedIn, avatar, name, isAdmin, loginUser, logoutUser }}
+      value={{
+        isLoggedIn,
+        avatar,
+        name,
+        isAdmin,
+        apiKey,
+        loginUser,
+        logoutUser,
+      }}
     >
       {children}
     </UserContext.Provider>
