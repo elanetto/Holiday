@@ -13,7 +13,7 @@ const ProfileTab = () => {
         <img
             src={avatar || PLACEHOLDER_AVATAR}
             alt="User avatar"
-            className="w-24 h-24 rounded-full border border-espressoy mt-2"
+            className="w-42 h-42 rounded-full border border-espressoy mt-2"
         />
         <p className="mt-2 font-semibold">{name}</p>
         {/* Add bio and banner here */}

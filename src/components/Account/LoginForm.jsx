@@ -66,25 +66,24 @@ export default function LoginForm() {
         avatar: avatar?.url,
       });
 
-      localStorage.setItem("isAdmin", venueManager); // Optional, if needed for non-context areas
+      localStorage.setItem("isAdmin", venueManager);
 
-      if (venueManager) {
-        const apiRes = await axios.post(
-          ENDPOINTS.api_key,
-          {},
-          {
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-            },
-          }
-        );
-        localStorage.setItem("apiKey", apiRes.data.data.key);
-      }
+      // 🔑 Generate API key for ALL users
+      // & Always request a new API key after login
+      const apiRes = await axios.post(
+        ENDPOINTS.api_key,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
+      localStorage.setItem("apiKey", apiRes.data.data.key);
 
       toast.success("Logged in successfully 🎉");
       launchConfetti();
       navigate("/account");
-
     } catch (err) {
       console.error("Login error:", err);
       setFormError("Login failed. Check your email and password.");
