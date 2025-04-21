@@ -49,7 +49,10 @@ export function Header() {
     <header className="bg-creamy h-40 w-full flex justify-between items-center gap-10 p-12">
       {/* Logo */}
       <div>
-        <Link to="/" className="text-3xl font-bold text-pink-600 hover:text-pink-800">
+        <Link
+          to="/"
+          className="text-3xl font-bold text-pink-600 hover:text-pink-800"
+        >
           <img src={logoUrl} alt="Logo for Holidaze" className="h-8" />
         </Link>
       </div>
@@ -88,12 +91,13 @@ export function Header() {
             }`}
           >
             <Link
-              to="/account"
+              to={`/account/${localStorage.getItem("name")}`}
               className="block px-4 py-2 hover:bg-creamy transition-colors"
               onClick={() => setShowDropdown(false)}
             >
               My Account
             </Link>
+
             <button
               onClick={handleLogout}
               className="w-full text-left px-4 py-2 hover:bg-creamy text-error transition-colors"

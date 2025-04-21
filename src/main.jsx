@@ -35,9 +35,9 @@ const router = createBrowserRouter([
         element: <LoginPage />,
       },
       {
-        path: "account",
+        path: "account/:username",
         element: <AccountPage />,
-      },
+      },      
       {
 				path: "404",
 				element: <NotFound />,

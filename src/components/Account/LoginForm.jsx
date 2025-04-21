@@ -83,7 +83,7 @@ export default function LoginForm() {
 
       toast.success("Logged in successfully 🎉");
       launchConfetti();
-      navigate("/account");
+      navigate("/account/" + `${localStorage.getItem("name")}`);
     } catch (err) {
       console.error("Login error:", err);
       setFormError("Login failed. Check your email and password.");

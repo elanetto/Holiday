@@ -1,5 +1,6 @@
 import AvatarEditor from '../../../../components/Account/AvatarEditor';
 import BannerEditor from '../../../../components/Account/BannerEditor';
+import BioEditor from '../../../../components/Account/BioEditor';
 
 const EditAccountTab = () => {
 
@@ -10,6 +11,7 @@ const EditAccountTab = () => {
 
             <AvatarEditor />
             <BannerEditor />
+            <BioEditor />
         </div>
     );
 };
