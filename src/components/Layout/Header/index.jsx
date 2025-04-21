@@ -7,7 +7,7 @@ import { useUser } from "../../../contexts/useUser";
 import { PLACEHOLDER_AVATAR } from "../../../utilities/placeholders";
 
 export function Header() {
-  const { isLoggedIn, avatar, logoutUser } = useUser();
+  const { isLoggedIn, avatar, logoutUser, user } = useUser();
   const navigate = useNavigate();
   const [showDropdown, setShowDropdown] = useState(false);
   const dropdownRef = useRef(null);
@@ -44,6 +44,8 @@ export function Header() {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+  const userName = user?.name || localStorage.getItem("name");
 
   return (
     <header className="bg-creamy h-40 w-full flex justify-between items-center gap-10 p-12">
@@ -91,7 +93,7 @@ export function Header() {
             }`}
           >
             <Link
-              to={`/account/${localStorage.getItem("name")}`}
+              to={`/account/${userName}`}
               className="block px-4 py-2 hover:bg-creamy transition-colors"
               onClick={() => setShowDropdown(false)}
             >
