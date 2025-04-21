@@ -46,7 +46,6 @@ export default function AvatarEditor() {
       }
 
       const url = `${ENDPOINTS.profiles}/${name}`;
-      console.log("🧪 PUT to:", url);
 
       const response = await axios.put(
         url,

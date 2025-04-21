@@ -26,8 +26,6 @@ export default function BioEditor() {
         throw new Error("Missing token or API key");
       }
 
-      console.log("🧪 PUT to:", `${ENDPOINTS.profiles}/${name}`);
-
       const res = await axios.put(
         `${ENDPOINTS.profiles}/${name}`,
         { bio },
