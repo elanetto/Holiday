@@ -98,6 +98,9 @@ export default function RegisterForm() {
       });
 
       if (response.status === 201) {
+        localStorage.setItem("name", username);
+        localStorage.setItem("email", email);
+
         toast.success("Account created! 🎉 You can now log in");
         navigate("/login");
       }
@@ -114,7 +117,6 @@ export default function RegisterForm() {
       </h1>
 
       <div className="bg-white p-4 sm:p-6 md:p-10 rounded-2xl w-full max-w-4xl shadow-md grid md:grid-cols-2 gap-10 items-start">
-        
         <div className="md:col-span-1">
           <form
             id="register-form"

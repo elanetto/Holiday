@@ -8,13 +8,34 @@ export default function BioEditor() {
   const { name, loginUser } = useUser();
   const [bio, setBio] = useState("");
   const [loading, setLoading] = useState(false);
+  const [currentBio, setCurrentBio] = useState("");
 
   useEffect(() => {
-    const savedBio = localStorage.getItem("bio");
-    if (savedBio) {
-      setBio(savedBio);
-    }
-  }, []);
+    const fetchBio = async () => {
+      const token = localStorage.getItem("token");
+      const apiKey = localStorage.getItem("apiKey");
+
+      if (!token || !apiKey) return;
+
+      try {
+        const res = await axios.get(`${ENDPOINTS.profiles}/${name}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "X-Noroff-API-Key": apiKey,
+          },
+        });
+
+        const userBio = res.data.data.bio || "";
+        setCurrentBio(userBio);
+        setBio(userBio);
+      } catch (err) {
+        console.error("Failed to load current bio:", err);
+        toast.error("Could not load current bio.");
+      }
+    };
+
+    fetchBio();
+  }, [name]);
 
   const handleSave = async () => {
     try {
@@ -44,7 +65,7 @@ export default function BioEditor() {
         isAdmin: localStorage.getItem("isAdmin") === "true",
       });
 
-      localStorage.setItem("bio", res.data.data.bio);
+      setCurrentBio(res.data.data.bio);
       toast.success("Bio updated!");
     } catch (err) {
       console.error("❌ Bio update failed:", err);
@@ -56,8 +77,17 @@ export default function BioEditor() {
 
   return (
     <div className="mt-6 space-y-4 text-left">
-      <h3 className="text-lg font-semibold">Edit your bio</h3>
+      <h3 className="text-lg font-semibold text-espressoy">Edit your bio</h3>
 
+      {/* Current Bio Preview */}
+      <div className="text-gray-800 italic bg-creamy p-2">
+        <p className="text-sm font-semibold mb-1">My bio:</p>
+        <p className="text-sm">
+          {currentBio.trim() ? currentBio : "You haven't added a bio yet."}
+        </p>
+      </div>
+
+      {/* Bio Textarea */}
       <textarea
         value={bio}
         onChange={(e) => setBio(e.target.value)}

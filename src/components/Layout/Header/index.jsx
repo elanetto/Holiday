@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useMemo, useState, useRef, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FaUser, FaCheckCircle, FaSearch } from "react-icons/fa";
 import { SearchBar } from "../../SearchBar";
@@ -14,7 +14,9 @@ export function Header() {
   const [showMobileSearch, setShowMobileSearch] = useState(false);
   const dropdownRef = useRef(null);
 
-  const userName = user?.name || localStorage.getItem("name");
+  const userName = useMemo(() => {
+    return user?.name || localStorage.getItem("name");
+  }, [user]);
 
   const handleLogout = () => {
     logoutUser();
@@ -40,16 +42,12 @@ export function Header() {
   // Close dropdown on outside click
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (
-        dropdownRef.current &&
-        !dropdownRef.current.contains(event.target)
-      ) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setShowDropdown(false);
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
-    return () =>
-      document.removeEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   return (
