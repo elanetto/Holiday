@@ -108,98 +108,154 @@ export default function RegisterForm() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-creamy text-center">
-      <div className="bg-white p-8 rounded-t-3xl w-full max-w-md">
-        <h1 className="text-2xl font-bold text-espressoy mb-2">Sign up</h1>
+    <div className="min-h-screen flex flex-col items-center justify-start bg-creamy text-center px-2 sm:px-2 md:px-4 py-8 md:py-8">
+      <h1 className="text-2xl font-bold text-espressoy mb-6 w-full max-w-4xl text-left">
+        Sign up
+      </h1>
+
+      <div className="bg-white p-4 sm:p-6 md:p-10 rounded-2xl w-full max-w-4xl shadow-md grid md:grid-cols-2 gap-10 items-start">
         
-        <form onSubmit={handleRegister} className="space-y-4 text-left">
-          {/* Username */}
-          <div>
-            <label className="text-sm">Username *</label>
-            <input
-              type="text"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              onBlur={() => handleBlur("username")}
-              className={`w-full border p-2 rounded focus:outline-none transition-colors duration-300 ${
-                touched.username && errors.username ? "border-error shake" : "border-espressoy"
-              }`}
-            />
-            {touched.username && errors.username && (
-              <p className="text-error text-sm">{errors.username}</p>
-            )}
-          </div>
-
-          {/* Email */}
-          <div>
-            <label className="text-sm">Email *</label>
-            <input
-              type="text"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              onBlur={() => handleBlur("email")}
-              className={`w-full border p-2 rounded focus:outline-none transition-colors duration-300 ${
-                touched.email && errors.email ? "border-error shake" : "border-espressoy"
-              }`}
-            />
-            {touched.email && errors.email && (
-              <p className="text-error text-sm">{errors.email}</p>
-            )}
-          </div>
-
-          {/* Password */}
-          <div>
-            <label className="text-sm">Password *</label>
-            <div className="relative">
+        <div className="md:col-span-1">
+          <form
+            id="register-form"
+            onSubmit={handleRegister}
+            className="space-y-4 text-left"
+          >
+            {/* Username */}
+            <div>
+              <label className="text-sm">Username *</label>
               <input
-                type={showPassword ? "text" : "password"}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                onBlur={() => handleBlur("password")}
-                className={`w-full border p-2 pr-10 rounded focus:outline-none transition-colors duration-300 ${
-                  touched.password && errors.password ? "border-error shake" : "border-espressoy"
+                type="text"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                onBlur={() => handleBlur("username")}
+                className={`w-full border p-2 rounded focus:outline-none transition-colors duration-300 ${
+                  touched.username && errors.username
+                    ? "border-error shake"
+                    : "border-espressoy"
                 }`}
               />
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute top-1/2 right-2 transform -translate-y-1/2"
-              >
-                {showPassword ? <FiEyeOff /> : <FiEye />}
-              </button>
+              {touched.username && errors.username && (
+                <p className="text-error text-sm">{errors.username}</p>
+              )}
             </div>
-            {touched.password && errors.password && (
-              <p className="text-error text-sm">{errors.password}</p>
-            )}
-          </div>
 
-          {/* Confirm Password */}
-          <div>
-            <label className="text-sm">Confirm Password *</label>
-            <input
-              type="password"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              onBlur={() => handleBlur("confirmPassword")}
-              className={`w-full border p-2 rounded focus:outline-none transition-colors duration-300 ${
-                touched.confirmPassword && errors.confirmPassword ? "border-error shake" : "border-espressoy"
-              }`}
-            />
-            {touched.confirmPassword && errors.confirmPassword && (
-              <p className="text-error text-sm">{errors.confirmPassword}</p>
-            )}
-          </div>
+            {/* Email */}
+            <div>
+              <label className="text-sm">Email *</label>
+              <input
+                type="text"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                onBlur={() => handleBlur("email")}
+                className={`w-full border p-2 rounded focus:outline-none transition-colors duration-300 ${
+                  touched.email && errors.email
+                    ? "border-error shake"
+                    : "border-espressoy"
+                }`}
+              />
+              {touched.email && errors.email && (
+                <p className="text-error text-sm">{errors.email}</p>
+              )}
+            </div>
 
-          {/* Avatar input + preview */}
+            {/* Password */}
+            <div>
+              <label className="text-sm">Password *</label>
+              <div className="relative">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  onBlur={() => handleBlur("password")}
+                  className={`w-full border p-2 pr-10 rounded focus:outline-none transition-colors duration-300 ${
+                    touched.password && errors.password
+                      ? "border-error shake"
+                      : "border-espressoy"
+                  }`}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute top-1/2 right-2 transform -translate-y-1/2"
+                >
+                  {showPassword ? <FiEyeOff /> : <FiEye />}
+                </button>
+              </div>
+              {touched.password && errors.password && (
+                <p className="text-error text-sm">{errors.password}</p>
+              )}
+            </div>
+
+            {/* Confirm Password */}
+            <div>
+              <label className="text-sm">Confirm Password *</label>
+              <input
+                type="password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                onBlur={() => handleBlur("confirmPassword")}
+                className={`w-full border p-2 rounded focus:outline-none transition-colors duration-300 ${
+                  touched.confirmPassword && errors.confirmPassword
+                    ? "border-error shake"
+                    : "border-espressoy"
+                }`}
+              />
+              {touched.confirmPassword && errors.confirmPassword && (
+                <p className="text-error text-sm">{errors.confirmPassword}</p>
+              )}
+            </div>
+
+            {/* Role */}
+            <div>
+              <label className="text-sm">Role</label>
+              <select
+                value={role}
+                onChange={(e) => setRole(e.target.value)}
+                className="w-full border p-2 rounded focus:outline-none border-espressoy"
+              >
+                <option value="customer">Customer</option>
+                <option value="admin">Admin</option>
+              </select>
+            </div>
+
+            {/* Admin password */}
+            {role === "admin" && (
+              <div>
+                <label className="text-sm">Admin Register Password *</label>
+                <input
+                  type="password"
+                  value={adminPass}
+                  onChange={(e) => setAdminPass(e.target.value)}
+                  onBlur={() => handleBlur("adminPass")}
+                  className={`w-full border p-2 rounded focus:outline-none transition-colors duration-300 ${
+                    touched.adminPass && errors.adminPass
+                      ? "border-error shake"
+                      : "border-espressoy"
+                  }`}
+                />
+                {touched.adminPass && errors.adminPass && (
+                  <p className="text-error text-sm">{errors.adminPass}</p>
+                )}
+              </div>
+            )}
+
+            {errors.form && <p className="text-error text-sm">{errors.form}</p>}
+          </form>
+        </div>
+
+        <div className="md:col-span-1 flex flex-col justify-between h-full">
           <div>
-            <label className="text-sm">Avatar URL (optional)</label>
-            <input
-              type="text"
-              value={avatar}
-              onChange={(e) => setAvatar(e.target.value)}
-              placeholder="Paste an image URL..."
-              className="w-full border p-2 rounded focus:outline-none border-espressoy"
-            />
+            <div className="text-left mb-4">
+              <label className="text-sm">Avatar URL (optional)</label>
+              <input
+                type="text"
+                value={avatar}
+                onChange={(e) => setAvatar(e.target.value)}
+                placeholder="Paste an image URL..."
+                className="w-full border p-2 rounded focus:outline-none border-espressoy"
+              />
+            </div>
 
             {/* Avatar Preview */}
             <div className="mt-4">
@@ -207,7 +263,9 @@ export default function RegisterForm() {
                 <img
                   src={selectedAvatar}
                   alt="Avatar preview"
-                  className={`w-full h-full object-cover ${popAnimation ? "avatar-pop" : ""}`}
+                  className={`w-full h-full object-cover ${
+                    popAnimation ? "avatar-pop" : ""
+                  }`}
                 />
               </div>
 
@@ -223,7 +281,9 @@ export default function RegisterForm() {
                       triggerPop();
                     }}
                     className={`w-10 h-10 rounded-full border-2 overflow-hidden ${
-                      selectedAvatar === url ? "border-espressoy" : "border-gray-300"
+                      selectedAvatar === url
+                        ? "border-espressoy"
+                        : "border-gray-300"
                     }`}
                   >
                     <img src={url} alt="Preset avatar option" />
@@ -233,54 +293,35 @@ export default function RegisterForm() {
             </div>
           </div>
 
-          {/* Role */}
-          <div>
-            <label className="text-sm">Role</label>
-            <select
-              value={role}
-              onChange={(e) => setRole(e.target.value)}
-              className="w-full border p-2 rounded focus:outline-none border-espressoy"
+          <div className="mt-8 text-left">
+            <p className="text-sm mb-4">
+              <strong>Important:</strong> Your{" "}
+              <span className="font-semibold text-error">
+                username, email, and password
+              </span>{" "}
+              cannot be changed later. Please double-check them before signing
+              up.
+            </p>
+
+            <button
+              type="submit"
+              form="register-form"
+              className="w-full bg-sunny text-espressoy rounded-full py-2 font-semibold hover:bg-orangey hover:text-white"
             >
-              <option value="customer">Customer</option>
-              <option value="admin">Admin</option>
-            </select>
+              SIGN UP
+            </button>
+
+            <p className="text-sm mt-4">
+              Already a member?{" "}
+              <Link
+                to="/login"
+                className="text-goldy underline hover:text-espressoy"
+              >
+                Login
+              </Link>
+            </p>
           </div>
-
-          {/* Admin password */}
-          {role === "admin" && (
-            <div>
-              <label className="text-sm">Admin Register Password *</label>
-              <input
-                type="password"
-                value={adminPass}
-                onChange={(e) => setAdminPass(e.target.value)}
-                onBlur={() => handleBlur("adminPass")}
-                className={`w-full border p-2 rounded focus:outline-none transition-colors duration-300 ${
-                  touched.adminPass && errors.adminPass ? "border-error shake" : "border-espressoy"
-                }`}
-              />
-              {touched.adminPass && errors.adminPass && (
-                <p className="text-error text-sm">{errors.adminPass}</p>
-              )}
-            </div>
-          )}
-
-          {errors.form && <p className="text-error text-sm">{errors.form}</p>}
-
-          <button
-            type="submit"
-            className="w-full bg-sunny text-espressoy rounded-full py-2 font-semibold hover:bg-orangey hover:text-white"
-          >
-            SIGN UP
-          </button>
-        </form>
-
-        <p className="text-sm mt-4">
-          Already a member?{" "}
-          <Link to="/login" className="text-goldy underline hover:text-espressoy">
-            Login
-          </Link>
-        </p>
+        </div>
       </div>
     </div>
   );

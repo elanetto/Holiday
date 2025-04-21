@@ -68,7 +68,6 @@ export default function LoginForm() {
 
       localStorage.setItem("isAdmin", venueManager);
 
-      // 🔑 Generate API key for ALL users
       const apiRes = await axios.post(
         ENDPOINTS.api_key,
         {},
@@ -82,7 +81,7 @@ export default function LoginForm() {
 
       toast.success("Logged in successfully 🎉");
       launchConfetti();
-      navigate(`/account/${name}`);
+      navigate(`/account/${encodeURIComponent(name)}`);
     } catch (err) {
       console.error("Login error:", err);
       setFormError("Login failed. Check your email and password.");
