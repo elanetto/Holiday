@@ -49,8 +49,6 @@ export default function BannerEditor() {
       }
   
       const url = `${ENDPOINTS.profiles}/${name}`;
-      console.log("🧪 PUT to:", url);
-      console.log("🔐 Token:", token.slice(0, 10) + "...", "🔑 API Key:", apiKey);
   
       const res = await axios.put(
         url,

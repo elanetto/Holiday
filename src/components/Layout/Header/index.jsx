@@ -1,16 +1,22 @@
-import { useState, useRef, useEffect } from "react";
+import { useMemo, useState, useRef, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { FaUser, FaCheckCircle } from "react-icons/fa";
+import { FaUser, FaCheckCircle, FaSearch } from "react-icons/fa";
 import { SearchBar } from "../../SearchBar";
+import MobileSearchBar from "../../SearchBar/MobileSearchBar/index";
 import logoUrl from "../../../assets/Logo.svg?url";
 import { useUser } from "../../../contexts/useUser";
 import { PLACEHOLDER_AVATAR } from "../../../utilities/placeholders";
 
 export function Header() {
-  const { isLoggedIn, avatar, logoutUser } = useUser();
+  const { isLoggedIn, avatar, logoutUser, user } = useUser();
   const navigate = useNavigate();
   const [showDropdown, setShowDropdown] = useState(false);
+  const [showMobileSearch, setShowMobileSearch] = useState(false);
   const dropdownRef = useRef(null);
+
+  const userName = useMemo(() => {
+    return user?.name || localStorage.getItem("name");
+  }, [user]);
 
   const handleLogout = () => {
     logoutUser();
@@ -24,85 +30,93 @@ export function Header() {
         <img
           src={avatarUrl}
           alt="User avatar"
-          className="w-12 h-12 rounded-full border-2 border-check object-cover"
+          className="w-10 h-10 sm:w-12 sm:h-12 rounded-full border-2 border-check object-cover"
         />
         <FaCheckCircle className="absolute -bottom-1 -right-1 text-check text-sm" />
       </div>
     ) : (
-      <FaUser className="text-3xl" />
+      <FaUser className="text-2xl sm:text-3xl" />
     );
   };
 
-  // Close dropdown when clicking outside
+  // Close dropdown on outside click
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setShowDropdown(false);
       }
     };
-
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   return (
-    <header className="bg-creamy h-40 w-full flex justify-between items-center gap-10 p-12">
-      {/* Logo */}
-      <div>
-        <Link to="/" className="text-3xl font-bold text-pink-600 hover:text-pink-800">
-          <img src={logoUrl} alt="Logo for Holidaze" className="h-8" />
+    <>
+      <header className="bg-creamy w-full px-4 py-4 sm:px-8 sm:py-6 flex items-center justify-between">
+        {/* Logo */}
+        <Link to="/">
+          <img src={logoUrl} alt="Logo for Holidaze" className="h-8 sm:h-10" />
         </Link>
-      </div>
 
-      {/* Search */}
-      <div>
-        <SearchBar />
-      </div>
+        {/* Desktop Search (hidden on small screens) */}
+        <div className="hidden md:block">
+          <SearchBar />
+        </div>
 
-      {/* User Avatar or Icon */}
-      <div className="relative" ref={dropdownRef}>
-        <nav>
-          <ul className="flex gap-8 text-2xl">
-            <li
-              className="hover:text-orangey text-espressoy relative cursor-pointer"
-              onClick={() => {
-                if (isLoggedIn) {
-                  setShowDropdown((prev) => !prev);
-                } else {
-                  navigate("/login");
-                }
-              }}
-            >
-              {renderUserIcon()}
-            </li>
-          </ul>
-        </nav>
-
-        {/* Dropdown */}
-        {isLoggedIn && (
-          <div
-            className={`absolute right-0 mt-2 w-40 bg-white border border-espressoy rounded shadow-md text-sm z-50 transform transition-all duration-300 ease-out origin-top-right ${
-              showDropdown
-                ? "opacity-100 scale-100 translate-y-0"
-                : "opacity-0 scale-95 -translate-y-2 pointer-events-none"
-            }`}
+        {/* User & Search icons */}
+        <div className="flex items-center gap-4 relative" ref={dropdownRef}>
+          {/* Search icon for mobile */}
+          <button
+            onClick={() => setShowMobileSearch((prev) => !prev)}
+            className="md:hidden text-xl text-espressoy hover:text-orangey"
+            aria-label="Toggle Search"
           >
-            <Link
-              to="/account"
-              className="block px-4 py-2 hover:bg-creamy transition-colors"
-              onClick={() => setShowDropdown(false)}
-            >
-              My Account
-            </Link>
-            <button
-              onClick={handleLogout}
-              className="w-full text-left px-4 py-2 hover:bg-creamy text-error transition-colors"
-            >
-              Logout
-            </button>
+            <FaSearch />
+          </button>
+
+          {/* Avatar / User Icon */}
+          <div
+            onClick={() =>
+              isLoggedIn ? setShowDropdown((prev) => !prev) : navigate("/login")
+            }
+            className="cursor-pointer"
+          >
+            {renderUserIcon()}
           </div>
-        )}
-      </div>
-    </header>
+
+          {/* Dropdown */}
+          {isLoggedIn && (
+            <div
+              className={`absolute right-0 top-12 sm:top-14 w-40 bg-white border border-espressoy rounded shadow-md text-sm z-50 transform transition-all duration-300 ease-out origin-top-right ${
+                showDropdown
+                  ? "opacity-100 scale-100 translate-y-0"
+                  : "opacity-0 scale-95 -translate-y-2 pointer-events-none"
+              }`}
+            >
+              <Link
+                to={`/account/${encodeURIComponent(userName)}`}
+                className="block px-4 py-2 hover:bg-creamy transition-colors"
+                onClick={() => setShowDropdown(false)}
+              >
+                My Account
+              </Link>
+              <button
+                onClick={handleLogout}
+                className="w-full text-left px-4 py-2 hover:bg-creamy text-error transition-colors"
+              >
+                Logout
+              </button>
+            </div>
+          )}
+        </div>
+      </header>
+
+      {/* Mobile search bar below header */}
+      {showMobileSearch && (
+        <div className="px-4 pb-4 sm:hidden">
+          <MobileSearchBar onClose={() => setShowMobileSearch(false)} />
+        </div>
+      )}
+    </>
   );
 }
