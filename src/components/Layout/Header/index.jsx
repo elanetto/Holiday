@@ -45,7 +45,7 @@ export function Header() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const userName = user?.name || localStorage.getItem("name");
+  const userName = user?.name;
 
   return (
     <header className="bg-creamy h-40 w-full flex justify-between items-center gap-10 p-12">
