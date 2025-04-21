@@ -11,19 +11,27 @@ export const UserProvider = ({ children }) => {
   useEffect(() => {
     const token = localStorage.getItem("token");
     const avatarData = localStorage.getItem("avatar");
-    const parsedAvatar = avatarData ? JSON.parse(avatarData) : "";
+    let parsedAvatar = "";
+  
+    try {
+      parsedAvatar = avatarData ? JSON.parse(avatarData) : "";
+    } catch {
+      parsedAvatar = avatarData; // fallback to string if not JSON
+    }
+  
     const nameData = localStorage.getItem("name");
     const adminFlag = localStorage.getItem("isAdmin") === "true";
     const storedApiKey = localStorage.getItem("apiKey");
-
+  
     if (token) {
       setIsLoggedIn(true);
-      setAvatar(parsedAvatar || "");
+      setAvatar(parsedAvatar?.url || parsedAvatar || "");
       setName(nameData || "");
       setIsAdmin(adminFlag);
       setApiKey(storedApiKey || "");
     }
   }, []);
+  
 
   const loginUser = (user) => {
     localStorage.setItem("token", user.token);

@@ -43,4 +43,9 @@
     animation: pop 0.25s ease;
 }
   
+
+select {
+    background-color: white !important;
+    color: black !important;
+  }
   

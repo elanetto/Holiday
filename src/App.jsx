@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import VenueList from "./components/VenueList";
 import { useSearch } from "./contexts/useSearch";
+import { getEmojiFlag } from "./utilities/getEmojiFlag";
 
 function App() {
   const [venues, setVenues] = useState([]);
@@ -69,6 +70,11 @@ function App() {
   return (
     <div className="min-h-screen bg-creamy w-full">
       <div className="max-w-7xl mx-auto px-4 py-6">
+        <div className="p-4 text-xl">
+          <p>{getEmojiFlag("NO")} Norway</p>
+          <p>{getEmojiFlag("SE")} Sweden</p>
+        </div>
+
         {/* TEST: Custom tailwind colourrs */}
         <div className="flex justify-center snap-center items-center p-8">
           <div className="flex text-center w-[943px] justify-center border-1 flex-wrap self-center">
