@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useSearch } from "../../../contexts/useSearch";
 
-export default function MobileSearchBar() {
+export default function MobileSearchBar({ onClose }) {
   const { setSearchFilters } = useSearch();
   const [location, setLocation] = useState("");
   const [checkIn, setCheckIn] = useState("");
@@ -15,6 +15,10 @@ export default function MobileSearchBar() {
       checkOut,
       guests,
     });
+
+    if (onClose) {
+      onClose();
+    }
   };
 
   return (
