@@ -45,7 +45,7 @@ export function Header() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const userName = user?.name;
+  const userName = user?.name || localStorage.getItem("name");
 
   return (
     <header className="bg-creamy h-40 w-full flex justify-between items-center gap-10 p-12">
@@ -92,13 +92,15 @@ export function Header() {
                 : "opacity-0 scale-95 -translate-y-2 pointer-events-none"
             }`}
           >
-            <Link
-              to={`/account/${userName}`}
-              className="block px-4 py-2 hover:bg-creamy transition-colors"
-              onClick={() => setShowDropdown(false)}
-            >
-              My Account
-            </Link>
+            {isLoggedIn && (
+              <Link
+                to={`/account/${encodeURIComponent(userName)}`}
+                className="block px-4 py-2 hover:bg-creamy transition-colors"
+                onClick={() => setShowDropdown(false)}
+              >
+                My Account
+              </Link>
+            )}
 
             <button
               onClick={handleLogout}
