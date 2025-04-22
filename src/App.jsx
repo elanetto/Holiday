@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import VenueList from "./components/VenueList";
 import { useSearch } from "./contexts/useSearch";
 import { getEmojiFlag } from "./utilities/getEmojiFlag";
-import { ENDPOINTS } from "./utilities/constants";
+import { VENUE_UTILS } from "./utilities/constants";
 
 function App() {
   const [venues, setVenues] = useState([]);
@@ -14,7 +14,8 @@ function App() {
   useEffect(() => {
     const fetchAll = async () => {
       try {
-        const res = await fetch(ENDPOINTS.latestVenues);
+        const res = await fetch(VENUE_UTILS.latest);
+
         if (!res.ok) {
           throw new Error(`Fetch error: ${res.status} ${res.statusText}`);
         }
