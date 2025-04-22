@@ -100,6 +100,7 @@ export function Header() {
               >
                 My Account
               </Link>
+
               <button
                 onClick={handleLogout}
                 className="w-full text-left px-4 py-2 hover:bg-creamy text-error transition-colors"
