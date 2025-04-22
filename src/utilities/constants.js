@@ -49,5 +49,5 @@ export const FALLBACK = {
 	lng: 10.755947969218308,
 	name: "Thor Hansen",
 	email: "thorhansen@madeupemail.com",
-	bio: "I cola light in the sun",
+	bio: "I like cola light in the sun",
 };
