@@ -130,7 +130,7 @@ export default function VenueForm({ mode = "create", venue = {} }) {
   const validate = () => {
     const newErrors = {};
 
-    if (!/^[A-Z][A-Za-z\s]{2,}$/.test(formData.name.trim())) {
+    if (!/^[\p{Lu}][\p{L}\s]{2,}$/u.test(formData.name.trim())) {
       newErrors.name =
         "Name must start with a capital letter and be at least 3 characters";
     }
