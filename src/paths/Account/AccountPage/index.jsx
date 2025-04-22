@@ -1,19 +1,38 @@
-import { useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 import { useUser } from "../../../contexts/useUser";
 import AdminTab from "./AccountTabs/AdminTab";
 import BookingHistoryTab from "./AccountTabs/BookingHistoryTab";
 import MyBookingsTab from "./AccountTabs/MyBookingsTab";
 import EditAccountTab from "./AccountTabs/EditTab";
 import ProfileTab from "./AccountTabs/ProfileTab";
+import ShareProfileLink from "../../../components/Account/ShareProfileLink";
 
 const AccountPage = () => {
+  const { username } = useParams();
+  const navigate = useNavigate();
   const { isLoggedIn, name, avatar, isAdmin } = useUser();
   const [activeTab, setActiveTab] = useState("profile");
+
+  useEffect(() => {
+    if (isLoggedIn && username !== name) {
+      navigate(`/account/${name}`, { replace: true });
+    }
+  }, [username, name, isLoggedIn, navigate]);
 
   const renderTabContent = () => {
     switch (activeTab) {
       case "profile":
-        return <ProfileTab name={name} avatar={avatar} />;
+        return (
+          <>
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-xl font-bold">My Profile</h2>
+              <ShareProfileLink />
+            </div>
+            <ProfileTab name={name} avatar={avatar} />
+          </>
+        );
+  
       case "edit":
         return isLoggedIn ? <EditAccountTab /> : null;
       case "bookings":

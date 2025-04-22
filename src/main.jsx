@@ -8,24 +8,25 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import NotFound from "./paths/NotFound/index.jsx";
 import { SearchProvider } from "../src/contexts/SearchProvider.jsx";
 import RegisterPage from "./paths/Account/RegisterPage/index.jsx";
-import { Toaster } from "react-hot-toast"; 
+import { Toaster } from "react-hot-toast";
 import LoginPage from "./paths/Account/LoginPage/index.jsx";
 import { UserProvider } from "./contexts/UserProvider.jsx";
 import AccountPage from "./paths/Account/AccountPage/index.jsx";
+import ProfilePage from "./paths/Profile/index.jsx";
 
 const router = createBrowserRouter([
-	{
-		path: "/",
-		element: <Layout />,
-		children: [
-			{
-				path: "",
-				element: <App />,
-			},
-			{
-				path: "venue/:id",
-				element: <VenuePage />,
-			},
+  {
+    path: "/",
+    element: <Layout />,
+    children: [
+      {
+        path: "",
+        element: <App />,
+      },
+      {
+        path: "venue/:id",
+        element: <VenuePage />,
+      },
       {
         path: "register",
         element: <RegisterPage />,
@@ -37,26 +38,30 @@ const router = createBrowserRouter([
       {
         path: "account/:username",
         element: <AccountPage />,
-      },      
+      },
       {
-				path: "404",
-				element: <NotFound />,
-			},
-			{
-				path: "*", // 👈 catch-all route
-				element: <NotFound />,
-			},
-		],
-	},
+        path: "profile/:username",
+        element: <ProfilePage />,
+      },
+      {
+        path: "404",
+        element: <NotFound />,
+      },
+      {
+        path: "*", // 👈 catch-all route
+        element: <NotFound />,
+      },
+    ],
+  },
 ]);
 
 createRoot(document.getElementById("root")).render(
-	<StrictMode>
+  <StrictMode>
     <UserProvider>
       <SearchProvider>
         <Toaster position="top-center" reverseOrder={false} />
         <RouterProvider router={router} />
       </SearchProvider>
     </UserProvider>
-	</StrictMode>
+  </StrictMode>
 );

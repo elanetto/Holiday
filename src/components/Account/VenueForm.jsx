@@ -8,8 +8,17 @@ import Select from "react-select";
 import countries from "i18n-iso-countries";
 import enLocale from "i18n-iso-countries/langs/en.json";
 import regionData from "country-region-data/data.json";
+import confetti from "canvas-confetti";
 
 countries.registerLocale(enLocale);
+
+const launchConfetti = () => {
+  confetti({
+    particleCount: 100,
+    spread: 70,
+    origin: { y: 0.6 },
+  });
+};
 
 const getCountryOptions = () => {
   const countryObj = countries.getNames("en", { select: "official" });
@@ -23,9 +32,7 @@ const getCountryOptions = () => {
 const getEmojiFlag = (code) => {
   return code
     .toUpperCase()
-    .replace(/./g, (char) =>
-      String.fromCodePoint(127397 + char.charCodeAt())
-    );
+    .replace(/./g, (char) => String.fromCodePoint(127397 + char.charCodeAt()));
 };
 
 function FlaggedCountryDropdown({ value, onChange }) {
@@ -188,7 +195,7 @@ export default function VenueForm({ mode = "create", venue = {} }) {
         mode === "edit" ? `${ENDPOINTS.venues}/${venue.id}` : ENDPOINTS.venues;
       const method = mode === "edit" ? "put" : "post";
 
-      await axios[method](url, formData, {
+      const response = await axios[method](url, formData, {
         headers: {
           Authorization: `Bearer ${token}`,
           "X-Noroff-API-Key": apiKey,
@@ -196,10 +203,18 @@ export default function VenueForm({ mode = "create", venue = {} }) {
         },
       });
 
+      const newVenueId = response?.data?.data?.id;
+
       toast.success(
         `Venue ${mode === "edit" ? "updated" : "created"} successfully!`
       );
-      navigate(`/account/${localStorage.getItem("name")}`);
+      launchConfetti();
+
+      if (mode === "create" && newVenueId) {
+        navigate(`/venue/${newVenueId}`);
+      } else {
+        navigate(`/account/${localStorage.getItem("name")}`);
+      }
     } catch (err) {
       toast.error("Something went wrong. Please try again.");
       console.error("Venue error:", err);
