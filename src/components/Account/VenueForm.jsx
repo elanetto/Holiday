@@ -135,7 +135,7 @@ export default function VenueForm({ mode = "create", venue = {} }) {
         "Name must start with a capital letter and be at least 3 characters";
     }
 
-    if (!/^\w+(\s+\w+)+$/.test(formData.description.trim())) {
+    if (formData.description.trim().split(/\s+/).length < 2) {
       newErrors.description = "Description must be at least two words";
     }
 
@@ -210,10 +210,9 @@ export default function VenueForm({ mode = "create", venue = {} }) {
       );
       launchConfetti();
 
-      if (mode === "create" && newVenueId) {
-        navigate(`/venue/${newVenueId}`);
-      } else {
-        navigate(`/account/${localStorage.getItem("name")}`);
+      const venueIdToNavigate = mode === "edit" ? venue.id : newVenueId;
+      if (venueIdToNavigate) {
+        navigate(`/venue/${venueIdToNavigate}`);
       }
     } catch (err) {
       toast.error("Something went wrong. Please try again.");
@@ -345,6 +344,64 @@ export default function VenueForm({ mode = "create", venue = {} }) {
             }),
           }}
         />
+      </div>
+
+      <div>
+        <label className="text-sm block mb-2">Amenities</label>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+          <label className="flex items-center gap-2">
+            <input
+              type="checkbox"
+              checked={formData.meta.wifi}
+              onChange={(e) =>
+                setFormData((prev) => ({
+                  ...prev,
+                  meta: { ...prev.meta, wifi: e.target.checked },
+                }))
+              }
+            />
+            WiFi
+          </label>
+          <label className="flex items-center gap-2">
+            <input
+              type="checkbox"
+              checked={formData.meta.parking}
+              onChange={(e) =>
+                setFormData((prev) => ({
+                  ...prev,
+                  meta: { ...prev.meta, parking: e.target.checked },
+                }))
+              }
+            />
+            Parking
+          </label>
+          <label className="flex items-center gap-2">
+            <input
+              type="checkbox"
+              checked={formData.meta.breakfast}
+              onChange={(e) =>
+                setFormData((prev) => ({
+                  ...prev,
+                  meta: { ...prev.meta, breakfast: e.target.checked },
+                }))
+              }
+            />
+            Breakfast
+          </label>
+          <label className="flex items-center gap-2">
+            <input
+              type="checkbox"
+              checked={formData.meta.pets}
+              onChange={(e) =>
+                setFormData((prev) => ({
+                  ...prev,
+                  meta: { ...prev.meta, pets: e.target.checked },
+                }))
+              }
+            />
+            Pets allowed
+          </label>
+        </div>
       </div>
 
       <div>

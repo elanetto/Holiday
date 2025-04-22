@@ -37,11 +37,6 @@ const VenueList = ({ venues = [] }) => {
     setTotalPages(Math.max(1, Math.ceil(sorted.length / limit)));
   }, [venues, sortBy, sortOrder]);
 
-  useEffect(() => {
-    console.log("Venues created dates:");
-    venues.forEach((v) => console.log(v.name, v.created));
-  }, [venues]);
-
   // Keep page in bounds
   useEffect(() => {
     if (page > totalPages) {

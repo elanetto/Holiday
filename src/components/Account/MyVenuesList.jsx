@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { ENDPOINTS } from "../../utilities/constants";
 import { useUser } from "../../contexts/useUser";
 import { PLACEHOLDER_VENUE } from "../../utilities/placeholders";
@@ -67,15 +67,24 @@ const MyVenuesList = () => {
   return (
     <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
       {venues.map((venue) => (
-        <div key={venue.id} className="border rounded-xl p-4 bg-white shadow hover:shadow-md transition">
+        <div
+          key={venue.id}
+          className="border rounded-xl p-4 bg-white shadow hover:shadow-md transition"
+        >
           <img
             src={venue.media?.[0]?.url || PLACEHOLDER_VENUE}
             alt={venue.media?.[0]?.alt || venue.name}
             className="w-full h-48 object-cover rounded"
           />
-          <h3 className="mt-2 text-lg font-bold text-espressoy">{venue.name}</h3>
-          <p className="text-sm text-gray-600">{venue.location.city}, {venue.location.country}</p>
-          <p className="text-sm mt-1">💰 {venue.price} NOK/night · 👥 Max {venue.maxGuests}</p>
+          <h3 className="mt-2 text-lg font-bold text-espressoy">
+            {venue.name}
+          </h3>
+          <p className="text-sm text-gray-600">
+            {venue.location.city}, {venue.location.country}
+          </p>
+          <p className="text-sm mt-1">
+            💰 {venue.price} NOK/night · 👥 Max {venue.maxGuests}
+          </p>
           <div className="mt-3 flex justify-between items-center">
             <button
               onClick={() => navigate(`/venue/${venue.id}`)}
@@ -84,12 +93,13 @@ const MyVenuesList = () => {
               View
             </button>
             <div className="flex gap-2">
-              <button
-                onClick={() => navigate(`/edit-venue/${venue.id}`)}
-                className="px-2 py-1 text-sm bg-goldy text-white rounded hover:bg-orangey"
+              <Link
+                to={`/edit-venue/${venue.id}`}
+                className="px-3 py-1 bg-yellow-400 rounded hover:bg-yellow-500"
               >
                 Edit
-              </button>
+              </Link>
+
               <button
                 onClick={() => handleDelete(venue.id)}
                 className="px-2 py-1 text-sm bg-error text-white rounded hover:bg-red-700"
