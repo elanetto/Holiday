@@ -23,10 +23,8 @@ export const ENDPOINTS = {
 		includeBookings = false,
 	} = {}) => {
 		let url = `${API_BASE_URL}/venues?limit=${limit}&page=${page}&sort=${sort}&sortOrder=${sortOrder}`;
-
 		if (includeOwner) url += "&_owner=true";
 		if (includeBookings) url += "&_bookings=true";
-
 		return url;
 	},
 
@@ -34,20 +32,12 @@ export const ENDPOINTS = {
 	venueById: (id, { includeOwner = true, includeBookings = true } = {}) => {
 		let url = `${API_BASE_URL}/venues/${id}`;
 		const query = [];
-
 		if (includeOwner) query.push("_owner=true");
 		if (includeBookings) query.push("_bookings=true");
-
 		if (query.length) url += `?${query.join("&")}`;
 		return url;
 	},
-};
 
-export const FALLBACK = {
-	// Noroff Oslo address
-	lat: 59.9300048872585,
-	lng: 10.755947969218308,
-	name: "Thor Hansen",
-	email: "thorhansen@madeupemail.com",
-	bio: "I cola light in the sun",
+	// ✨ Latest venues helper
+	latestVenues: `${API_BASE_URL}/venues?limit=100&sort=created&sortOrder=desc&_owner=true&_bookings=true`,
 };

@@ -1,12 +1,13 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useUser } from "../../../contexts/useUser";
-import AdminTab from "./AccountTabs/AdminTab";
 import BookingHistoryTab from "./AccountTabs/BookingHistoryTab";
 import MyBookingsTab from "./AccountTabs/MyBookingsTab";
 import EditAccountTab from "./AccountTabs/EditTab";
 import ProfileTab from "./AccountTabs/ProfileTab";
 import ShareProfileLink from "../../../components/Account/ShareProfileLink";
+import MyVenuesList from "../../../components/Account/MyVenuesList";
+import VenueForm from "../../../components/Account/VenueForm";
 
 const AccountPage = () => {
   const { username } = useParams();
@@ -32,15 +33,16 @@ const AccountPage = () => {
             <ProfileTab name={name} avatar={avatar} />
           </>
         );
-  
       case "edit":
         return isLoggedIn ? <EditAccountTab /> : null;
       case "bookings":
         return isLoggedIn ? <MyBookingsTab /> : null;
       case "history":
         return isLoggedIn ? <BookingHistoryTab /> : null;
-      case "admin":
-        return isAdmin ? <AdminTab /> : null;
+      case "venues":
+        return isAdmin ? <MyVenuesList /> : null;
+      case "new":
+        return isAdmin ? <VenueForm mode="create" /> : null;
       default:
         return null;
     }
@@ -87,16 +89,27 @@ const AccountPage = () => {
             </>
           )}
           {isAdmin && (
-            <button
-              className={`py-2 px-4 font-semibold ${
-                activeTab === "admin" ? "text-goldy border-b-2 border-goldy" : ""
-              }`}
-              onClick={() => setActiveTab("admin")}
-            >
-              Admin
-            </button>
+            <>
+              <button
+                className={`py-2 px-4 font-semibold ${
+                  activeTab === "venues" ? "text-goldy border-b-2 border-goldy" : ""
+                }`}
+                onClick={() => setActiveTab("venues")}
+              >
+                My Venues
+              </button>
+              <button
+                className={`py-2 px-4 font-semibold ${
+                  activeTab === "new" ? "text-goldy border-b-2 border-goldy" : ""
+                }`}
+                onClick={() => setActiveTab("new")}
+              >
+                Add New Venue
+              </button>
+            </>
           )}
         </div>
+
         <div>{renderTabContent()}</div>
       </div>
     </div>

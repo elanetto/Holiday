@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import VenueList from "./components/VenueList";
 import { useSearch } from "./contexts/useSearch";
 import { getEmojiFlag } from "./utilities/getEmojiFlag";
+import { ENDPOINTS } from "./utilities/constants";
 
 function App() {
   const [venues, setVenues] = useState([]);
@@ -13,9 +14,7 @@ function App() {
   useEffect(() => {
     const fetchAll = async () => {
       try {
-        const res = await fetch(
-          "https://v2.api.noroff.dev/holidaze/venues?limit=100&_owner=true&_bookings=true"
-        );
+        const res = await fetch(ENDPOINTS.latestVenues);
         if (!res.ok) {
           throw new Error(`Fetch error: ${res.status} ${res.statusText}`);
         }
