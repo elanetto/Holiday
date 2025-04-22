@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { PLACEHOLDER_VENUE } from "../../utilities/placeholders";
 
 const VenueCard = ({ venue }) => {
 	const {
@@ -13,7 +14,7 @@ const VenueCard = ({ venue }) => {
 	} = venue;
 
 	// Safe image handling with fallback
-	const image = media?.[0]?.url || "https://placehold.co/400x300?text=No+Image";
+	const image = media?.[0]?.url || PLACEHOLDER_VENUE;
 	const imageAlt = media?.[0]?.alt || name || "Venue image";
 
 	// Feature tags helper
@@ -29,6 +30,7 @@ const VenueCard = ({ venue }) => {
 			<img
 				src={image}
 				alt={imageAlt}
+				onError={(e) => (e.target.src = PLACEHOLDER_VENUE)}
 				className="w-full h-60 object-cover"
 			/>
 

@@ -13,6 +13,7 @@ import LoginPage from "./paths/Account/LoginPage/index.jsx";
 import { UserProvider } from "./contexts/UserProvider.jsx";
 import AccountPage from "./paths/Account/AccountPage/index.jsx";
 import ProfilePage from "./paths/Profile/index.jsx";
+import EditVenuePage from "./paths/EditVenuePage";
 
 const router = createBrowserRouter([
   {
@@ -42,6 +43,10 @@ const router = createBrowserRouter([
       {
         path: "profile/:username",
         element: <ProfilePage />,
+      },
+      {
+        path: "edit-venue/:id",
+        element: <EditVenuePage />
       },
       {
         path: "404",

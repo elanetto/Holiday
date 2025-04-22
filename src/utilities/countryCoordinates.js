@@ -35,8 +35,11 @@ const COUNTRY_COORDINATES = {
    * Supports both English and common localized (e.g. Norwegian) names.
    */
   export const getCountryCoordinates = (rawName = "") => {
+    if (typeof rawName !== "string") return null;
+  
     const key = rawName.trim().toLowerCase();
     const normalized = COUNTRY_ALIASES[key] || key;
     return COUNTRY_COORDINATES[normalized] || null;
   };
+  
   
