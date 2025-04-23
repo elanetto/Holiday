@@ -8,6 +8,7 @@ import { BsCaretLeftFill, BsCaretRightFill } from "react-icons/bs";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import { getCountryCoordinates } from "../../utilities/countryCoordinates";
+import BookNow from '../../components/Booking/BookNow.jsx'
 
 const VenuePage = () => {
   const { id } = useParams();
@@ -170,6 +171,8 @@ const VenuePage = () => {
             </MapContainer>
           </div>
         </div>
+
+        {venue && <BookNow venue={venue} />}
 
         <div className="mt-6">
           <h2 className="text-xl font-semibold text-espressoy mb-2">Host</h2>
