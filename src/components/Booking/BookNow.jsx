@@ -54,8 +54,11 @@ const BookNow = ({ venue }) => {
       toast.success("Booking successful! 🎉");
       navigate(`/account/${localStorage.getItem("name")}`);
     } catch (err) {
-      toast.error("Booking failed. Please try again.");
-      console.error(err);
+      const errorMessage =
+        err.response?.data?.message ||
+        `Error: ${err.response?.status || "Unknown error"}`;
+      toast.error(`Booking failed. ${errorMessage}`);
+      console.error("Booking error:", err);
     } finally {
       setLoading(false);
     }
