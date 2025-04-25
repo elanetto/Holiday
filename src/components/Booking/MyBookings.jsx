@@ -25,7 +25,16 @@ const MyBookings = () => {
             },
           }
         );
-        setBookings(response.data.data);
+
+        const today = new Date();
+        today.setHours(0, 0, 0, 0); // Reset to midnight
+
+        const futureBookings = response.data.data.filter((booking) => {
+          const bookingStart = new Date(booking.dateFrom);
+          return bookingStart >= today;
+        });
+
+        setBookings(futureBookings);
       } catch (err) {
         toast.error("Failed to load bookings.");
         console.error("Bookings fetch error:", err);
@@ -47,12 +56,17 @@ const MyBookings = () => {
   };
 
   if (!token) {
-    return <p className="p-4 text-center text-espressoy">Please log in to view your bookings.</p>;
+    return (
+      <p className="p-4 text-center text-espressoy">
+        Please log in to view your bookings.
+      </p>
+    );
   }
 
   if (loading) return <p className="p-4">Loading your bookings...</p>;
 
-  if (!bookings.length) return <p className="p-4">You don't have any bookings yet.</p>;
+  if (!bookings.length)
+    return <p className="p-4">You don't have any bookings yet.</p>;
 
   return (
     <div className="p-4 max-w-4xl mx-auto">
@@ -80,10 +94,13 @@ const MyBookings = () => {
                   {booking.venue.name}
                 </h3>
                 <p className="text-sm text-gray-600">
-                  📅 {new Date(booking.dateFrom).toLocaleDateString()} → {" "}
-                  {new Date(booking.dateTo).toLocaleDateString()} ({nights} nights)
+                  📅 {new Date(booking.dateFrom).toLocaleDateString()} →{" "}
+                  {new Date(booking.dateTo).toLocaleDateString()} ({nights}{" "}
+                  nights)
                 </p>
-                <p className="text-sm text-gray-600">👥 {booking.guests} guests</p>
+                <p className="text-sm text-gray-600">
+                  👥 {booking.guests} guests
+                </p>
                 <p className="font-bold text-base text-espressoy">
                   Total: NOK {total.toLocaleString()}
                 </p>
