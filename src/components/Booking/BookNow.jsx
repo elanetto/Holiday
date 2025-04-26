@@ -1,21 +1,16 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { toast } from "react-hot-toast";
-import axios from "axios";
-import { useNavigate } from "react-router-dom";
 
 const BookNow = ({ venue }) => {
   const navigate = useNavigate();
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
   const [guests, setGuests] = useState(1);
-  const [loading, setLoading] = useState(false);
 
   const token = localStorage.getItem("token");
-  const apiKey = localStorage.getItem("apiKey");
 
-  // 🛡️ Check for venue object
   if (!venue || !venue.id || typeof venue.maxGuests === "undefined") {
     return (
       <div className="p-4 bg-red-100 text-red-800 rounded">
@@ -23,46 +18,6 @@ const BookNow = ({ venue }) => {
       </div>
     );
   }
-
-  const handleBooking = async () => {
-    if (!startDate || !endDate) {
-      toast.error("Please select a valid date range.");
-      return;
-    }
-
-    const bookingData = {
-      dateFrom: startDate.toISOString(),
-      dateTo: endDate.toISOString(),
-      guests,
-      venueId: venue.id,
-    };
-
-    try {
-      setLoading(true);
-      await axios.post(
-        "https://v2.api.noroff.dev/holidaze/bookings",
-        bookingData,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "X-Noroff-API-Key": apiKey,
-            "Content-Type": "application/json",
-          },
-        }
-      );
-
-      toast.success("Booking successful! 🎉");
-      navigate(`/account/${localStorage.getItem("name")}`);
-    } catch (err) {
-      const errorMessage =
-        err.response?.data?.message ||
-        `Error: ${err.response?.status || "Unknown error"}`;
-      toast.error(`Booking failed. ${errorMessage}`);
-      console.error("Booking error:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   if (!token) {
     return (
@@ -75,6 +30,24 @@ const BookNow = ({ venue }) => {
       </p>
     );
   }
+
+  const calculateTotal = () => {
+    if (!startDate || !endDate || !guests) return 0;
+    const days = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24));
+    return days * guests * venue.price;
+  };
+
+  const handleProceedToCheckout = () => {
+    navigate("/checkout", {
+      state: {
+        venue,
+        startDate,
+        endDate,
+        guests,
+        totalPrice: calculateTotal(),
+      },
+    });
+  };
 
   return (
     <div className="mt-8 p-4 border border-espressoy rounded-xl bg-white space-y-4 shadow">
@@ -123,12 +96,16 @@ const BookNow = ({ venue }) => {
         </p>
       </div>
 
+      <div className="text-sm font-semibold text-espressoy">
+        Total: NOK {calculateTotal().toLocaleString()}
+      </div>
+
       <button
-        onClick={handleBooking}
-        disabled={loading}
+        onClick={handleProceedToCheckout}
+        disabled={!startDate || !endDate}
         className="w-full bg-sunny hover:bg-orangey hover:text-white text-espressoy py-2 rounded-full font-semibold"
       >
-        {loading ? "Booking..." : "Book Now"}
+        Continue to Checkout
       </button>
     </div>
   );
