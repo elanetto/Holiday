@@ -14,6 +14,8 @@ import { UserProvider } from "./contexts/UserProvider.jsx";
 import AccountPage from "./paths/Account/AccountPage/index.jsx";
 import ProfilePage from "./paths/Profile/index.jsx";
 import EditVenuePage from "./paths/EditVenuePage";
+import CheckoutPage from "./paths/CheckoutPage/index.jsx";
+import SuccessPage from "./paths/Success/index.jsx";
 
 const router = createBrowserRouter([
   {
@@ -46,14 +48,22 @@ const router = createBrowserRouter([
       },
       {
         path: "edit-venue/:id",
-        element: <EditVenuePage />
+        element: <EditVenuePage />,
+      },
+      {
+        path: "checkout",
+        element: <CheckoutPage />,
+      },
+      {
+        path: "success",
+        element: <SuccessPage />,
       },
       {
         path: "404",
         element: <NotFound />,
       },
       {
-        path: "*", // 👈 catch-all route
+        path: "*",
         element: <NotFound />,
       },
     ],
