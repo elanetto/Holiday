@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import VenueList from "./components/VenueList";
 import { useSearch } from "./contexts/useSearch";
-import { getEmojiFlag } from "./utilities/getEmojiFlag";
 import { VENUE_UTILS } from "./utilities/constants";
 
 function App() {
@@ -70,29 +69,25 @@ function App() {
   return (
     <div className="min-h-screen bg-creamy w-full">
       <div className="max-w-7xl mx-auto px-4 py-6">
-        <div className="p-4 text-xl">
-          <p>{getEmojiFlag("NO")} Norway</p>
-          <p>{getEmojiFlag("SE")} Sweden</p>
-        </div>
-
-        {/* TEST: Custom tailwind colourrs */}
-        <div className="flex justify-center snap-center items-center p-8">
-          <div className="flex text-center w-[943px] justify-center border-1 flex-wrap self-center">
-            <div className="p-8 bg-goldy">Goldy</div>
-            <div className="p-8 bg-pinky">Pinky</div>
-            <div className="p-8 bg-orangey">Orangey</div>
-            <div className="p-8 bg-greeney">Greeney</div>
-            <div className="p-8 bg-lilacy">Lilacy</div>
-            <div className="p-8 bg-sunny">Sunny</div>
-            <div className="p-8 bg-creamy">Creamy</div>
-            <div className="p-8 bg-espressoy text-white">Esspressoy</div>
-          </div>
-        </div>
-
         {loading ? (
           <p className="text-center mt-10">Loading venues...</p>
         ) : (
-          <VenueList venues={filteredVenues} />
+          <>
+            {searchFilters?.location || searchFilters?.guests > 1 ? (
+              <h2 className="text-2xl font-bold text-espressoy mb-4">
+                Search results
+                {searchFilters.location && ` for "${searchFilters.location}"`}
+                {searchFilters.guests > 1 &&
+                  ` with at least ${searchFilters.guests} guests`}
+              </h2>
+            ) : (
+              <h2 className="text-2xl font-bold text-espressoy mb-4">
+                Latest Venues
+              </h2>
+            )}
+
+            <VenueList venues={filteredVenues} />
+          </>
         )}
       </div>
     </div>

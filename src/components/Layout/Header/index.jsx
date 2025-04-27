@@ -6,6 +6,7 @@ import MobileSearchBar from "../../SearchBar/MobileSearchBar/index";
 import logoUrl from "../../../assets/Logo.svg?url";
 import { useUser } from "../../../contexts/useUser";
 import { PLACEHOLDER_AVATAR } from "../../../utilities/placeholders";
+import { useLocation } from "react-router-dom";
 
 export function Header() {
   const { isLoggedIn, avatar, logoutUser, user } = useUser();
@@ -13,6 +14,15 @@ export function Header() {
   const [showDropdown, setShowDropdown] = useState(false);
   const [showMobileSearch, setShowMobileSearch] = useState(false);
   const dropdownRef = useRef(null);
+  const location = useLocation();
+
+  const handleLogoClick = () => {
+    if (location.pathname === "/") {
+      window.location.reload();
+    } else {
+      navigate("/");
+    }
+  };
 
   const userName = useMemo(() => {
     return user?.name || localStorage.getItem("name");
@@ -54,9 +64,9 @@ export function Header() {
     <>
       <header className="bg-creamy w-full px-4 py-4 sm:px-8 sm:py-6 flex items-center justify-between">
         {/* Logo */}
-        <Link to="/">
+        <button onClick={handleLogoClick} className="focus:outline-none">
           <img src={logoUrl} alt="Logo for Holidaze" className="h-8 sm:h-10" />
-        </Link>
+        </button>
 
         {/* Desktop Search (hidden on small screens) */}
         <div className="hidden md:block">
