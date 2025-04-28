@@ -1,51 +1,131 @@
 @import "tailwindcss";
 
 @theme {
-  --color-goldy: #B89827;
-  --color-pinky: #FFBBEE;
-  --color-orangey: #FB701E;
-  --color-greeney: #DEDF55;
-  --color-lilacy: #D5B9DF;
-  --color-sunny: #FEB629;
-  --color-creamy: #F9F2EC;
+  --color-goldy: #b89827;
+  --color-pinky: #ffbbee;
+  --color-orangey: #fb701e;
+  --color-greeney: #dedf55;
+  --color-lilacy: #d5b9df;
+  --color-sunny: #feb629;
+  --color-creamy: #f9f2ec;
   --color-espressoy: #201309;
 
-  --color-error: #F13838;
-  --color-check: #59B635;
+  --color-error: #f13838;
+  --color-check: #59b635;
 }
 
 @keyframes shake {
-    0% { transform: translateX(0); }
-    20% { transform: translateX(-5px); }
-    40% { transform: translateX(5px); }
-    60% { transform: translateX(-5px); }
-    80% { transform: translateX(5px); }
-    100% { transform: translateX(0); }
+  0% {
+    transform: translateX(0);
   }
-  
-  .shake {
-    animation: shake 0.3s ease-in-out;
+  20% {
+    transform: translateX(-5px);
+  }
+  40% {
+    transform: translateX(5px);
+  }
+  60% {
+    transform: translateX(-5px);
+  }
+  80% {
+    transform: translateX(5px);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+.shake {
+  animation: shake 0.3s ease-in-out;
 }
 
 @keyframes pop {
-    0% {
-      transform: scale(1);
-    }
-    40% {
-      transform: scale(1.1);
-    }
-    100% {
-      transform: scale(1);
-    }
+  0% {
+    transform: scale(1);
   }
-  
-  .avatar-pop {
-    animation: pop 0.25s ease;
+  40% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
 }
-  
+
+.avatar-pop {
+  animation: pop 0.25s ease;
+}
 
 select {
-    background-color: white !important;
-    color: black !important;
-  }
-  
+  background-color: white !important;
+  color: black !important;
+}
+
+/* DATE PICKER */
+
+/* Full sunny background for selected dates */
+.react-datepicker__day--in-selecting-range,
+.react-datepicker__day--in-range {
+  background-color: var(--color-sunny) !important;
+  color: black !important;
+  border-radius: 0 !important;
+}
+
+/* First selected date - rounded on the left */
+.react-datepicker__day--range-start {
+  background-color: var(--color-sunny) !important;
+  color: black !important;
+  border-top-left-radius: 999px !important; /* half circle left */
+  border-bottom-left-radius: 999px !important;
+  border-top-right-radius: 0 !important;
+  border-bottom-right-radius: 0 !important;
+}
+
+/* Last selected date - rounded on the right */
+.react-datepicker__day--range-end {
+  background-color: var(--color-sunny) !important;
+  color: black !important;
+  border-top-right-radius: 999px !important; /* half circle right */
+  border-bottom-right-radius: 999px !important;
+  border-top-left-radius: 0 !important;
+  border-bottom-left-radius: 0 !important;
+}
+
+/* Remove margin/gaps to ensure seamless connection */
+.react-datepicker__day {
+  margin: 0 !important;
+}
+
+/* Optional hover effect to make it lively */
+.react-datepicker__day--in-range:hover,
+.react-datepicker__day--range-start:hover,
+.react-datepicker__day--range-end:hover {
+  background-color: #f8a700 !important; /* slightly darker sunny */
+  color: black !important;
+}
+
+/* While selecting: same background for the range */
+.react-datepicker__day--in-selecting-range {
+  background-color: var(--color-sunny) !important;
+  color: black !important;
+  border-radius: 0 !important;
+}
+
+/* While selecting: first date (rounded left) */
+.react-datepicker__day--selecting-range-start {
+  background-color: var(--color-sunny) !important;
+  color: black !important;
+  border-top-left-radius: 999px !important;
+  border-bottom-left-radius: 999px !important;
+  border-top-right-radius: 0 !important;
+  border-bottom-right-radius: 0 !important;
+}
+
+/* While selecting: end date (rounded right) */
+.react-datepicker__day--selecting-range-end {
+  background-color: var(--color-sunny) !important;
+  color: black !important;
+  border-top-right-radius: 999px !important;
+  border-bottom-right-radius: 999px !important;
+  border-top-left-radius: 0 !important;
+  border-bottom-left-radius: 0 !important;
+}
