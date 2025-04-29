@@ -56,8 +56,9 @@ export default function RegisterForm() {
     if (password !== confirmPassword) {
       newErrors.confirmPassword = "Passwords do not match";
     }
-    if (role === "admin" && adminPass !== "superSecret123") {
-      newErrors.adminPass = "Wrong admin password";
+    const adminPassword = import.meta.env.VITE_ADMIN_PASSWORD || "";
+    if (role === "admin" && adminPass !== adminPassword) {
+      newErrors.adminPass = "Incorrect admin password";
     }
     return newErrors;
   };
