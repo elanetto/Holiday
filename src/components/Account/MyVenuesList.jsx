@@ -1,0 +1,117 @@
+import { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { ENDPOINTS } from "../../utilities/constants";
+import { useUser } from "../../contexts/useUser";
+import { PLACEHOLDER_VENUE } from "../../utilities/placeholders";
+import { toast } from "react-hot-toast";
+import axios from "axios";
+
+const MyVenuesList = () => {
+  const { name, isLoggedIn } = useUser();
+  const [venues, setVenues] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchVenues = async () => {
+      if (!isLoggedIn) return;
+
+      try {
+        const token = localStorage.getItem("token");
+        const apiKey = localStorage.getItem("apiKey");
+
+        const res = await axios.get(`${ENDPOINTS.profiles}/${name}/venues`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "X-Noroff-API-Key": apiKey,
+          },
+        });
+
+        setVenues(res.data.data || []);
+      } catch (error) {
+        toast.error("Failed to fetch your venues.");
+        console.error(error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchVenues();
+  }, [name, isLoggedIn]);
+
+  const handleDelete = async (venueId) => {
+    if (!window.confirm("Are you sure you want to delete this venue?")) return;
+
+    try {
+      const token = localStorage.getItem("token");
+      const apiKey = localStorage.getItem("apiKey");
+
+      await axios.delete(`${ENDPOINTS.venues}/${venueId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "X-Noroff-API-Key": apiKey,
+        },
+      });
+
+      toast.success("Venue deleted");
+      setVenues((prev) => prev.filter((v) => v.id !== venueId));
+    } catch (err) {
+      toast.error("Failed to delete venue");
+      console.error(err);
+    }
+  };
+
+  if (loading) return <p>Loading your venues...</p>;
+  if (!venues.length) return <p>You haven't created any venues yet.</p>;
+
+  return (
+    <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+      {venues.map((venue) => (
+        <div
+          key={venue.id}
+          className="border rounded-xl p-4 bg-white shadow hover:shadow-md transition"
+        >
+          <img
+            src={venue.media?.[0]?.url || PLACEHOLDER_VENUE}
+            alt={venue.media?.[0]?.alt || venue.name}
+            className="w-full h-48 object-cover rounded"
+          />
+          <h3 className="mt-2 text-lg font-bold text-espressoy">
+            {venue.name}
+          </h3>
+          <p className="text-sm text-gray-600">
+            {venue.location.city}, {venue.location.country}
+          </p>
+          <p className="text-sm mt-1">
+            💰 {venue.price} NOK/night · 👥 Max {venue.maxGuests}
+          </p>
+          <div className="mt-3 flex justify-between items-center">
+            <button
+              onClick={() => navigate(`/venue/${venue.id}`)}
+              className="text-sunny font-semibold hover:underline"
+            >
+              View
+            </button>
+            <div className="flex gap-2">
+              <Link
+                to={`/edit-venue/${venue.id}`}
+                className="px-3 py-1 bg-yellow-400 rounded hover:bg-yellow-500"
+              >
+                Edit
+              </Link>
+
+              <button
+                onClick={() => handleDelete(venue.id)}
+                className="px-2 py-1 text-sm bg-error text-white rounded hover:bg-red-700"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+};
+
+export default MyVenuesList;
