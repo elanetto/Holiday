@@ -36,6 +36,9 @@ export const ENDPOINTS = {
 		if (includeBookings) query.push("_bookings=true");
 		return query.length ? `${url}?${query.join("&")}` : url;
 	},
+
+	venuesByOwner: (ownerName) => 
+		`${API_BASE_URL}/venues?owner=${encodeURIComponent(ownerName)}`, // 👈 NEW!
 };
 
 // ✨ Venue utilities
@@ -43,7 +46,7 @@ export const VENUE_UTILS = {
 	latest: ENDPOINTS.venuesWithQuery({ limit: 100 }),
 };
 
-// 📍 Fallback data (for placeholder maps or user info)
+// 📍 Fallback data
 export const FALLBACK = {
 	lat: 59.9300048872585,
 	lng: 10.755947969218308,

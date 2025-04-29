@@ -6,15 +6,17 @@ import {
   PLACEHOLDER_AVATAR,
   PLACEHOLDER_BANNER,
 } from "../../../../utilities/placeholders";
+import VenueCard from "../../../../components/VenueCard";
 
 const ProfileTab = () => {
   const { username } = useParams();
   const [profile, setProfile] = useState(null);
+  const [venues, setVenues] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
   useEffect(() => {
-    const fetchProfile = async () => {
+    const fetchProfileAndVenues = async () => {
       const token = localStorage.getItem("token");
       const apiKey = localStorage.getItem("apiKey");
 
@@ -27,23 +29,32 @@ const ProfileTab = () => {
       try {
         setLoading(true);
 
-        const res = await axios.get(`https://v2.api.noroff.dev/holidaze/profiles/${username}`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "X-Noroff-API-Key": apiKey,
-          },
-          withCredentials: false,
-        });
+        const [profileRes, userVenuesRes] = await Promise.all([
+          axios.get(`${ENDPOINTS.profiles}/${username}`, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "X-Noroff-API-Key": apiKey,
+            },
+          }),
+          axios.get(`${ENDPOINTS.profiles}/${username}/venues`, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "X-Noroff-API-Key": apiKey,
+            },
+          }),
+        ]);
 
-        setProfile(res.data.data);
-      } catch {
-        setError("Could not load profile. Please try again later.");
+        setProfile(profileRes.data.data);
+        setVenues(userVenuesRes.data.data || []); // 🛡
+      } catch (error) {
+        console.error(error);
+        setError("Could not load profile or venues. Please try again later.");
       } finally {
         setLoading(false);
       }
     };
 
-    fetchProfile();
+    fetchProfileAndVenues();
   }, [username]);
 
   if (loading) {
@@ -54,12 +65,7 @@ const ProfileTab = () => {
     return <div className="p-8 text-center text-red-500">{error}</div>;
   }
 
-  const {
-    name,
-    bio,
-    avatar = {},
-    banner = {},
-  } = profile || {};
+  const { name, bio, avatar = {}, banner = {} } = profile || {};
 
   return (
     <div className="p-0 w-full text-center">
@@ -88,6 +94,32 @@ const ProfileTab = () => {
           {bio?.trim() ? bio : "This user hasn’t added a bio yet. 🌱"}
         </p>
       </div>
+
+      {/* Venues List */}
+      {venues.length > 0 ? (
+        <>
+          {profile?.venueManager && (
+            <div className="text-center mb-8 mt-12">
+              <h2 className="text-2xl font-bold text-espressoy">
+                Venues by {profile.name}
+              </h2>
+              <p className="text-gray-600 text-sm mt-1">
+                Explore venues created by this host
+              </p>
+            </div>
+          )}
+
+          <div className="p-4 max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {venues.map((venue) => (
+              <VenueCard key={venue.id} venue={venue} />
+            ))}
+          </div>
+        </>
+      ) : (
+        <div className="text-center text-gray-600 mt-8">
+          This venue manager has not created any venues yet.
+        </div>
+      )}
     </div>
   );
 };
