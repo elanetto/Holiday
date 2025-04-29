@@ -33,7 +33,10 @@ const BookNow = ({ venue }) => {
 
   const calculateTotal = () => {
     if (!startDate || !endDate || !guests) return 0;
-    const days = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24));
+    const days = Math.max(
+      1,
+      Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24))
+    );
     return days * guests * venue.price;
   };
 
