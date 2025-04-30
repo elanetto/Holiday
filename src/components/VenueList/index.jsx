@@ -3,18 +3,17 @@ import VenueCard from "../VenueCard";
 
 const VenueList = ({ venues = [] }) => {
   const [sortedVenues, setSortedVenues] = useState([]);
+  const [visibleVenues, setVisibleVenues] = useState([]);
   const [sortBy, setSortBy] = useState("created");
   const [sortOrder, setSortOrder] = useState("desc");
   const [page, setPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
   const limit = 21;
 
-  // Sort venues and calculate pages
+  // Sort venues
   useEffect(() => {
     if (!venues.length) {
       setSortedVenues([]);
-      setTotalPages(1);
       return;
     }
 
@@ -22,9 +21,8 @@ const VenueList = ({ venues = [] }) => {
       let aVal = a[sortBy];
       let bVal = b[sortBy];
 
-      // Convert to Date objects if sorting by date fields
       if (sortBy === "created" || sortBy === "updated") {
-        aVal = new Date(aVal || 0); // fallback to timestamp 0 if null
+        aVal = new Date(aVal || 0);
         bVal = new Date(bVal || 0);
       }
 
@@ -34,23 +32,39 @@ const VenueList = ({ venues = [] }) => {
     });
 
     setSortedVenues(sorted);
-    setTotalPages(Math.max(1, Math.ceil(sorted.length / limit)));
+    setVisibleVenues(sorted.slice(0, limit)); // Show first page immediately
   }, [venues, sortBy, sortOrder]);
 
-  // Keep page in bounds
-  useEffect(() => {
-    if (page > totalPages) {
-      setPage(totalPages);
-    }
-  }, [page, totalPages]);
-
   // Pagination logic
-  const start = (page - 1) * limit;
-  const end = start + limit;
-  const paginatedVenues = sortedVenues.slice(start, end);
+  const totalPages = Math.ceil(sortedVenues.length / limit);
 
-  const handleNext = () => setPage((prev) => Math.min(prev + 1, totalPages));
-  const handlePrev = () => setPage((prev) => Math.max(prev - 1, 1));
+  useEffect(() => {
+    const start = (page - 1) * limit;
+
+    setIsLoadingMore(true);
+    const timeout = setTimeout(() => {
+      setVisibleVenues(sortedVenues.slice(start, start + limit));
+      setIsLoadingMore(false);
+    }, 300); // Simulate async loading
+
+    return () => clearTimeout(timeout);
+  }, [sortedVenues, page]);
+
+  // Preload next page (optional)
+  useEffect(() => {
+    const preloadNextPage = () => {
+      const nextPageStart = page * limit;
+      const nextVenues = sortedVenues.slice(
+        nextPageStart,
+        nextPageStart + limit
+      );
+      if (nextVenues.length) {
+        // You could cache this if desired
+      }
+    };
+
+    preloadNextPage();
+  }, [page, sortedVenues]);
 
   return (
     <div className="p-4">
@@ -80,14 +94,23 @@ const VenueList = ({ venues = [] }) => {
       </div>
 
       {/* Venue Cards */}
-      {paginatedVenues.length === 0 ? (
+      {visibleVenues.length === 0 ? (
         <p className="text-center text-gray-500 mt-8">
           No venues found. Try adjusting your search.
         </p>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-          {paginatedVenues.map((venue) => (
+          {visibleVenues.map((venue) => (
             <VenueCard key={venue.id} venue={venue} />
+          ))}
+        </div>
+      )}
+
+      {/* Skeleton Loading */}
+      {isLoadingMore && (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+          {[...Array(limit)].map((_, i) => (
+            <div key={i} className="h-48 bg-gray-200 rounded animate-pulse" />
           ))}
         </div>
       )}
@@ -100,14 +123,14 @@ const VenueList = ({ venues = [] }) => {
           </p>
           <div className="flex gap-4">
             <button
-              onClick={handlePrev}
+              onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
               disabled={page === 1}
               className="px-4 py-2 border rounded disabled:opacity-50"
             >
               ← Prev
             </button>
             <button
-              onClick={handleNext}
+              onClick={() => setPage((prev) => Math.min(prev + 1, totalPages))}
               disabled={page === totalPages}
               className="px-4 py-2 border rounded disabled:opacity-50"
             >
