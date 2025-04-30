@@ -49,7 +49,9 @@ function App() {
           }
         };
 
-        fetchRest(); // fire and forget
+        fetchRest().catch((err) => {
+          console.error("Error fetching additional venues:", err);
+        });
       } catch (err) {
         console.error("Error loading venues:", err);
       } finally {

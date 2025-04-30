@@ -37,9 +37,10 @@ const VenueList = ({ venues = [] }) => {
 
   // Pagination logic
   const totalPages = Math.ceil(sortedVenues.length / limit);
-  const start = (page - 1) * limit;
 
   useEffect(() => {
+    const start = (page - 1) * limit;
+
     setIsLoadingMore(true);
     const timeout = setTimeout(() => {
       setVisibleVenues(sortedVenues.slice(start, start + limit));
@@ -49,15 +50,16 @@ const VenueList = ({ venues = [] }) => {
     return () => clearTimeout(timeout);
   }, [sortedVenues, page]);
 
+  // Preload next page (optional)
   useEffect(() => {
     const preloadNextPage = () => {
-      const nextPageStart = (page + 1 - 1) * limit;
+      const nextPageStart = page * limit;
       const nextVenues = sortedVenues.slice(
         nextPageStart,
         nextPageStart + limit
       );
       if (nextVenues.length) {
-        // you could cache this if desired
+        // You could cache this if desired
       }
     };
 
@@ -104,6 +106,7 @@ const VenueList = ({ venues = [] }) => {
         </div>
       )}
 
+      {/* Skeleton Loading */}
       {isLoadingMore && (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
           {[...Array(limit)].map((_, i) => (
