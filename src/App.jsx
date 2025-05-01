@@ -65,7 +65,12 @@ function App() {
   useEffect(() => {
     const fetchSearchResults = async () => {
       if (!searchFilters || !searchFilters.location) {
-        setFilteredVenues(venues);
+        // If no search query is given, and venues exist, show them all
+        if (venues.length > 0) {
+          setFilteredVenues(venues);
+        } else {
+          setFilteredVenues([]);
+        }
         return;
       }
 
