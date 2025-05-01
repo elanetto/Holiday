@@ -1,7 +1,3 @@
-// Updated App.jsx and VenueList.jsx to correctly support API pagination
-
-// STEP 1: Update App.jsx to fetch paginated venues page by page until all are loaded
-
 import { useEffect, useState } from "react";
 import VenueList from "./components/VenueList";
 import { useSearch } from "./contexts/useSearch";
@@ -10,6 +6,7 @@ import { ENDPOINTS } from "./utilities/constants";
 function App() {
   const [venues, setVenues] = useState([]);
   const [filteredVenues, setFilteredVenues] = useState([]);
+  const [searchError, setSearchError] = useState(null);
   const [loading, setLoading] = useState(true);
 
   const { searchFilters } = useSearch();
@@ -63,38 +60,46 @@ function App() {
   }, []);
 
   useEffect(() => {
-    if (!searchFilters || !venues.length) {
-      setFilteredVenues(venues);
-      return;
-    }
+    const controller = new AbortController();
+    const signal = controller.signal;
 
-    const { location = "", guests = 1 } = searchFilters;
-    const searchTerm = location.toLowerCase();
+    const fetchSearchResults = async () => {
+      setSearchError(null);
+      const { location = "", guests = 1 } = searchFilters || {};
 
-    const results = venues.filter((venue) => {
-      const name = venue.name?.toLowerCase() || "";
-      const description = venue.description?.toLowerCase() || "";
-      const altTexts = (venue.media || [])
-        .map((mediaItem) => mediaItem.alt?.toLowerCase() || "")
-        .join(" ");
-      const locationFields = [
-        venue.location?.city,
-        venue.location?.country,
-        venue.location?.address,
-        venue.location?.continent,
-        venue.location?.zip,
-      ]
-        .map((part) => part?.toLowerCase() || "")
-        .join(" ");
+      // 🛑 Don't refetch if location is empty and venues haven't changed
+      if (!location) {
+        setFilteredVenues(venues.length > 0 ? venues : []);
+        return;
+      }
 
-      const fullText = `${name} ${description} ${altTexts} ${locationFields}`;
-      const matchText = fullText.includes(searchTerm);
-      const matchGuests = venue.maxGuests >= guests;
+      try {
+        const res = await fetch(
+          `${ENDPOINTS.venues}/search?q=${encodeURIComponent(location)}`,
+          { signal }
+        );
+        if (!res.ok) throw new Error("Search request failed");
 
-      return matchText && matchGuests;
-    });
+        const data = await res.json();
 
-    setFilteredVenues(results);
+        const filtered = data.data.filter((venue) => venue.maxGuests >= guests);
+
+        setFilteredVenues(filtered);
+      } catch (err) {
+        if (err.name === "AbortError") {
+          console.log("Search request aborted");
+          return;
+        }
+        console.error("Error searching venues:", err);
+        setSearchError(
+          "An error occurred while searching for venues. Please try again."
+        );
+      }
+    };
+
+    fetchSearchResults();
+
+    return () => controller.abort();
   }, [searchFilters, venues]);
 
   return (
@@ -104,6 +109,10 @@ function App() {
           <p className="text-center mt-10">Loading venues...</p>
         ) : (
           <>
+            {searchError && (
+              <p className="text-red-500 text-center mb-4">{searchError}</p>
+            )}
+
             {searchFilters?.location || searchFilters?.guests > 1 ? (
               <h2 className="text-2xl font-bold text-espressoy mb-4">
                 Search results
