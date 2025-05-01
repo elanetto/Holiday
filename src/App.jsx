@@ -1,7 +1,3 @@
-// Updated App.jsx and VenueList.jsx to correctly support API pagination
-
-// STEP 1: Update App.jsx to fetch paginated venues page by page until all are loaded
-
 import { useEffect, useState } from "react";
 import VenueList from "./components/VenueList";
 import { useSearch } from "./contexts/useSearch";
@@ -10,6 +6,7 @@ import { ENDPOINTS } from "./utilities/constants";
 function App() {
   const [venues, setVenues] = useState([]);
   const [filteredVenues, setFilteredVenues] = useState([]);
+  const [searchError, setSearchError] = useState(null);
   const [loading, setLoading] = useState(true);
 
   const { searchFilters } = useSearch();
@@ -71,6 +68,7 @@ function App() {
         } else {
           setFilteredVenues([]);
         }
+        setSearchError(null); // Clear any previous search errors
         return;
       }
 
@@ -82,11 +80,17 @@ function App() {
         );
         const data = await res.json();
 
-        const filtered = data.data.filter((venue) => venue.maxGuests >= guests);
+        const filtered = data.data.filter(
+          (venue) => venue.maxGuests >= guests
+        );
 
         setFilteredVenues(filtered);
+        setSearchError(null); // Clear any previous error
       } catch (err) {
         console.error("Error searching venues:", err);
+        setSearchError(
+          "An error occurred while searching for venues. Please try again."
+        );
       }
     };
 
@@ -100,6 +104,10 @@ function App() {
           <p className="text-center mt-10">Loading venues...</p>
         ) : (
           <>
+            {searchError && (
+              <p className="text-red-500 text-center mb-4">{searchError}</p>
+            )}
+
             {searchFilters?.location || searchFilters?.guests > 1 ? (
               <h2 className="text-2xl font-bold text-espressoy mb-4">
                 Search results
