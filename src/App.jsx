@@ -64,11 +64,10 @@ function App() {
     const signal = controller.signal;
 
     const fetchSearchResults = async () => {
-      setSearchError(null); // ✅ Clear any stale error before running new search
-
+      setSearchError(null);
       const { location = "", guests = 1 } = searchFilters || {};
 
-      // If there's no location search, just show all local venues
+      // 🛑 Don't refetch if location is empty and venues haven't changed
       if (!location) {
         setFilteredVenues(venues.length > 0 ? venues : []);
         return;
@@ -100,7 +99,7 @@ function App() {
 
     fetchSearchResults();
 
-    return () => controller.abort(); // Cancel request on unmount or new search
+    return () => controller.abort();
   }, [searchFilters, venues]);
 
   return (
