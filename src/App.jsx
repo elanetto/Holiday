@@ -60,6 +60,9 @@ function App() {
   }, []);
 
   useEffect(() => {
+    const controller = new AbortController();
+    const signal = controller.signal;
+
     const fetchSearchResults = async () => {
       const { location = "", guests = 1 } = searchFilters || {};
 
@@ -72,7 +75,8 @@ function App() {
 
       try {
         const res = await fetch(
-          `${ENDPOINTS.venues}/search?q=${encodeURIComponent(location)}`
+          `${ENDPOINTS.venues}/search?q=${encodeURIComponent(location)}`,
+          { signal }
         );
         if (!res.ok) throw new Error("Search request failed");
 
@@ -83,6 +87,10 @@ function App() {
         setFilteredVenues(filtered);
         setSearchError(null);
       } catch (err) {
+        if (err.name === "AbortError") {
+          console.log("Search request aborted");
+          return;
+        }
         console.error("Error searching venues:", err);
         setSearchError(
           "An error occurred while searching for venues. Please try again."
@@ -91,6 +99,8 @@ function App() {
     };
 
     fetchSearchResults();
+
+    return () => controller.abort(); // Cancel request on unmount or new search
   }, [searchFilters, venues]);
 
   return (
