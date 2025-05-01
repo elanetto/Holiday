@@ -63,38 +63,29 @@ function App() {
   }, []);
 
   useEffect(() => {
-    if (!searchFilters || !venues.length) {
-      setFilteredVenues(venues);
-      return;
-    }
+    const fetchSearchResults = async () => {
+      if (!searchFilters || !searchFilters.location) {
+        setFilteredVenues(venues);
+        return;
+      }
 
-    const { location = "", guests = 1 } = searchFilters;
-    const searchTerm = location.toLowerCase();
+      const { location = "", guests = 1 } = searchFilters;
 
-    const results = venues.filter((venue) => {
-      const name = venue.name?.toLowerCase() || "";
-      const description = venue.description?.toLowerCase() || "";
-      const altTexts = (venue.media || [])
-        .map((mediaItem) => mediaItem.alt?.toLowerCase() || "")
-        .join(" ");
-      const locationFields = [
-        venue.location?.city,
-        venue.location?.country,
-        venue.location?.address,
-        venue.location?.continent,
-        venue.location?.zip,
-      ]
-        .map((part) => part?.toLowerCase() || "")
-        .join(" ");
+      try {
+        const res = await fetch(
+          `${ENDPOINTS.venues}/search?q=${encodeURIComponent(location)}`
+        );
+        const data = await res.json();
 
-      const fullText = `${name} ${description} ${altTexts} ${locationFields}`;
-      const matchText = fullText.includes(searchTerm);
-      const matchGuests = venue.maxGuests >= guests;
+        const filtered = data.data.filter((venue) => venue.maxGuests >= guests);
 
-      return matchText && matchGuests;
-    });
+        setFilteredVenues(filtered);
+      } catch (err) {
+        console.error("Error searching venues:", err);
+      }
+    };
 
-    setFilteredVenues(results);
+    fetchSearchResults();
   }, [searchFilters, venues]);
 
   return (
