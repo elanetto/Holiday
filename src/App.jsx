@@ -64,12 +64,13 @@ function App() {
     const signal = controller.signal;
 
     const fetchSearchResults = async () => {
+      setSearchError(null); // ✅ Clear any stale error before running new search
+
       const { location = "", guests = 1 } = searchFilters || {};
 
       // If there's no location search, just show all local venues
       if (!location) {
         setFilteredVenues(venues.length > 0 ? venues : []);
-        setSearchError(null);
         return;
       }
 
@@ -85,7 +86,6 @@ function App() {
         const filtered = data.data.filter((venue) => venue.maxGuests >= guests);
 
         setFilteredVenues(filtered);
-        setSearchError(null);
       } catch (err) {
         if (err.name === "AbortError") {
           console.log("Search request aborted");
