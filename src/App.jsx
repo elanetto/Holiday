@@ -61,31 +61,27 @@ function App() {
 
   useEffect(() => {
     const fetchSearchResults = async () => {
-      if (!searchFilters || !searchFilters.location) {
-        // If no search query is given, and venues exist, show them all
-        if (venues.length > 0) {
-          setFilteredVenues(venues);
-        } else {
-          setFilteredVenues([]);
-        }
-        setSearchError(null); // Clear any previous search errors
+      const { location = "", guests = 1 } = searchFilters || {};
+
+      // If there's no location search, just show all local venues
+      if (!location) {
+        setFilteredVenues(venues.length > 0 ? venues : []);
+        setSearchError(null);
         return;
       }
-
-      const { location = "", guests = 1 } = searchFilters;
 
       try {
         const res = await fetch(
           `${ENDPOINTS.venues}/search?q=${encodeURIComponent(location)}`
         );
+        if (!res.ok) throw new Error("Search request failed");
+
         const data = await res.json();
 
-        const filtered = data.data.filter(
-          (venue) => venue.maxGuests >= guests
-        );
+        const filtered = data.data.filter((venue) => venue.maxGuests >= guests);
 
         setFilteredVenues(filtered);
-        setSearchError(null); // Clear any previous error
+        setSearchError(null);
       } catch (err) {
         console.error("Error searching venues:", err);
         setSearchError(
