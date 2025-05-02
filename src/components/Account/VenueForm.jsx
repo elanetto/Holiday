@@ -266,9 +266,6 @@ export default function VenueForm({ mode = "create", venue = {} }) {
       toast.error(
         "An error occurred while saving the venue. Please try again."
       );
-      toast.error(
-        "An error occurred while saving the venue. Please try again."
-      );
 
       console.error("Venue error:", apiError);
     } finally {
@@ -314,7 +311,7 @@ export default function VenueForm({ mode = "create", venue = {} }) {
           value={formData.description}
           onChange={(e) => handleChange("description", e.target.value)}
           onBlur={() => handleBlur("description")}
-          className={getInputClassName(errors.name, touched.name)}
+          className={getInputClassName(errors.description, touched.description)}
         />
         {errors.description && touched.description && (
           <p className="text-error text-sm">{errors.description}</p>
@@ -330,7 +327,7 @@ export default function VenueForm({ mode = "create", venue = {} }) {
             value={formData.price}
             onChange={(e) => handleChange("price", Number(e.target.value))}
             onBlur={() => handleBlur("price")}
-            className={getInputClassName(errors.name, touched.name)}
+            className={getInputClassName(errors.price, touched.price)}
           />
           {errors.price && touched.price && (
             <p className="text-error text-sm">{errors.price}</p>
@@ -346,7 +343,7 @@ export default function VenueForm({ mode = "create", venue = {} }) {
             value={formData.maxGuests}
             onChange={(e) => handleChange("maxGuests", Number(e.target.value))}
             onBlur={() => handleBlur("maxGuests")}
-            className={getInputClassName(errors.name, touched.name)}
+            className={getInputClassName(errors.maxGuests, touched.maxGuests)}
           />
           {errors.maxGuests && touched.maxGuests && (
             <p className="text-error text-sm">{errors.maxGuests}</p>
@@ -510,7 +507,10 @@ export default function VenueForm({ mode = "create", venue = {} }) {
               placeholder="Alt text"
               value={media.alt}
               onChange={(e) => handleImageChange(index, "alt", e.target.value)}
-              className={getInputClassName(errors.name, touched.name)}
+              className={getInputClassName(
+                errors[`media-${index}-alt`],
+                touched[`media-${index}-alt`]
+              )}
             />
             {errors[`media-${index}-alt`] && (
               <p className="text-error text-sm mt-1">
