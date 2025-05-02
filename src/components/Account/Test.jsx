@@ -130,26 +130,9 @@ export default function VenueForm({ mode = "create", venue = {} }) {
   const validate = () => {
     const newErrors = {};
 
-    if (formData.maxGuests <= 0) {
-      newErrors.maxGuests = "Max guests must be greater than 0";
-    } else if (formData.maxGuests > 100) {
-      newErrors.maxGuests = "Max guests cannot be more than 100";
-    }
-
-    if (!formData.location.continent.trim()) {
-      newErrors.continent = "Continent is required";
-    }
-
-    if (!formData.location.address.trim()) {
-      newErrors.address = "Address is required";
-    }
-    if (!formData.location.zip.trim()) {
-      newErrors.zip = "Zip code is required";
-    }
-
-    if (!/^[\p{Lu}][\p{L}\s'-]{2,}$/u.test(formData.name.trim())) {
+    if (!/^[\p{Lu}].{2,}$/u.test(formData.name.trim())) {
       newErrors.name =
-        "Name must start with a capital letter, contain only letters, spaces, hyphens, or apostrophes, and be at least 3 characters long";
+        "Name must start with a capital letter and be at least 3 characters";
     }
 
     if (formData.description.trim().split(/\s+/).length < 2) {
@@ -263,27 +246,11 @@ export default function VenueForm({ mode = "create", venue = {} }) {
         err?.response?.data?.errors ||
         err?.response?.data?.message ||
         err.message;
-      toast.error(
-        "An error occurred while saving the venue. Please try again."
-      );
-
+      toast.error("Could not save venue: " + JSON.stringify(apiError));
       console.error("Venue error:", apiError);
     } finally {
       setLoading(false);
     }
-  };
-
-  /**
-   * Determines the CSS class for an input field based on its error and touched states.
-   *
-   * @param {boolean} error - Indicates whether the input field has an error.
-   * @param {boolean} touched - Indicates whether the input field has been interacted with.
-   * @returns {string} The CSS class name for the input field.
-   */
-  const getInputClassName = (error, touched) => {
-    return `w-full border p-2 rounded ${
-      error && touched ? "border-error" : "border-espressoy"
-    }`;
   };
 
   return (
@@ -303,7 +270,9 @@ export default function VenueForm({ mode = "create", venue = {} }) {
           value={formData.name}
           onChange={(e) => handleChange("name", e.target.value)}
           onBlur={() => handleBlur("name")}
-          className={getInputClassName(errors.name, touched.name)}
+          className={`w-full border p-2 rounded ${
+            errors.name && touched.name ? "border-error" : "border-espressoy"
+          }`}
         />
         {errors.name && touched.name && (
           <p className="text-error text-sm">{errors.name}</p>
@@ -318,7 +287,11 @@ export default function VenueForm({ mode = "create", venue = {} }) {
           value={formData.description}
           onChange={(e) => handleChange("description", e.target.value)}
           onBlur={() => handleBlur("description")}
-          className={getInputClassName(errors.description, touched.description)}
+          className={`w-full border p-2 rounded ${
+            errors.description && touched.description
+              ? "border-error"
+              : "border-espressoy"
+          }`}
         />
         {errors.description && touched.description && (
           <p className="text-error text-sm">{errors.description}</p>
@@ -334,7 +307,11 @@ export default function VenueForm({ mode = "create", venue = {} }) {
             value={formData.price}
             onChange={(e) => handleChange("price", Number(e.target.value))}
             onBlur={() => handleBlur("price")}
-            className={getInputClassName(errors.price, touched.price)}
+            className={`w-full border p-2 rounded ${
+              errors.price && touched.price
+                ? "border-error"
+                : "border-espressoy"
+            }`}
           />
           {errors.price && touched.price && (
             <p className="text-error text-sm">{errors.price}</p>
@@ -345,12 +322,14 @@ export default function VenueForm({ mode = "create", venue = {} }) {
           <label className="text-sm block">Max Guests *</label>
           <input
             type="number"
-            min={1}
-            max={100}
             value={formData.maxGuests}
             onChange={(e) => handleChange("maxGuests", Number(e.target.value))}
             onBlur={() => handleBlur("maxGuests")}
-            className={getInputClassName(errors.maxGuests, touched.maxGuests)}
+            className={`w-full border p-2 rounded ${
+              errors.maxGuests && touched.maxGuests
+                ? "border-error"
+                : "border-espressoy"
+            }`}
           />
           {errors.maxGuests && touched.maxGuests && (
             <p className="text-error text-sm">{errors.maxGuests}</p>
@@ -407,35 +386,21 @@ export default function VenueForm({ mode = "create", venue = {} }) {
       <div>
         <label className="text-sm block mb-2">Location</label>
         <div className="grid grid-cols-2 gap-4">
-          {/* Address */}
           <input
             type="text"
             placeholder="Address"
             value={formData.location.address}
             onChange={(e) => handleLocationChange("address", e.target.value)}
-            onBlur={() => handleBlur("address")}
-            className={getInputClassName(errors.address, touched.address)}
+            className="border p-2 rounded border-espressoy"
           />
-          {errors.address && touched.address && (
-            <p className="text-error text-sm mt-1 col-span-2">
-              {errors.address}
-            </p>
-          )}
-
-          {/* Zip Code */}
           <input
             type="text"
             placeholder="Zip Code"
             value={formData.location.zip}
             onChange={(e) => handleLocationChange("zip", e.target.value)}
-            onBlur={() => handleBlur("zip")}
-            className={getInputClassName(errors.zip, touched.zip)}
+            className="border p-2 rounded border-espressoy"
           />
-          {errors.zip && touched.zip && (
-            <p className="text-error text-sm mt-1 col-span-2">{errors.zip}</p>
-          )}
 
-          {/* Country */}
           <div className="col-span-1">
             <FlaggedCountryDropdown
               value={country}
@@ -449,7 +414,6 @@ export default function VenueForm({ mode = "create", venue = {} }) {
             )}
           </div>
 
-          {/* City */}
           <div className="col-span-1">
             <Select
               options={cityOptions}
@@ -467,24 +431,13 @@ export default function VenueForm({ mode = "create", venue = {} }) {
             )}
           </div>
 
-          {/* Continent */}
           <input
             type="text"
             placeholder="Continent"
             value={formData.location.continent}
             onChange={(e) => handleLocationChange("continent", e.target.value)}
-            onBlur={() => handleBlur("continent")}
-            className={`border p-2 rounded col-span-2 ${
-              errors.continent && touched.continent
-                ? "border-error"
-                : "border-espressoy"
-            }`}
+            className="border p-2 rounded border-espressoy col-span-2"
           />
-          {errors.continent && touched.continent && (
-            <p className="text-error text-sm mt-1 col-span-2">
-              {errors.continent}
-            </p>
-          )}
         </div>
       </div>
 
@@ -514,10 +467,11 @@ export default function VenueForm({ mode = "create", venue = {} }) {
               placeholder="Alt text"
               value={media.alt}
               onChange={(e) => handleImageChange(index, "alt", e.target.value)}
-              className={getInputClassName(
-                errors[`media-${index}-alt`],
-                touched[`media-${index}-alt`]
-              )}
+              className={`w-full border p-2 rounded ${
+                errors[`media-${index}-alt`]
+                  ? "border-error"
+                  : "border-espressoy"
+              }`}
             />
             {errors[`media-${index}-alt`] && (
               <p className="text-error text-sm mt-1">

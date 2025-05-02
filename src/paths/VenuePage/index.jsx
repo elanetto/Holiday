@@ -16,6 +16,8 @@ const VenuePage = () => {
   const [validImages, setValidImages] = useState([]);
   const navigate = useNavigate();
 
+  const [showFullDescription, setShowFullDescription] = useState(false);
+
   useEffect(() => {
     const fetchVenue = async () => {
       try {
@@ -56,9 +58,20 @@ const VenuePage = () => {
 
   const markerPosition = getCountryCoordinates(venue.location.country);
 
+  const getTrimmedDescription = (text, limit = 200) => {
+    const words = text?.split(/\s+/);
+    if (!words || words.length <= limit) return text;
+    return words.slice(0, limit).join(" ") + "...";
+  };
+
   return (
     <div className="p-4 max-w-5xl mx-auto">
-      <h1 className="text-3xl font-bold text-espressoy mb-4">{venue.name}</h1>
+      <h1
+        className="text-3xl font-bold text-espressoy mb-4 truncate"
+        title={venue.name}
+      >
+        {venue.name}
+      </h1>
 
       {validImages.length > 1 ? (
         <div className="relative">
@@ -130,17 +143,37 @@ const VenuePage = () => {
           </Carousel>
         </div>
       ) : (
-        <img
-          src={validImages[0]?.url || PLACEHOLDER_VENUE}
-          alt={validImages[0]?.alt || venue.name}
-          className="w-full max-h-[500px] object-cover rounded-xl mb-6"
-        />
+        <div className="mb-6 rounded-xl overflow-hidden">
+          <img
+            src={validImages[0]?.url || PLACEHOLDER_VENUE}
+            alt={validImages[0]?.alt || venue.name}
+            className="w-full max-h-[500px] object-cover rounded-xl"
+            onError={(e) => (e.target.src = PLACEHOLDER_VENUE)}
+          />
+          <div className="bg-white p-3 text-center text-gray-600 italic text-sm">
+            {validImages[0]?.alt || venue.name}
+          </div>
+        </div>
       )}
 
       <div className="space-y-4">
-        <p className="text-lg text-gray-800 leading-relaxed">
-          {venue.description}
-        </p>
+        <h2 className="text-2xl font-bold">Description</h2>
+        <div>
+          <p className="text-lg text-gray-800 leading-relaxed whitespace-pre-wrap">
+            {showFullDescription
+              ? venue.description
+              : getTrimmedDescription(venue.description, 200)}
+          </p>
+
+          {venue.description?.split(" ").length > 200 && (
+            <button
+              onClick={() => setShowFullDescription((prev) => !prev)}
+              className="mt-2 text-sm text-orangey font-medium underline hover:text-espressoy transition"
+            >
+              {showFullDescription ? "Show less" : "Read more"}
+            </button>
+          )}
+        </div>
 
         <div className="flex gap-4 flex-wrap">
           <span className="px-3 py-1 rounded-full bg-sunny text-white">
