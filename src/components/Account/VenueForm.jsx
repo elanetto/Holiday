@@ -263,7 +263,6 @@ export default function VenueForm({ mode = "create", venue = {} }) {
         err?.response?.data?.errors ||
         err?.response?.data?.message ||
         err.message;
-
       toast.error(
         "An error occurred while saving the venue. Please try again."
       );
@@ -272,6 +271,19 @@ export default function VenueForm({ mode = "create", venue = {} }) {
     } finally {
       setLoading(false);
     }
+  };
+
+  /**
+   * Determines the CSS class for an input field based on its error and touched states.
+   *
+   * @param {boolean} error - Indicates whether the input field has an error.
+   * @param {boolean} touched - Indicates whether the input field has been interacted with.
+   * @returns {string} The CSS class name for the input field.
+   */
+  const getInputClassName = (error, touched) => {
+    return `w-full border p-2 rounded ${
+      error && touched ? "border-error" : "border-espressoy"
+    }`;
   };
 
   return (
@@ -291,9 +303,7 @@ export default function VenueForm({ mode = "create", venue = {} }) {
           value={formData.name}
           onChange={(e) => handleChange("name", e.target.value)}
           onBlur={() => handleBlur("name")}
-          className={`w-full border p-2 rounded ${
-            errors.name && touched.name ? "border-error" : "border-espressoy"
-          }`}
+          className={getInputClassName(errors.name, touched.name)}
         />
         {errors.name && touched.name && (
           <p className="text-error text-sm">{errors.name}</p>
@@ -308,11 +318,7 @@ export default function VenueForm({ mode = "create", venue = {} }) {
           value={formData.description}
           onChange={(e) => handleChange("description", e.target.value)}
           onBlur={() => handleBlur("description")}
-          className={`w-full border p-2 rounded ${
-            errors.description && touched.description
-              ? "border-error"
-              : "border-espressoy"
-          }`}
+          className={getInputClassName(errors.description, touched.description)}
         />
         {errors.description && touched.description && (
           <p className="text-error text-sm">{errors.description}</p>
@@ -328,11 +334,7 @@ export default function VenueForm({ mode = "create", venue = {} }) {
             value={formData.price}
             onChange={(e) => handleChange("price", Number(e.target.value))}
             onBlur={() => handleBlur("price")}
-            className={`w-full border p-2 rounded ${
-              errors.price && touched.price
-                ? "border-error"
-                : "border-espressoy"
-            }`}
+            className={getInputClassName(errors.price, touched.price)}
           />
           {errors.price && touched.price && (
             <p className="text-error text-sm">{errors.price}</p>
@@ -348,11 +350,7 @@ export default function VenueForm({ mode = "create", venue = {} }) {
             value={formData.maxGuests}
             onChange={(e) => handleChange("maxGuests", Number(e.target.value))}
             onBlur={() => handleBlur("maxGuests")}
-            className={`w-full border p-2 rounded ${
-              errors.maxGuests && touched.maxGuests
-                ? "border-error"
-                : "border-espressoy"
-            }`}
+            className={getInputClassName(errors.maxGuests, touched.maxGuests)}
           />
           {errors.maxGuests && touched.maxGuests && (
             <p className="text-error text-sm">{errors.maxGuests}</p>
@@ -409,6 +407,7 @@ export default function VenueForm({ mode = "create", venue = {} }) {
       <div>
         <label className="text-sm block mb-2">Location</label>
         <div className="grid grid-cols-2 gap-4">
+          {/* Address */}
           <input
             type="text"
             placeholder="Address"
@@ -418,23 +417,25 @@ export default function VenueForm({ mode = "create", venue = {} }) {
             className={getInputClassName(errors.address, touched.address)}
           />
           {errors.address && touched.address && (
-            <p className="text-error text-sm mt-1">{errors.address}</p>
+            <p className="text-error text-sm mt-1 col-span-2">
+              {errors.address}
+            </p>
           )}
 
+          {/* Zip Code */}
           <input
             type="text"
             placeholder="Zip Code"
             value={formData.location.zip}
             onChange={(e) => handleLocationChange("zip", e.target.value)}
             onBlur={() => handleBlur("zip")}
-            className={`border p-2 rounded ${
-              errors.zip && touched.zip ? "border-error" : "border-espressoy"
-            }`}
+            className={getInputClassName(errors.zip, touched.zip)}
           />
           {errors.zip && touched.zip && (
-            <p className="text-error text-sm mt-1">{errors.zip}</p>
+            <p className="text-error text-sm mt-1 col-span-2">{errors.zip}</p>
           )}
 
+          {/* Country */}
           <div className="col-span-1">
             <FlaggedCountryDropdown
               value={country}
@@ -448,6 +449,7 @@ export default function VenueForm({ mode = "create", venue = {} }) {
             )}
           </div>
 
+          {/* City */}
           <div className="col-span-1">
             <Select
               options={cityOptions}
@@ -465,6 +467,7 @@ export default function VenueForm({ mode = "create", venue = {} }) {
             )}
           </div>
 
+          {/* Continent */}
           <input
             type="text"
             placeholder="Continent"
@@ -478,7 +481,9 @@ export default function VenueForm({ mode = "create", venue = {} }) {
             }`}
           />
           {errors.continent && touched.continent && (
-            <p className="text-error text-sm mt-1">{errors.continent}</p>
+            <p className="text-error text-sm mt-1 col-span-2">
+              {errors.continent}
+            </p>
           )}
         </div>
       </div>
@@ -509,11 +514,10 @@ export default function VenueForm({ mode = "create", venue = {} }) {
               placeholder="Alt text"
               value={media.alt}
               onChange={(e) => handleImageChange(index, "alt", e.target.value)}
-              className={`w-full border p-2 rounded ${
-                errors[`media-${index}-alt`]
-                  ? "border-error"
-                  : "border-espressoy"
-              }`}
+              className={getInputClassName(
+                errors[`media-${index}-alt`],
+                touched[`media-${index}-alt`]
+              )}
             />
             {errors[`media-${index}-alt`] && (
               <p className="text-error text-sm mt-1">
