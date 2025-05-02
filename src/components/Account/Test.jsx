@@ -130,23 +130,6 @@ export default function VenueForm({ mode = "create", venue = {} }) {
   const validate = () => {
     const newErrors = {};
 
-    if (formData.maxGuests <= 0) {
-      newErrors.maxGuests = "Max guests must be greater than 0";
-    } else if (formData.maxGuests > 100) {
-      newErrors.maxGuests = "Max guests cannot be more than 100";
-    }
-
-    if (!formData.location.continent.trim()) {
-      newErrors.continent = "Continent is required";
-    }
-
-    if (!formData.location.address.trim()) {
-      newErrors.address = "Address is required";
-    }
-    if (!formData.location.zip.trim()) {
-      newErrors.zip = "Zip code is required";
-    }
-
     if (!/^[\p{Lu}].{2,}$/u.test(formData.name.trim())) {
       newErrors.name =
         "Name must start with a capital letter and be at least 3 characters";
@@ -339,8 +322,6 @@ export default function VenueForm({ mode = "create", venue = {} }) {
           <label className="text-sm block">Max Guests *</label>
           <input
             type="number"
-            min={1}
-            max={100}
             value={formData.maxGuests}
             onChange={(e) => handleChange("maxGuests", Number(e.target.value))}
             onBlur={() => handleBlur("maxGuests")}
@@ -410,30 +391,15 @@ export default function VenueForm({ mode = "create", venue = {} }) {
             placeholder="Address"
             value={formData.location.address}
             onChange={(e) => handleLocationChange("address", e.target.value)}
-            onBlur={() => handleBlur("address")}
-            className={`border p-2 rounded ${
-              errors.address && touched.address
-                ? "border-error"
-                : "border-espressoy"
-            }`}
+            className="border p-2 rounded border-espressoy"
           />
-          {errors.address && touched.address && (
-            <p className="text-error text-sm mt-1">{errors.address}</p>
-          )}
-
           <input
             type="text"
             placeholder="Zip Code"
             value={formData.location.zip}
             onChange={(e) => handleLocationChange("zip", e.target.value)}
-            onBlur={() => handleBlur("zip")}
-            className={`border p-2 rounded ${
-              errors.zip && touched.zip ? "border-error" : "border-espressoy"
-            }`}
+            className="border p-2 rounded border-espressoy"
           />
-          {errors.zip && touched.zip && (
-            <p className="text-error text-sm mt-1">{errors.zip}</p>
-          )}
 
           <div className="col-span-1">
             <FlaggedCountryDropdown
@@ -470,16 +436,8 @@ export default function VenueForm({ mode = "create", venue = {} }) {
             placeholder="Continent"
             value={formData.location.continent}
             onChange={(e) => handleLocationChange("continent", e.target.value)}
-            onBlur={() => handleBlur("continent")}
-            className={`border p-2 rounded col-span-2 ${
-              errors.continent && touched.continent
-                ? "border-error"
-                : "border-espressoy"
-            }`}
+            className="border p-2 rounded border-espressoy col-span-2"
           />
-          {errors.continent && touched.continent && (
-            <p className="text-error text-sm mt-1">{errors.continent}</p>
-          )}
         </div>
       </div>
 
