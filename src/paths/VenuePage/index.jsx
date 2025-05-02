@@ -147,7 +147,7 @@ const VenuePage = () => {
           <img
             src={validImages[0]?.url || PLACEHOLDER_VENUE}
             alt={validImages[0]?.alt || venue.name}
-            className="w-full max-h-[500px] object-cover"
+            className="w-full max-h-[500px] object-cover rounded-xl"
             onError={(e) => (e.target.src = PLACEHOLDER_VENUE)}
           />
           <div className="bg-white p-3 text-center text-gray-600 italic text-sm">

@@ -147,9 +147,9 @@ export default function VenueForm({ mode = "create", venue = {} }) {
       newErrors.zip = "Zip code is required";
     }
 
-    if (!/^[\p{Lu}].{2,}$/u.test(formData.name.trim())) {
+    if (!/^[\p{Lu}][\p{L}\s'-]{2,}$/u.test(formData.name.trim())) {
       newErrors.name =
-        "Name must start with a capital letter and be at least 3 characters";
+        "Name must start with a capital letter, contain only letters, spaces, hyphens, or apostrophes, and be at least 3 characters long";
     }
 
     if (formData.description.trim().split(/\s+/).length < 2) {
@@ -263,7 +263,11 @@ export default function VenueForm({ mode = "create", venue = {} }) {
         err?.response?.data?.errors ||
         err?.response?.data?.message ||
         err.message;
-      toast.error("Could not save venue: " + JSON.stringify(apiError));
+
+      toast.error(
+        "An error occurred while saving the venue. Please try again."
+      );
+
       console.error("Venue error:", apiError);
     } finally {
       setLoading(false);
