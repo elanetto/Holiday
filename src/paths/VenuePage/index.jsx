@@ -59,7 +59,7 @@ const VenuePage = () => {
   const markerPosition = getCountryCoordinates(venue.location.country);
 
   const getTrimmedDescription = (text, limit = 200) => {
-    const words = text?.split(" ");
+    const words = text?.split(/\s+/);
     if (!words || words.length <= limit) return text;
     return words.slice(0, limit).join(" ") + "...";
   };
