@@ -415,11 +415,7 @@ export default function VenueForm({ mode = "create", venue = {} }) {
             value={formData.location.address}
             onChange={(e) => handleLocationChange("address", e.target.value)}
             onBlur={() => handleBlur("address")}
-            className={`border p-2 rounded ${
-              errors.address && touched.address
-                ? "border-error"
-                : "border-espressoy"
-            }`}
+            className={getInputClassName(errors.address, touched.address)}
           />
           {errors.address && touched.address && (
             <p className="text-error text-sm mt-1">{errors.address}</p>
