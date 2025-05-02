@@ -273,6 +273,13 @@ export default function VenueForm({ mode = "create", venue = {} }) {
     }
   };
 
+  /**
+   * Determines the CSS class for an input field based on its error and touched states.
+   *
+   * @param {boolean} error - Indicates whether the input field has an error.
+   * @param {boolean} touched - Indicates whether the input field has been interacted with.
+   * @returns {string} The CSS class name for the input field.
+   */
   const getInputClassName = (error, touched) => {
     return `w-full border p-2 rounded ${
       error && touched ? "border-error" : "border-espressoy"
