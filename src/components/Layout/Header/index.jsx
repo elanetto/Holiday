@@ -40,7 +40,7 @@ export function Header() {
         <img
           src={avatarUrl}
           alt="User avatar"
-          className="w-10 h-10 sm:w-12 sm:h-12 rounded-full border-2 border-check object-cover"
+          className="w-10 h-10 sm:w-12 sm:h-12 rounded-full border-2 border-check object-cover cursor-pointer"
         />
         <FaCheckCircle className="absolute -bottom-1 -right-1 text-check text-sm" />
       </div>
@@ -64,8 +64,15 @@ export function Header() {
     <>
       <header className="bg-creamy w-full px-4 py-4 sm:px-8 sm:py-6 flex items-center justify-between">
         {/* Logo */}
-        <button onClick={handleLogoClick} className="focus:outline-none">
-          <img src={logoUrl} alt="Logo for Holidaze" className="h-8 sm:h-10" />
+        <button
+          onClick={handleLogoClick}
+          className="focus:outline-none cursor-pointer"
+        >
+          <img
+            src={logoUrl}
+            alt="Logo for Holidaze"
+            className="h-8 sm:h-10 cursor-pointer"
+          />
         </button>
 
         {/* Desktop Search (hidden on small screens) */}
@@ -78,7 +85,7 @@ export function Header() {
           {/* Search icon for mobile */}
           <button
             onClick={() => setShowMobileSearch((prev) => !prev)}
-            className="md:hidden text-xl text-espressoy hover:text-orangey"
+            className="md:hidden text-xl text-espressoy hover:text-orangey cursor-pointer"
             aria-label="Toggle Search"
           >
             <FaSearch />
@@ -97,7 +104,7 @@ export function Header() {
           {/* Dropdown */}
           {isLoggedIn && (
             <div
-              className={`absolute right-0 top-12 sm:top-14 w-40 bg-white border border-espressoy rounded shadow-md text-sm z-50 transform transition-all duration-300 ease-out origin-top-right ${
+              className={`absolute right-0 top-12 sm:top-14 w-40 bg-white border border-espressoy rounded shadow-md text-sm z-50 transform transition-all duration-300 ease-out origin-top-right cursor-pointer ${
                 showDropdown
                   ? "opacity-100 scale-100 translate-y-0"
                   : "opacity-0 scale-95 -translate-y-2 pointer-events-none"
@@ -105,7 +112,7 @@ export function Header() {
             >
               <Link
                 to={`/account/${encodeURIComponent(userName)}`}
-                className="block px-4 py-2 hover:bg-creamy transition-colors"
+                className="block px-4 py-2 hover:bg-creamy transition-colors cursor-pointer"
                 onClick={() => setShowDropdown(false)}
               >
                 My Account
@@ -113,7 +120,7 @@ export function Header() {
 
               <button
                 onClick={handleLogout}
-                className="w-full text-left px-4 py-2 hover:bg-creamy text-error transition-colors"
+                className="w-full text-left px-4 py-2 hover:bg-creamy text-error transition-colors cursor-pointer"
               >
                 Logout
               </button>

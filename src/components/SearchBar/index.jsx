@@ -68,7 +68,7 @@ export const SearchBar = () => {
       {/* Search Button */}
       <button
         onClick={handleSearch}
-        className="bg-espressoy text-white px-4 py-2 rounded-xl hover:bg-orangey transition"
+        className="bg-espressoy text-white px-4 py-2 rounded-xl hover:bg-orangey transition cursor-pointer"
       >
         Search
       </button>
