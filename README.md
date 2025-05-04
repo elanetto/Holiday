@@ -1,4 +1,4 @@
-# Holidaze
+# 🏞️ 🌃 Holidaze 🌅 🌉
 
 Visit the deployed site here: [Holidaze](https://holiday-booking-site.netlify.app/)
 
