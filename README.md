@@ -5,7 +5,7 @@ The site will only be a dummy site, and nothing is real. But it is a good way to
 Visit the deployed site here: [Holidaze](https://holiday-booking-site.netlify.app/)
 This project is due to be finished by May 26th.
 
-# 🌱 Current version 🌱
+# 🌱 ➡️ Current version ⬅️ 🌱
 Visit the deployed version of the latest [Development branch](https://dev-holiday.onrender.com/)
 
 This verison is not in any way finished yet.
