@@ -20,14 +20,14 @@ export const SearchBar = () => {
   };
 
   return (
-    <div className="flex flex-col md:flex-row gap-2 md:gap-4 p-4 border rounded-2xl shadow bg-white items-center">
+    <div className="flex flex-col md:flex-row gap-2 md:gap-4 p-4 rounded-2xl shadow bg-sunny items-center">
       {/* Location */}
       <input
         type="text"
         placeholder="Where to?"
         value={location}
         onChange={(e) => setLocation(e.target.value)}
-        className="p-2 border rounded-xl w-full md:flex-1 text-center"
+        className="p-2 rounded-xl w-full md:flex-1 text-center bg-white cursor-pointer"
       />
 
       {/* Date Range */}
@@ -40,7 +40,7 @@ export const SearchBar = () => {
             setDates(update);
           }}
           placeholderText="Select dates"
-          className="p-2 border rounded-xl w-full cursor-pointer text-center"
+          className="p-2 rounded-xl w-full cursor-pointer text-center bg-white"
           calendarClassName="bg-white rounded-lg shadow-lg p-4"
           minDate={new Date()}
           inline={false}
@@ -49,17 +49,17 @@ export const SearchBar = () => {
       </div>
 
       {/* Guests */}
-      <div className="flex items-center gap-2 border p-2 rounded-xl">
+      <div className="flex items-center gap-2 p-2 rounded-xl">
         <button
           onClick={() => setGuests((g) => Math.max(g - 1, 1))}
-          className="px-3 py-1 border rounded-full hover:bg-orangey hover:text-white"
+          className="px-3 py-1 rounded-full hover:bg-orangey hover:text-white bg-white cursor-pointer"
         >
           -
         </button>
         <span>{guests}</span>
         <button
           onClick={() => setGuests((g) => g + 1)}
-          className="px-3 py-1 border rounded-full hover:bg-orangey hover:text-white"
+          className="px-3 py-1 rounded-full hover:bg-orangey hover:text-white bg-white cursor-pointer"
         >
           +
         </button>
