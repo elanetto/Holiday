@@ -89,7 +89,7 @@ const VenuePage = () => {
                   type="button"
                   onClick={onClickHandler}
                   title={label}
-                  className="absolute left-4 top-1/2 -translate-y-1/2 bg-sunny p-2 rounded-full z-10 shadow"
+                  className="absolute left-4 top-1/2 -translate-y-1/2 bg-sunny p-2 rounded-full z-10 shadow cursor-pointer"
                 >
                   <BsCaretLeftFill className="text-espressoy w-6 h-6" />
                 </button>
@@ -101,7 +101,7 @@ const VenuePage = () => {
                   type="button"
                   onClick={onClickHandler}
                   title={label}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 bg-sunny p-2 rounded-full z-10 shadow"
+                  className="absolute right-4 top-1/2 -translate-y-1/2 bg-sunny p-2 rounded-full z-10 shadow cursor-pointer"
                 >
                   <BsCaretRightFill className="text-espressoy w-6 h-6" />
                 </button>
@@ -241,7 +241,7 @@ const VenuePage = () => {
             )}
             <Link
               to={`/profile/${venue.owner?.name}`}
-              className="p-4 flex gap-4 items-center hover:bg-creamy"
+              className="p-4 flex gap-4 items-center hover:bg-creamy cursor-pointer"
             >
               <img
                 src={venue.owner?.avatar?.url || PLACEHOLDER_VENUE}
