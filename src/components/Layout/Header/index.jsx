@@ -3,10 +3,11 @@ import { Link, useNavigate } from "react-router-dom";
 import { FaUser, FaCheckCircle, FaSearch } from "react-icons/fa";
 import { SearchBar } from "../../SearchBar";
 import MobileSearchBar from "../../SearchBar/MobileSearchBar/index";
-import logoUrl from "../../../assets/Logo.svg?url";
+import logoUrl from "../../../assets/Logo_hvit.svg?url";
 import { useUser } from "../../../contexts/useUser";
 import { PLACEHOLDER_AVATAR } from "../../../utilities/placeholders";
 import { useLocation } from "react-router-dom";
+import backgroundimage from "../../../assets/background/travel_street.png";
 
 export function Header() {
   const { isLoggedIn, avatar, logoutUser, user } = useUser();
@@ -62,7 +63,13 @@ export function Header() {
 
   return (
     <>
-      <header className="bg-creamy w-full px-4 py-4 sm:px-8 sm:py-6 flex items-center justify-between">
+      <header 
+        style={{
+          backgroundImage: `url(${backgroundimage})`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+        }}
+      className="bg-creamy w-full px-4 py-4 sm:px-8 sm:py-6 flex items-center justify-between">
         {/* Logo */}
         <button
           onClick={handleLogoClick}
@@ -71,7 +78,7 @@ export function Header() {
           <img
             src={logoUrl}
             alt="Logo for Holidaze"
-            className="h-8 sm:h-10 cursor-pointer"
+            className="h-5 sm:h-7 cursor-pointer"
           />
         </button>
 
