@@ -6,10 +6,11 @@ import { ENDPOINTS } from "../../utilities/constants";
 import { PLACEHOLDER_BANNER } from "../../utilities/placeholders";
 
 const presetBanners = [
-  "https://images.unsplash.com/photo-1491553895911-0055eca6402d?auto=format&fit=crop&w=1400&q=80", // city night
-  "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1400&q=80", // beach
-  "https://images.unsplash.com/photo-1549887534-238fa218a0d5?auto=format&fit=crop&w=1400&q=80", // aurora
-  "https://images.unsplash.com/photo-1571501679680-de32f1e7aad4?auto=format&fit=crop&w=1400&q=80"  // travel
+  "https://raw.githubusercontent.com/elanetto/Holiday/refs/heads/features/src/assets/banner/banner-ancient-gate.jpg", // Ancient Gate
+  "https://raw.githubusercontent.com/elanetto/Holiday/refs/heads/features/src/assets/banner/banner-beach.jpg", // Beach
+  "https://raw.githubusercontent.com/elanetto/Holiday/refs/heads/features/src/assets/banner/banner-cliff.jpg", // Cliff
+  "https://raw.githubusercontent.com/elanetto/Holiday/refs/heads/features/src/assets/banner/banner-greece.jpg",  // Greece
+  "https://raw.githubusercontent.com/elanetto/Holiday/refs/heads/features/src/assets/banner/banner-snowy-mountain.jpg", // Snowy Mountain
 ];
 
 export default function BannerEditor() {
