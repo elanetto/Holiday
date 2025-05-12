@@ -10,7 +10,7 @@ const presetBanners = [
   "https://raw.githubusercontent.com/elanetto/Holiday/refs/heads/features/src/assets/banner/banner-beach.jpg", // Beach
   "https://raw.githubusercontent.com/elanetto/Holiday/refs/heads/features/src/assets/banner/banner-cliff.jpg", // Cliff
   "https://raw.githubusercontent.com/elanetto/Holiday/refs/heads/features/src/assets/banner/banner-greece.jpg",  // Greece
-  "https://raw.githubusercontent.com/elanetto/Holiday/refs/heads/features/src/assets/banner/banner-snowy-mountain.jpg", // Snowy Mountain
+  "https://raw.githubusercontent.com/elanetto/Holiday/refs/heads/features/src/assets/banner/banner-snowy-mountain.jpg", // Snowy Mountain in Norway
 ];
 
 export default function BannerEditor() {
