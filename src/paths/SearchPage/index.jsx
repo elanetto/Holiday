@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
-import VenueList from "./components/VenueList";
-import { useSearch } from "./contexts/useSearch";
-import { ENDPOINTS } from "./utilities/constants";
-import { SearchBar } from "./components/SearchBar";
-import backgroundImage from "./assets/background/travel-street.jpg";
+import VenueList from "./../../components/VenueList";
+import { useSearch } from "./../../contexts/useSearch";
+import { ENDPOINTS } from "./../../utilities/constants";
+import { SearchBar } from "./../../components/SearchBar";
+import backgroundImage from "./../../assets/background/travel-street.jpg";
 
-function App() {
+function SearchPage() {
   const [venues, setVenues] = useState([]);
   const [filteredVenues, setFilteredVenues] = useState([]);
   const [searchError, setSearchError] = useState(null);
@@ -21,7 +21,6 @@ function App() {
       const limit = 100;
 
       try {
-        // Fetch initial batch (fast!)
         const firstPageUrl = `${ENDPOINTS.venues}?limit=${limit}&page=1&sort=created&sortOrder=desc&_owner=true`;
         const res = await fetch(firstPageUrl);
         const data = await res.json();
@@ -29,7 +28,7 @@ function App() {
         setVenues(firstBatch);
         setFilteredVenues(firstBatch);
 
-        // Fetch the rest in the background
+        // Fetch the rest
         let currentPage = 2;
         let hasNextPage = data.meta?.isLastPage === false;
 
@@ -62,6 +61,7 @@ function App() {
   }, []);
 
   useEffect(() => {
+    console.log("🔍 Filters changed:", searchFilters);
     const controller = new AbortController();
     const signal = controller.signal;
 
@@ -69,7 +69,6 @@ function App() {
       setSearchError(null);
       const { location = "", guests = 1 } = searchFilters || {};
 
-      // 🛑 Don't refetch if location is empty and venues haven't changed
       if (!location) {
         setFilteredVenues(venues.length > 0 ? venues : []);
         return;
@@ -119,36 +118,36 @@ function App() {
         >
           <SearchBar />
         </div>
+      </div>
 
-        <div className="max-w-7xl mx-auto px-4 py-6">
-          {loading ? (
-            <p className="text-center mt-10">Loading venues...</p>
-          ) : (
-            <>
-              {searchError && (
-                <p className="text-red-500 text-center mb-4">{searchError}</p>
-              )}
+      <div className="max-w-7xl mx-auto px-4 py-6">
+        {loading ? (
+          <p className="text-center mt-10">Loading venues...</p>
+        ) : (
+          <>
+            {searchError && (
+              <p className="text-red-500 text-center mb-4">{searchError}</p>
+            )}
 
-              {searchFilters?.location || searchFilters?.guests > 1 ? (
-                <h2 className="text-2xl font-bold text-espressoy mb-4">
-                  Search results
-                  {searchFilters.location && ` for "${searchFilters.location}"`}
-                  {searchFilters.guests > 1 &&
-                    ` with at least ${searchFilters.guests} guests`}
-                </h2>
-              ) : (
-                <h2 className="text-2xl font-bold text-espressoy mb-4">
-                  Latest Venues
-                </h2>
-              )}
+            {searchFilters?.location || searchFilters?.guests > 1 ? (
+              <h2 className="text-2xl font-bold text-espressoy mb-4">
+                Search results
+                {searchFilters.location && ` for "${searchFilters.location}"`}
+                {searchFilters.guests > 1 &&
+                  ` with at least ${searchFilters.guests} guests`}
+              </h2>
+            ) : (
+              <h2 className="text-2xl font-bold text-espressoy mb-4">
+                Latest Venues
+              </h2>
+            )}
 
-              <VenueList venues={filteredVenues} />
-            </>
-          )}
-        </div>
+            <VenueList venues={filteredVenues} />
+          </>
+        )}
       </div>
     </div>
   );
 }
 
-export default App;
+export default SearchPage;
