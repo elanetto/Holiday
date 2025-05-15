@@ -20,7 +20,6 @@ function SearchPage() {
     const fetchVenues = async () => {
       setLoading(true);
       let firstBatch = [];
-      let restBatch = [];
       const limit = 100;
 
       try {
@@ -40,7 +39,6 @@ function SearchPage() {
             const res = await fetch(nextPageUrl, { signal });
             const data = await res.json();
 
-            restBatch = [...restBatch, ...data.data];
             setVenues((prev) => [...prev, ...data.data]);
             setFilteredVenues((prev) => [...prev, ...data.data]);
 
