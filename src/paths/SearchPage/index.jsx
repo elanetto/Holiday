@@ -14,6 +14,9 @@ function SearchPage() {
   const { searchFilters } = useSearch();
 
   useEffect(() => {
+    const controller = new AbortController();
+    const signal = controller.signal;
+
     const fetchVenues = async () => {
       setLoading(true);
       let firstBatch = [];
@@ -22,20 +25,19 @@ function SearchPage() {
 
       try {
         const firstPageUrl = `${ENDPOINTS.venues}?limit=${limit}&page=1&sort=created&sortOrder=desc&_owner=true`;
-        const res = await fetch(firstPageUrl);
+        const res = await fetch(firstPageUrl, { signal });
         const data = await res.json();
         firstBatch = data.data;
         setVenues(firstBatch);
         setFilteredVenues(firstBatch);
 
-        // Fetch the rest
         let currentPage = 2;
         let hasNextPage = data.meta?.isLastPage === false;
 
         const fetchRest = async () => {
           while (hasNextPage) {
             const nextPageUrl = `${ENDPOINTS.venues}?limit=${limit}&page=${currentPage}&sort=created&sortOrder=desc&_owner=true`;
-            const res = await fetch(nextPageUrl);
+            const res = await fetch(nextPageUrl, { signal });
             const data = await res.json();
 
             restBatch = [...restBatch, ...data.data];
@@ -51,6 +53,10 @@ function SearchPage() {
           console.error("Error fetching additional venues:", err);
         });
       } catch (err) {
+        if (err.name === "AbortError") {
+          console.log("fetchVenues aborted");
+          return;
+        }
         console.error("Error loading venues:", err);
       } finally {
         setLoading(false);
@@ -58,6 +64,8 @@ function SearchPage() {
     };
 
     fetchVenues();
+
+    return () => controller.abort();
   }, []);
 
   useEffect(() => {
@@ -84,7 +92,6 @@ function SearchPage() {
         const data = await res.json();
 
         const filtered = data.data.filter((venue) => venue.maxGuests >= guests);
-
         setFilteredVenues(filtered);
       } catch (err) {
         if (err.name === "AbortError") {
