@@ -16,6 +16,7 @@ import ProfilePage from "./paths/Profile/index.jsx";
 import EditVenuePage from "./paths/EditVenuePage";
 import CheckoutPage from "./paths/CheckoutPage/index.jsx";
 import SuccessPage from "./paths/Success/index.jsx";
+import SearchPage from "./paths/SearchPage/index.jsx";
 
 const router = createBrowserRouter([
   {
@@ -29,6 +30,10 @@ const router = createBrowserRouter([
       {
         path: "venue/:id",
         element: <VenuePage />,
+      },
+      {
+        path: "search",
+        element: <SearchPage />,
       },
       {
         path: "register",
