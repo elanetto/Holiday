@@ -5,46 +5,46 @@ export const UserProvider = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [avatar, setAvatar] = useState("");
   const [name, setName] = useState("");
-  const [isAdmin, setIsAdmin] = useState(false);
+  const [isVenueManager, setIsVenueManager] = useState(false);
   const [apiKey, setApiKey] = useState("");
 
   useEffect(() => {
     const token = localStorage.getItem("token");
     const avatarData = localStorage.getItem("avatar");
+    const nameData = localStorage.getItem("name");
+    const venueManagerFlag = localStorage.getItem("isVenueManager") === "true";
+    const storedApiKey = localStorage.getItem("apiKey");
+
     let parsedAvatar = "";
-  
+
     try {
       parsedAvatar = avatarData ? JSON.parse(avatarData) : "";
     } catch {
-      parsedAvatar = avatarData; // fallback to string if not JSON
+      parsedAvatar = avatarData; // fallback if not JSON
     }
-  
-    const nameData = localStorage.getItem("name");
-    const adminFlag = localStorage.getItem("isAdmin") === "true";
-    const storedApiKey = localStorage.getItem("apiKey");
-  
+
     if (token) {
       setIsLoggedIn(true);
       setAvatar(parsedAvatar?.url || parsedAvatar || "");
       setName(nameData || "");
-      setIsAdmin(adminFlag);
+      setIsVenueManager(venueManagerFlag);
       setApiKey(storedApiKey || "");
     }
   }, []);
-  
 
-  const loginUser = (user) => {
-    localStorage.setItem("token", user.token);
-    localStorage.setItem("avatar", JSON.stringify(user.avatar));
-    localStorage.setItem("name", user.name);
-    localStorage.setItem("isAdmin", user.isAdmin);
-    localStorage.setItem("apiKey", user.apiKey);
+  const loginUser = ({ token, name, email, avatar, isVenueManager, apiKey }) => {
+    localStorage.setItem("token", token);
+    localStorage.setItem("name", name);
+    localStorage.setItem("email", email);
+    localStorage.setItem("avatar", JSON.stringify(avatar));
+    localStorage.setItem("isVenueManager", isVenueManager);
+    if (apiKey) localStorage.setItem("apiKey", apiKey);
 
     setIsLoggedIn(true);
-    setAvatar(user.avatar?.url || user.avatar || "");
-    setName(user.name || "");
-    setIsAdmin(!!user.isAdmin);
-    setApiKey(user.apiKey || "");
+    setName(name);
+    setAvatar(avatar?.url || avatar || "");
+    setIsVenueManager(!!isVenueManager);
+    setApiKey(apiKey || "");
   };
 
   const logoutUser = () => {
@@ -52,7 +52,7 @@ export const UserProvider = ({ children }) => {
     setIsLoggedIn(false);
     setAvatar("");
     setName("");
-    setIsAdmin(false);
+    setIsVenueManager(false);
     setApiKey("");
   };
 
@@ -60,9 +60,9 @@ export const UserProvider = ({ children }) => {
     <UserContext.Provider
       value={{
         isLoggedIn,
-        avatar,
         name,
-        isAdmin,
+        avatar,
+        isVenueManager,
         apiKey,
         loginUser,
         logoutUser,
