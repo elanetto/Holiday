@@ -6,6 +6,7 @@ import { ENDPOINTS } from "./utilities/constants";
 import { SearchBar } from "./components/SearchBar";
 import backgroundImage from "./assets/background/travel-street.jpg";
 import { LiaMapMarkedAltSolid } from "react-icons/lia";
+import { FaArrowRightLong } from "react-icons/fa6";
 
 // Blog card background images
 import uniqueVenuesImage from "./assets/background/travel-ancient-gate.jpg";
@@ -154,13 +155,16 @@ function App() {
                 <LiaMapMarkedAltSolid />
               </div>
               <div className="flex-1">
-                <h2 className="text-4xl sm:text-sky-300xl font-bold text-espressoy italiana-regular">
+                <h2 className="text-3xl sm:text-4xl font-bold text-espressoy font-ledger">
                   Host venues for free
                 </h2>
-                <p>Become a venue manager today</p>
+                <span className="flex gap-2 items-center">
+                  <FaArrowRightLong />{" "}
+                  <p className="italic"> Become a venue manager today</p>
+                </span>
               </div>
               <Link
-                to="/signup"
+                to="/register"
                 className="bg-espressoy text-white px-6 py-2 rounded-xl hover:bg-orangey transition"
               >
                 Register

@@ -60,64 +60,65 @@ export function Header() {
   }, []);
 
   return (
-    <header className="bg-creamy w-full px-4 py-4 sm:px-8 sm:py-6 flex items-center justify-between">
-      
-      {/* Logo */}
-      <button
-        onClick={handleLogoClick}
-        onMouseEnter={() => setLogoSrc(logoOrange)}
-        onMouseLeave={() => setLogoSrc(logoYellow)}
-        className="focus:outline-none cursor-pointer transition"
-      >
-        <img src={logoSrc} alt="Logo for Holidaze" className="h-5 sm:h-7" />
-      </button>
-
-      {/* User section: Search icon + Avatar + Dropdown */}
-      <div className="flex items-center gap-4 relative" ref={dropdownRef}>
-        {/* 🔍 Search Icon */}
+    <header className="w-full">
+      <div className="max-w-7xl mx-auto px-4 sm:px-8 py-4 sm:py-6 flex items-center justify-between">
+        {/* Logo */}
         <button
-          onClick={() => navigate("/search")}
-          className="text-xl sm:text-2xl text-sunny hover:text-orangey transition"
-          aria-label="Go to search page"
+          onClick={handleLogoClick}
+          onMouseEnter={() => setLogoSrc(logoOrange)}
+          onMouseLeave={() => setLogoSrc(logoYellow)}
+          className="focus:outline-none cursor-pointer transition"
         >
-          <FaSearch />
+          <img src={logoSrc} alt="Logo for Holidaze" className="h-5 sm:h-7" />
         </button>
 
-        {/* 👤 Avatar */}
-        <div
-          onClick={() =>
-            isLoggedIn ? setShowDropdown((prev) => !prev) : navigate("/login")
-          }
-          className="cursor-pointer"
-        >
-          {renderUserIcon()}
-        </div>
-
-        {/* Dropdown Menu */}
-        {isLoggedIn && (
-          <div
-            className={`absolute right-0 top-12 sm:top-14 w-40 bg-white border border-espressoy rounded shadow-md text-sm z-50 transform transition-all duration-300 ease-out origin-top-right cursor-pointer ${
-              showDropdown
-                ? "opacity-100 scale-100 translate-y-0"
-                : "opacity-0 scale-95 -translate-y-2 pointer-events-none"
-            }`}
+        {/* User section: Search icon + Avatar + Dropdown */}
+        <div className="flex items-center gap-4 relative" ref={dropdownRef}>
+          {/* 🔍 Search Icon */}
+          <button
+            onClick={() => navigate("/search")}
+            className="text-xl sm:text-2xl text-sunny hover:text-orangey transition"
+            aria-label="Go to search page"
           >
-            <Link
-              to={`/account/${encodeURIComponent(userName)}`}
-              className="block px-4 py-2 hover:bg-creamy transition-colors cursor-pointer"
-              onClick={() => setShowDropdown(false)}
-            >
-              My Account
-            </Link>
+            <FaSearch />
+          </button>
 
-            <button
-              onClick={handleLogout}
-              className="w-full text-left px-4 py-2 hover:bg-creamy text-error transition-colors cursor-pointer"
-            >
-              Logout
-            </button>
+          {/* 👤 Avatar */}
+          <div
+            onClick={() =>
+              isLoggedIn ? setShowDropdown((prev) => !prev) : navigate("/login")
+            }
+            className="cursor-pointer"
+          >
+            {renderUserIcon()}
           </div>
-        )}
+
+          {/* Dropdown Menu */}
+          {isLoggedIn && (
+            <div
+              className={`absolute right-0 top-12 sm:top-14 w-40 bg-white border border-espressoy rounded shadow-md text-sm z-50 transform transition-all duration-300 ease-out origin-top-right cursor-pointer ${
+                showDropdown
+                  ? "opacity-100 scale-100 translate-y-0"
+                  : "opacity-0 scale-95 -translate-y-2 pointer-events-none"
+              }`}
+            >
+              <Link
+                to={`/account/${encodeURIComponent(userName)}`}
+                className="block px-4 py-2 hover:bg-creamy transition-colors cursor-pointer"
+                onClick={() => setShowDropdown(false)}
+              >
+                My Account
+              </Link>
+
+              <button
+                onClick={handleLogout}
+                className="w-full text-left px-4 py-2 hover:bg-creamy text-error transition-colors cursor-pointer"
+              >
+                Logout
+              </button>
+            </div>
+          )}
+        </div>
       </div>
     </header>
   );
