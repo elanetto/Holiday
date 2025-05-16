@@ -20,8 +20,6 @@ export default function RegisterForm() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [avatar, setAvatar] = useState("");
-  const [role, setRole] = useState("customer");
-  const [adminPass, setAdminPass] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState({});
   const [touched, setTouched] = useState({});
@@ -56,10 +54,6 @@ export default function RegisterForm() {
     if (password !== confirmPassword) {
       newErrors.confirmPassword = "Passwords do not match";
     }
-    const adminPassword = import.meta.env.VITE_ADMIN_PASSWORD || "";
-    if (role === "admin" && adminPass !== adminPassword) {
-      newErrors.adminPass = "Incorrect admin password";
-    }
     return newErrors;
   };
 
@@ -78,7 +72,6 @@ export default function RegisterForm() {
       email: true,
       password: true,
       confirmPassword: true,
-      adminPass: role === "admin",
     });
 
     if (Object.keys(validationErrors).length) {
@@ -95,7 +88,7 @@ export default function RegisterForm() {
           url: selectedAvatar,
           alt: `${username}'s avatar`,
         },
-        venueManager: role === "admin",
+        venueManager: false,
       });
 
       if (response.status === 201) {
@@ -209,40 +202,6 @@ export default function RegisterForm() {
               )}
             </div>
 
-            {/* Role */}
-            <div>
-              <label className="text-sm">Role</label>
-              <select
-                value={role}
-                onChange={(e) => setRole(e.target.value)}
-                className="w-full border p-2 rounded focus:outline-none border-espressoy"
-              >
-                <option value="customer">Customer</option>
-                <option value="admin">Admin</option>
-              </select>
-            </div>
-
-            {/* Admin password */}
-            {role === "admin" && (
-              <div>
-                <label className="text-sm">Admin Register Password *</label>
-                <input
-                  type="password"
-                  value={adminPass}
-                  onChange={(e) => setAdminPass(e.target.value)}
-                  onBlur={() => handleBlur("adminPass")}
-                  className={`w-full border p-2 rounded focus:outline-none transition-colors duration-300 ${
-                    touched.adminPass && errors.adminPass
-                      ? "border-error shake"
-                      : "border-espressoy"
-                  }`}
-                />
-                {touched.adminPass && errors.adminPass && (
-                  <p className="text-error text-sm">{errors.adminPass}</p>
-                )}
-              </div>
-            )}
-
             {errors.form && <p className="text-error text-sm">{errors.form}</p>}
           </form>
         </div>
@@ -260,7 +219,6 @@ export default function RegisterForm() {
               />
             </div>
 
-            {/* Avatar Preview */}
             <div className="mt-4">
               <div className="mx-auto w-42 h-42 rounded-full border-2 border-espressoy overflow-hidden mb-2">
                 <img
@@ -272,7 +230,6 @@ export default function RegisterForm() {
                 />
               </div>
 
-              {/* Preset Avatar Options */}
               <div className="flex justify-center gap-2">
                 {presetAvatars.map((url, index) => (
                   <button
@@ -298,10 +255,10 @@ export default function RegisterForm() {
 
           <div className="mt-8 text-left">
             <p className="text-sm mb-4">
-              <strong>Important:</strong> Your{" "}
+              <strong>Important:</strong> Your
               <span className="font-semibold text-error">
                 username, email, and password
-              </span>{" "}
+              </span>
               cannot be changed later. Please double-check them before signing
               up.
             </p>
@@ -315,7 +272,7 @@ export default function RegisterForm() {
             </button>
 
             <p className="text-sm mt-4">
-              Already a member?{" "}
+              Already a member?
               <Link
                 to="/login"
                 className="text-goldy underline hover:text-espressoy"

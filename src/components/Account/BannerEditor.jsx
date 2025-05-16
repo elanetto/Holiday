@@ -111,7 +111,7 @@ export default function BannerEditor() {
       <input
         type="text"
         placeholder="Paste custom banner URL"
-        className="w-full border p-2 rounded focus:outline-none border-espressoy"
+        className="w-full border p-2 bg-white rounded focus:outline-none border-espressoy"
         value={customUrl}
         onChange={(e) => setCustomUrl(e.target.value)}
       />

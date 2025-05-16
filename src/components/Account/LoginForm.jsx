@@ -89,8 +89,8 @@ export default function LoginForm() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-creamy text-center">
-      <div className="bg-white p-8 rounded-t-3xl w-full max-w-md">
+    <div className="flex justify-center text-center mt-10 sm:mt-16">
+      <div className="bg-creamy p-8 rounded-3xl w-full max-w-md text-center">
         <h1 className="text-2xl font-bold text-espressoy mb-2">LOG IN</h1>
 
         <form onSubmit={handleLogin} className="space-y-4 text-left">
@@ -102,7 +102,7 @@ export default function LoginForm() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               onBlur={() => handleBlur("email")}
-              className={`w-full border p-2 rounded focus:outline-none transition-colors duration-300 ${
+              className={`w-full bg-white border p-2 rounded focus:outline-none transition-colors duration-300 ${
                 touched.email && errors.email
                   ? "border-error shake"
                   : "border-espressoy"
@@ -122,7 +122,7 @@ export default function LoginForm() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 onBlur={() => handleBlur("password")}
-                className={`w-full border p-2 pr-10 rounded focus:outline-none transition-colors duration-300 ${
+                className={`w-full border bg-white p-2 pr-10 rounded focus:outline-none transition-colors duration-300 ${
                   touched.password && errors.password
                     ? "border-error shake"
                     : "border-espressoy"

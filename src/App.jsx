@@ -7,6 +7,7 @@ import { SearchBar } from "./components/SearchBar";
 import backgroundImage from "./assets/background/travel-street.jpg";
 import { LiaMapMarkedAltSolid } from "react-icons/lia";
 import { FaArrowRightLong } from "react-icons/fa6";
+import { useUser } from "./contexts/useUser";
 
 // Blog card background images
 import uniqueVenuesImage from "./assets/background/travel-ancient-gate.jpg";
@@ -18,6 +19,7 @@ function App() {
   const [filteredVenues, setFilteredVenues] = useState([]);
   const [searchError, setSearchError] = useState(null);
   const [loading, setLoading] = useState(true);
+  const { isLoggedIn, isAdmin, name } = useUser();
 
   const { searchFilters } = useSearch();
 
@@ -160,8 +162,8 @@ function App() {
           </div>
         )}
 
-        {/* Banner under blog cards (only when no search is active) */}
-        {!isSearchActive && (
+        {!isSearchActive && !isLoggedIn && (
+          // 👇 Default banner for guests
           <div className="mt-14 mb-20 w-full bg-sunny rounded-2xl shadow px-6 py-8">
             <div className="max-w-3xl mx-auto flex flex-col sm:flex-row items-center justify-center gap-10 text-center sm:text-left">
               <div className="text-6xl text-yellow-100">
@@ -181,6 +183,60 @@ function App() {
                 className="bg-espressoy text-white px-6 py-2 rounded-xl hover:bg-orangey transition"
               >
                 Register
+              </Link>
+            </div>
+          </div>
+        )}
+
+        {!isSearchActive && isLoggedIn && !isAdmin && (
+          // 👇 Banner for logged-in non-managers
+          <div className="mt-14 mb-20 w-full bg-sunny rounded-2xl shadow px-6 py-8">
+            <div className="max-w-3xl mx-auto flex flex-col sm:flex-row items-center justify-center gap-10 text-center sm:text-left">
+              <div className="text-6xl text-yellow-100">
+                <LiaMapMarkedAltSolid />
+              </div>
+              <div className="flex-1">
+                <h2 className="text-3xl sm:text-4xl font-bold text-espressoy font-ledger">
+                  Ready to start hosting?
+                </h2>
+                <span className="flex gap-2 items-center">
+                  <FaArrowRightLong />
+                  <p className="italic">Upgrade to a venue manager account</p>
+                </span>
+              </div>
+              <Link
+                to={`/account/${encodeURIComponent(name)}?tab=become`}
+                className="bg-espressoy text-white px-6 py-2 rounded-xl hover:bg-orangey transition"
+              >
+                Become a Manager
+              </Link>
+            </div>
+          </div>
+        )}
+
+        {!isSearchActive && isLoggedIn && isAdmin && (
+          // 👇 Banner for venue managers
+          <div className="mt-14 mb-20 w-full bg-green-200 rounded-2xl shadow px-6 py-8">
+            <div className="max-w-3xl mx-auto flex flex-col sm:flex-row items-center justify-center gap-10 text-center sm:text-left">
+              <div className="text-6xl text-espressoy">
+                <LiaMapMarkedAltSolid />
+              </div>
+              <div className="flex-1">
+                <h2 className="text-3xl sm:text-4xl font-bold text-espressoy font-ledger">
+                  Manage your venues
+                </h2>
+                <span className="flex gap-2 items-center">
+                  <FaArrowRightLong />
+                  <p className="italic">
+                    Keep track of your listings and bookings
+                  </p>
+                </span>
+              </div>
+              <Link
+                to={`/account/${encodeURIComponent(name)}?tab=venues`}
+                className="bg-espressoy text-white px-6 py-2 rounded-xl hover:bg-orangey transition"
+              >
+                Go to Dashboard
               </Link>
             </div>
           </div>

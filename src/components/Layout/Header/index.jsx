@@ -44,7 +44,7 @@ export function Header() {
         <FaCheckCircle className="absolute -bottom-1 -right-1 text-check text-sm" />
       </div>
     ) : (
-      <FaUser className="text-2xl sm:text-3xl" />
+      <FaUser className="text-2xl sm:text-3xl text-sunny hover:text-orangey" />
     );
   };
 
@@ -77,7 +77,7 @@ export function Header() {
           {/* 🔍 Search Icon */}
           <button
             onClick={() => navigate("/search")}
-            className="text-xl sm:text-2xl text-sunny hover:text-orangey transition"
+            className="text-xl cursor-pointer sm:text-2xl text-sunny hover:text-orangey transition"
             aria-label="Go to search page"
           >
             <FaSearch />
@@ -96,7 +96,8 @@ export function Header() {
           {/* Dropdown Menu */}
           {isLoggedIn && (
             <div
-              className={`absolute right-0 top-12 sm:top-14 w-40 bg-white border border-espressoy rounded shadow-md text-sm z-50 transform transition-all duration-300 ease-out origin-top-right cursor-pointer ${
+              className={`absolute right-0 top-12 sm:top-14 w-40 bg-white border border-espressoy rounded shadow-md text-sm z-[10000]
+              transform transition-all duration-300 ease-out origin-top-right cursor-pointer ${
                 showDropdown
                   ? "opacity-100 scale-100 translate-y-0"
                   : "opacity-0 scale-95 -translate-y-2 pointer-events-none"
