@@ -30,12 +30,25 @@ function App() {
     const fetchVenues = async () => {
       setLoading(true);
       const limit = 100;
+      let currentPage = 1;
+      let allVenues = [];
 
       try {
-        const firstPageUrl = `${ENDPOINTS.venues}?limit=${limit}&page=1&sort=created&sortOrder=desc&_owner=true`;
-        const res = await fetch(firstPageUrl, { signal });
-        const data = await res.json();
-        setVenues(data.data);
+        while (true) {
+          const url = `${ENDPOINTS.venues}?limit=${limit}&page=${currentPage}&sort=created&sortOrder=desc&_owner=true`;
+          const res = await fetch(url, { signal });
+          const data = await res.json();
+
+          allVenues = [...allVenues, ...data.data];
+
+          if (data.meta?.isLastPage || data.data.length < limit) {
+            break;
+          }
+
+          currentPage++;
+        }
+
+        setVenues(allVenues);
       } catch (err) {
         if (err.name !== "AbortError") {
           console.error("Error loading venues:", err);
