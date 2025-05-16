@@ -54,6 +54,7 @@ export const SearchBar = () => {
           minDate={new Date()}
           inline={false}
           dateFormat="d MMM"
+          popperClassName="z-[9999]"
         />
       </div>
 
