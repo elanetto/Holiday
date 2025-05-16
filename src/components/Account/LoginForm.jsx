@@ -6,10 +6,14 @@ import { toast } from "react-hot-toast";
 import { ENDPOINTS } from "../../utilities/constants";
 import { useUser } from "../../contexts/useUser";
 import { launchConfetti } from "../../utilities/confetti";
+import { useLocation } from "react-router-dom";
 
 export default function LoginForm() {
   const navigate = useNavigate();
   const { loginUser } = useUser();
+
+  const location = useLocation();
+  const from = location.state?.from?.pathname || `/account/${name}`;
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -80,7 +84,9 @@ export default function LoginForm() {
 
       toast.success("Logged in successfully 🎉");
       launchConfetti();
-      navigate(`/account/${encodeURIComponent(name)}`);
+      navigate(from || `/account/${encodeURIComponent(name)}`, {
+        replace: true,
+      });
     } catch (err) {
       console.error("Login error:", err);
       setFormError("Login failed. Check your email and password.");
@@ -154,7 +160,7 @@ export default function LoginForm() {
           Don’t have an account?{" "}
           <Link
             to="/register"
-            className="text-goldy underline hover:text-espressoy"
+            className="text-orangey underline hover:text-espressoy"
           >
             Sign up
           </Link>
