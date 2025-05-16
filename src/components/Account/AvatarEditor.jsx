@@ -97,7 +97,7 @@ export default function AvatarEditor() {
         <input
           type="text"
           placeholder="Paste custom avatar URL"
-          className="w-full border p-2 rounded focus:outline-none border-espressoy"
+          className="w-full border p-2 rounded focus:outline-none border-espressoy bg-white"
           value={customUrl}
           onChange={(e) => setCustomUrl(e.target.value)}
         />

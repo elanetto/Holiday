@@ -93,7 +93,7 @@ export default function BioEditor() {
         onChange={(e) => setBio(e.target.value)}
         rows={4}
         placeholder="Write something cool about yourself..."
-        className="w-full border border-espressoy rounded p-3 resize-none focus:outline-none"
+        className="w-full border border-espressoy rounded p-3 resize-none focus:outline-none bg-white"
       />
 
       <button

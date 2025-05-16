@@ -35,6 +35,21 @@
   }
 }
 
+@layer utilities {
+  .font-italiana {
+    font-family: "Italiana", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+  }
+
+  .font-ledger {
+    font-family: "Ledger", serif;
+    font-weight: 400;
+    font-style: normal;
+  }
+  
+}
+
 .shake {
   animation: shake 0.3s ease-in-out;
 }

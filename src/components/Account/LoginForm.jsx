@@ -6,10 +6,14 @@ import { toast } from "react-hot-toast";
 import { ENDPOINTS } from "../../utilities/constants";
 import { useUser } from "../../contexts/useUser";
 import { launchConfetti } from "../../utilities/confetti";
+import { useLocation } from "react-router-dom";
 
 export default function LoginForm() {
   const navigate = useNavigate();
   const { loginUser } = useUser();
+
+  const location = useLocation();
+  const from = location.state?.from?.pathname || `/account/${name}`;
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -57,17 +61,6 @@ export default function LoginForm() {
 
       const { accessToken, venueManager, name, avatar } = res.data.data;
 
-      // Save everything in context + localStorage
-      loginUser({
-        token: accessToken,
-        name,
-        email,
-        isAdmin: venueManager,
-        avatar: avatar?.url,
-      });
-
-      localStorage.setItem("isAdmin", venueManager);
-
       const apiRes = await axios.post(
         ENDPOINTS.api_key,
         {},
@@ -77,11 +70,23 @@ export default function LoginForm() {
           },
         }
       );
-      localStorage.setItem("apiKey", apiRes.data.data.key);
+
+      const apiKey = apiRes.data.data.key;
+
+      loginUser({
+        token: accessToken,
+        name,
+        email,
+        isVenueManager: venueManager,
+        avatar: avatar?.url,
+        apiKey,
+      });
 
       toast.success("Logged in successfully 🎉");
       launchConfetti();
-      navigate(`/account/${encodeURIComponent(name)}`);
+      navigate(from || `/account/${encodeURIComponent(name)}`, {
+        replace: true,
+      });
     } catch (err) {
       console.error("Login error:", err);
       setFormError("Login failed. Check your email and password.");
@@ -89,8 +94,8 @@ export default function LoginForm() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-creamy text-center">
-      <div className="bg-white p-8 rounded-t-3xl w-full max-w-md">
+    <div className="flex justify-center text-center mt-10 sm:mt-16">
+      <div className="bg-creamy p-8 rounded-3xl w-full max-w-md text-center">
         <h1 className="text-2xl font-bold text-espressoy mb-2">LOG IN</h1>
 
         <form onSubmit={handleLogin} className="space-y-4 text-left">
@@ -102,7 +107,7 @@ export default function LoginForm() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               onBlur={() => handleBlur("email")}
-              className={`w-full border p-2 rounded focus:outline-none transition-colors duration-300 ${
+              className={`w-full bg-white border p-2 rounded focus:outline-none transition-colors duration-300 ${
                 touched.email && errors.email
                   ? "border-error shake"
                   : "border-espressoy"
@@ -122,7 +127,7 @@ export default function LoginForm() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 onBlur={() => handleBlur("password")}
-                className={`w-full border p-2 pr-10 rounded focus:outline-none transition-colors duration-300 ${
+                className={`w-full border bg-white p-2 pr-10 rounded focus:outline-none transition-colors duration-300 ${
                   touched.password && errors.password
                     ? "border-error shake"
                     : "border-espressoy"
@@ -155,7 +160,7 @@ export default function LoginForm() {
           Don’t have an account?{" "}
           <Link
             to="/register"
-            className="text-goldy underline hover:text-espressoy"
+            className="text-orangey underline hover:text-espressoy"
           >
             Sign up
           </Link>

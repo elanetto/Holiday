@@ -9,7 +9,8 @@ import {
 import VenueCard from "../../../../components/VenueCard";
 
 const ProfileTab = () => {
-  const { username } = useParams();
+  const params = useParams();
+  const username = params.username || localStorage.getItem("name");
   const [profile, setProfile] = useState(null);
   const [venues, setVenues] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -45,7 +46,7 @@ const ProfileTab = () => {
         ]);
 
         setProfile(profileRes.data.data);
-        setVenues(userVenuesRes.data.data || []); // 🛡
+        setVenues(userVenuesRes.data.data || []);
       } catch (error) {
         console.error(error);
         setError("Could not load profile or venues. Please try again later.");
