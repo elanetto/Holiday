@@ -24,10 +24,10 @@ function App() {
   const isSearchActive = !!searchFilters?.location || searchFilters?.guests > 1;
 
   useEffect(() => {
-    const fetchVenues = async () => {
-      const controller = new AbortController();
-      const signal = controller.signal;
+    const controller = new AbortController();
+    const signal = controller.signal;
 
+    const fetchVenues = async () => {
       setLoading(true);
       const limit = 100;
 
@@ -43,11 +43,11 @@ function App() {
       } finally {
         setLoading(false);
       }
-
-      return () => controller.abort();
     };
 
     fetchVenues();
+
+    return () => controller.abort();
   }, []);
 
   useEffect(() => {
@@ -118,7 +118,7 @@ function App() {
         {/* Search area with background */}
         <div
           style={background}
-          className="h-80 w-full flex items-center justify-center rounded-2xl shadow"
+          className="h-80 w-full flex items-center justify-center rounded-2xl shadow relative z-50"
         >
           <SearchBar />
         </div>
@@ -159,8 +159,8 @@ function App() {
                   Host venues for free
                 </h2>
                 <span className="flex gap-2 items-center">
-                  <FaArrowRightLong />{" "}
-                  <p className="italic"> Become a venue manager today</p>
+                  <FaArrowRightLong />
+                  <p className="italic">Become a venue manager today</p>
                 </span>
               </div>
               <Link
