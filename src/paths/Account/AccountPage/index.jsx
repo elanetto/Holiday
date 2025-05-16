@@ -12,6 +12,7 @@ import axios from "axios";
 import { ENDPOINTS } from "../../../utilities/constants";
 import { Menu, X } from "lucide-react";
 import { useSearchParams } from "react-router-dom";
+import { toast } from "react-hot-toast";
 
 const AccountPage = () => {
   const { username } = useParams();
@@ -20,8 +21,15 @@ const AccountPage = () => {
     useUser();
 
   const [searchParams] = useSearchParams();
-  const initialTab = searchParams.get("tab") || "profile";
-  const [activeTab, setActiveTab] = useState(initialTab);
+  const [activeTab, setActiveTab] = useState(
+    searchParams.get("tab") || "profile"
+  );
+
+  useEffect(() => {
+    const tab = searchParams.get("tab");
+    if (tab) setActiveTab(tab);
+  }, [searchParams]);
+
   const [becomingManager, setBecomingManager] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -56,9 +64,12 @@ const AccountPage = () => {
         avatar,
       });
 
+      toast.success("You are now a venue manager! 🏡✨");
+
       navigate(`/account/${name}?tab=venues`, { replace: true });
     } catch (error) {
       console.error("Failed to become venue manager:", error);
+      toast.error("Failed to become venue manager. Please try again.");
     } finally {
       setBecomingManager(false);
     }
@@ -146,7 +157,7 @@ const AccountPage = () => {
                 <button
                   key={tab.key}
                   onClick={() => {
-                    setActiveTab(tab.key);
+                    navigate(`?tab=${tab.key}`);
                     setMobileMenuOpen(false);
                   }}
                   className={`py-2 font-semibold ${
@@ -164,12 +175,13 @@ const AccountPage = () => {
           {tabs.map((tab) => (
             <button
               key={tab.key}
-              className={`py-2 px-4 font-semibold ${
-                activeTab === tab.key
-                  ? "text-orangey border-b-2 border-orangey"
-                  : ""
+              onClick={() => {
+                navigate(`?tab=${tab.key}`);
+                setMobileMenuOpen(false);
+              }}
+              className={`py-2 font-semibold ${
+                activeTab === tab.key ? "text-orangey" : ""
               }`}
-              onClick={() => setActiveTab(tab.key)}
             >
               {tab.label}
             </button>
