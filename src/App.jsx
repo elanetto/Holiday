@@ -19,7 +19,7 @@ function App() {
   const [filteredVenues, setFilteredVenues] = useState([]);
   const [searchError, setSearchError] = useState(null);
   const [loading, setLoading] = useState(true);
-  const { isLoggedIn, isAdmin, name } = useUser();
+  const { isLoggedIn, isVenueManager, name } = useUser();
 
   const { searchFilters } = useSearch();
 
@@ -188,7 +188,7 @@ function App() {
           </div>
         )}
 
-        {!isSearchActive && isLoggedIn && !isAdmin && (
+        {!isSearchActive && isLoggedIn && !isVenueManager && (
           // 👇 Banner for logged-in non-managers
           <div className="mt-14 mb-20 w-full bg-sunny rounded-2xl shadow px-6 py-8">
             <div className="max-w-3xl mx-auto flex flex-col sm:flex-row items-center justify-center gap-10 text-center sm:text-left">
@@ -214,7 +214,7 @@ function App() {
           </div>
         )}
 
-        {!isSearchActive && isLoggedIn && isAdmin && (
+        {!isSearchActive && isLoggedIn && isVenueManager && (
           // 👇 Banner for venue managers
           <div className="mt-14 mb-20 w-full bg-green-200 rounded-2xl shadow px-6 py-8">
             <div className="max-w-3xl mx-auto flex flex-col sm:flex-row items-center justify-center gap-10 text-center sm:text-left">

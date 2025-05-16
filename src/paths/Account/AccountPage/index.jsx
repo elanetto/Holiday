@@ -16,7 +16,9 @@ import { useSearchParams } from "react-router-dom";
 const AccountPage = () => {
   const { username } = useParams();
   const navigate = useNavigate();
-  const { isLoggedIn, name, avatar, isAdmin } = useUser();
+  const { isLoggedIn, name, email, avatar, loginUser, isVenueManager } =
+    useUser();
+
   const [searchParams] = useSearchParams();
   const initialTab = searchParams.get("tab") || "profile";
   const [activeTab, setActiveTab] = useState(initialTab);
@@ -46,8 +48,15 @@ const AccountPage = () => {
         }
       );
 
-      localStorage.setItem("isAdmin", true);
-      window.location.reload();
+      loginUser({
+        token,
+        name,
+        email,
+        isVenueManager: true,
+        avatar,
+      });
+
+      navigate(`/account/${name}?tab=venues`, { replace: true });
     } catch (error) {
       console.error("Failed to become venue manager:", error);
     } finally {
@@ -60,10 +69,11 @@ const AccountPage = () => {
       case "profile":
         return (
           <>
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-bold">My Profile</h2>
+            <div className="flex flex-col justify-center items-center sm:flex-row sm:justify-between sm:items-center gap-2 mb-4 text-left">
               <ShareProfileLink />
+              <h2 className="text-xl font-bold text-espressoy">My Profile</h2>
             </div>
+
             <ProfileTab name={name} avatar={avatar} />
           </>
         );
@@ -74,9 +84,9 @@ const AccountPage = () => {
       case "history":
         return isLoggedIn ? <BookingHistoryTab /> : null;
       case "venues":
-        return isAdmin ? <MyVenuesList /> : null;
+        return isVenueManager ? <MyVenuesList /> : null;
       case "new":
-        return isAdmin ? <VenueForm mode="create" /> : null;
+        return isVenueManager ? <VenueForm mode="create" /> : null;
       case "become":
         return (
           <div className="text-center p-8">
@@ -104,10 +114,10 @@ const AccountPage = () => {
           { key: "edit", label: "Edit" },
           { key: "bookings", label: "My Bookings" },
           { key: "history", label: "Booking History" },
-          !isAdmin && { key: "become", label: "Become a Venue Manager" },
+          !isVenueManager && { key: "become", label: "Become a Venue Manager" },
         ].filter(Boolean)
       : []),
-    ...(isAdmin
+    ...(isVenueManager
       ? [
           { key: "venues", label: "My Venues" },
           { key: "new", label: "Add New Venue" },

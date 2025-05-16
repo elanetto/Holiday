@@ -57,17 +57,6 @@ export default function LoginForm() {
 
       const { accessToken, venueManager, name, avatar } = res.data.data;
 
-      // Save everything in context + localStorage
-      loginUser({
-        token: accessToken,
-        name,
-        email,
-        isAdmin: venueManager,
-        avatar: avatar?.url,
-      });
-
-      localStorage.setItem("isAdmin", venueManager);
-
       const apiRes = await axios.post(
         ENDPOINTS.api_key,
         {},
@@ -77,7 +66,17 @@ export default function LoginForm() {
           },
         }
       );
-      localStorage.setItem("apiKey", apiRes.data.data.key);
+
+      const apiKey = apiRes.data.data.key;
+
+      loginUser({
+        token: accessToken,
+        name,
+        email,
+        isVenueManager: venueManager,
+        avatar: avatar?.url,
+        apiKey,
+      });
 
       toast.success("Logged in successfully 🎉");
       launchConfetti();
