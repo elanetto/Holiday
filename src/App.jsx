@@ -1,9 +1,16 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import VenueList from "./components/VenueList";
 import { useSearch } from "./contexts/useSearch";
 import { ENDPOINTS } from "./utilities/constants";
 import { SearchBar } from "./components/SearchBar";
 import backgroundImage from "./assets/background/travel-street.jpg";
+import { LiaMapMarkedAltSolid } from "react-icons/lia";
+
+// Blog card background images
+import uniqueVenuesImage from "./assets/background/travel-ancient-gate.jpg";
+import sunnyResortsImage from "./assets/background/travel-greece.jpg";
+import cityLivingImage from "./assets/background/travel_cliff.jpg";
 
 function App() {
   const [venues, setVenues] = useState([]);
@@ -13,49 +20,30 @@ function App() {
 
   const { searchFilters } = useSearch();
 
+  const isSearchActive = !!searchFilters?.location || searchFilters?.guests > 1;
+
   useEffect(() => {
     const fetchVenues = async () => {
+      const controller = new AbortController();
+      const signal = controller.signal;
+
       setLoading(true);
-      let firstBatch = [];
-      let restBatch = [];
       const limit = 100;
 
       try {
-        // Fetch initial batch (fast!)
         const firstPageUrl = `${ENDPOINTS.venues}?limit=${limit}&page=1&sort=created&sortOrder=desc&_owner=true`;
-        const res = await fetch(firstPageUrl);
+        const res = await fetch(firstPageUrl, { signal });
         const data = await res.json();
-        firstBatch = data.data;
-        setVenues(firstBatch);
-        setFilteredVenues(firstBatch);
-
-        // Fetch the rest in the background
-        let currentPage = 2;
-        let hasNextPage = data.meta?.isLastPage === false;
-
-        const fetchRest = async () => {
-          while (hasNextPage) {
-            const nextPageUrl = `${ENDPOINTS.venues}?limit=${limit}&page=${currentPage}&sort=created&sortOrder=desc&_owner=true`;
-            const res = await fetch(nextPageUrl);
-            const data = await res.json();
-
-            restBatch = [...restBatch, ...data.data];
-            setVenues((prev) => [...prev, ...data.data]);
-            setFilteredVenues((prev) => [...prev, ...data.data]);
-
-            hasNextPage = data.meta?.isLastPage === false;
-            currentPage++;
-          }
-        };
-
-        fetchRest().catch((err) => {
-          console.error("Error fetching additional venues:", err);
-        });
+        setVenues(data.data);
       } catch (err) {
-        console.error("Error loading venues:", err);
+        if (err.name !== "AbortError") {
+          console.error("Error loading venues:", err);
+        }
       } finally {
         setLoading(false);
       }
+
+      return () => controller.abort();
     };
 
     fetchVenues();
@@ -69,9 +57,8 @@ function App() {
       setSearchError(null);
       const { location = "", guests = 1 } = searchFilters || {};
 
-      // 🛑 Don't refetch if location is empty and venues haven't changed
       if (!location) {
-        setFilteredVenues(venues.length > 0 ? venues : []);
+        setFilteredVenues([]);
         return;
       }
 
@@ -83,19 +70,15 @@ function App() {
         if (!res.ok) throw new Error("Search request failed");
 
         const data = await res.json();
-
         const filtered = data.data.filter((venue) => venue.maxGuests >= guests);
-
         setFilteredVenues(filtered);
       } catch (err) {
-        if (err.name === "AbortError") {
-          console.log("Search request aborted");
-          return;
+        if (err.name !== "AbortError") {
+          console.error("Error searching venues:", err);
+          setSearchError(
+            "An error occurred while searching for venues. Please try again."
+          );
         }
-        console.error("Error searching venues:", err);
-        setSearchError(
-          "An error occurred while searching for venues. Please try again."
-        );
       }
     };
 
@@ -110,9 +93,28 @@ function App() {
     backgroundPosition: "center",
   };
 
+  const blogCards = [
+    {
+      title: "Unique Venues",
+      image: uniqueVenuesImage,
+      link: "/blog/unique-venues",
+    },
+    {
+      title: "Sunny Resorts",
+      image: sunnyResortsImage,
+      link: "/blog/sunny-resorts",
+    },
+    {
+      title: "City Living",
+      image: cityLivingImage,
+      link: "/blog/city-living",
+    },
+  ];
+
   return (
     <div className="min-h-screen w-full">
       <div className="max-w-7xl mx-auto px-4 py-6">
+        {/* Search area with background */}
         <div
           style={background}
           className="h-80 w-full flex items-center justify-center rounded-2xl shadow"
@@ -120,32 +122,74 @@ function App() {
           <SearchBar />
         </div>
 
-        <div className="max-w-7xl mx-auto px-4 py-6">
-          {loading ? (
-            <p className="text-center mt-10">Loading venues...</p>
-          ) : (
-            <>
-              {searchError && (
-                <p className="text-red-500 text-center mb-4">{searchError}</p>
-              )}
+        {/* Show blog cards when no search is active */}
+        {!isSearchActive && (
+          <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+            {blogCards.map((card) => (
+              <Link
+                to={card.link}
+                key={card.title}
+                className="relative rounded-2xl overflow-hidden shadow-lg group h-60 hover:scale-105 transition-transform"
+              >
+                <img
+                  src={card.image}
+                  alt={card.title}
+                  className="absolute inset-0 w-full h-full object-cover z-0"
+                />
+                <div className="absolute inset-0 bg-black/30 z-10 flex items-center justify-center">
+                  <h3 className="text-white text-xl font-bold group-hover:text-white transition">
+                    {card.title}
+                  </h3>
+                </div>
+              </Link>
+            ))}
+          </div>
+        )}
 
-              {searchFilters?.location || searchFilters?.guests > 1 ? (
+        {/* Banner under blog cards (only when no search is active) */}
+        {!isSearchActive && (
+          <div className="mt-14 mb-20 w-full bg-sunny rounded-2xl shadow px-6 py-8">
+            <div className="max-w-3xl mx-auto flex flex-col sm:flex-row items-center justify-center gap-10 text-center sm:text-left">
+              <div className="text-6xl text-yellow-100">
+                <LiaMapMarkedAltSolid />
+              </div>
+              <div className="flex-1">
+                <h2 className="text-4xl sm:text-sky-300xl font-bold text-espressoy italiana-regular">
+                  Host venues for free
+                </h2>
+                <p>Become a venue manager today</p>
+              </div>
+              <Link
+                to="/signup"
+                className="bg-espressoy text-white px-6 py-2 rounded-xl hover:bg-orangey transition"
+              >
+                Register
+              </Link>
+            </div>
+          </div>
+        )}
+
+        {/* Show search results if search is active */}
+        {isSearchActive && (
+          <div className="mt-10">
+            {loading ? (
+              <p className="text-center mt-10">Loading venues...</p>
+            ) : (
+              <>
+                {searchError && (
+                  <p className="text-red-500 text-center mb-4">{searchError}</p>
+                )}
                 <h2 className="text-2xl font-bold text-espressoy mb-4">
                   Search results
                   {searchFilters.location && ` for "${searchFilters.location}"`}
                   {searchFilters.guests > 1 &&
                     ` with at least ${searchFilters.guests} guests`}
                 </h2>
-              ) : (
-                <h2 className="text-2xl font-bold text-espressoy mb-4">
-                  Latest Venues
-                </h2>
-              )}
-
-              <VenueList venues={filteredVenues} />
-            </>
-          )}
-        </div>
+                <VenueList venues={filteredVenues} />
+              </>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );
