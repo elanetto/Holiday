@@ -9,4 +9,4 @@ This project is due to be finished by May 26th.
 Visit the deployed version of the latest [Development branch](https://dev-holiday.onrender.com/)
 
 This verison is not in any way finished yet.
-Let's see how it evolves! 🔥 💃
+Let's see how it evolves! 🔥 💃 🔥
