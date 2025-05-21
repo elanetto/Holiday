@@ -16,6 +16,7 @@
     "canvas-confetti": "^1.9.3",
     "country-flag-icons": "^1.5.18",
     "country-region-data": "^3.1.0",
+    "fuse.js": "^7.1.0",
     "i18n-iso-countries": "^7.14.0",
     "leaflet": "^1.9.4",
     "lucide-react": "^0.511.0",
@@ -31,7 +32,8 @@
     "react-router-dom": "^7.5.0",
     "react-select": "^5.10.1",
     "tailwindcss": "^4.1.4",
-    "world-countries-capitals": "^3.4.0"
+    "world-countries-capitals": "^3.4.0",
+    "zustand": "^5.0.5"
   },
   "devDependencies": {
     "@eslint/js": "^9.21.0",
