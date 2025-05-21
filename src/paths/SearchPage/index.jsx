@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import Fuse from "fuse.js";
 import VenueList from "./../../components/VenueList";
 import { useSearch } from "./../../contexts/useSearch";
@@ -14,6 +14,13 @@ function SearchPage() {
 
   const isSearchActive = !!searchFilters?.location || searchFilters?.guests > 1;
 
+  const fuse = useMemo(() => {
+    return new Fuse(venues, {
+      keys: ["name", "location.city", "location.country"],
+      threshold: 0.4,
+    });
+  }, [venues]);
+
   useEffect(() => {
     if (!isSearchActive) {
       setFilteredVenues(venues);
@@ -23,11 +30,6 @@ function SearchPage() {
     const { location = "", guests = 1 } = searchFilters || {};
 
     try {
-      const fuse = new Fuse(venues, {
-        keys: ["name", "location.city", "location.country"],
-        threshold: 0.4,
-      });
-
       const results = fuse.search(location);
       const matchedVenues = results.map((result) => result.item);
 
@@ -40,7 +42,7 @@ function SearchPage() {
       console.error("Fuzzy search failed:", err);
       setSearchError("An error occurred while searching. Please try again.");
     }
-  }, [searchFilters, venues, isSearchActive]);
+  }, [searchFilters, venues, isSearchActive, fuse]);
 
   const background = {
     backgroundImage: `url(${backgroundImage})`,
