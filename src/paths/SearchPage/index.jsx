@@ -9,7 +9,8 @@ import { ENDPOINTS } from "./../../utilities/constants";
 
 function SearchPage() {
   const { searchFilters } = useSearch();
-  const { venues, isLoading, setVenues, setLoading } = useVenueStore();
+  const { venues, loading, setVenues, setLoading } = useVenueStore();
+
   const [activeResults, setActiveResults] = useState([]);
 
   const isSearchActive = !!searchFilters?.location || searchFilters?.guests > 1;
@@ -60,7 +61,10 @@ function SearchPage() {
 
   // Always show all venues if search is not active or no filters
   useEffect(() => {
-    if (!searchFilters?.location && (!searchFilters?.guests || searchFilters?.guests <= 1)) {
+    if (
+      !searchFilters?.location &&
+      (!searchFilters?.guests || searchFilters?.guests <= 1)
+    ) {
       setActiveResults(venues);
     } else {
       setActiveResults(fuzzyResults);
@@ -85,7 +89,7 @@ function SearchPage() {
       </div>
 
       <div className="max-w-7xl mx-auto px-4 py-6">
-        {isLoading ? (
+        {loading ? (
           <p className="text-center mt-10">Fetching venues. Please wait...</p>
         ) : (
           <>
