@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react";
-import { useFuzzySearch } from "./../../utilities/useFuzzySearch";
+import { useEffect } from "react";
 import { useSearch } from "./../../contexts/useSearch";
 import { useVenueStore } from "./../../store/useVenueStore";
+import { useFilteredVenues } from "./../../utilities/useFilteredVenues";
 import { SearchBar } from "./../../components/SearchBar";
 import VenueList from "./../../components/VenueList";
 import backgroundImage from "./../../assets/background/travel-street.jpg";
@@ -9,16 +9,8 @@ import { ENDPOINTS } from "./../../utilities/constants";
 
 function SearchPage() {
   const { searchFilters } = useSearch();
-  const { venues, loading, setVenues, setLoading } = useVenueStore();
-
-  const [activeResults, setActiveResults] = useState([]);
-
-  const isSearchActive = !!searchFilters?.location || searchFilters?.guests > 1;
-
-  const { results: fuzzyResults, error: searchError } = useFuzzySearch(
-    venues,
-    searchFilters
-  );
+  const { loading, setVenues, setLoading } = useVenueStore();
+  const { results: activeResults, error: searchError, isSearchActive } = useFilteredVenues();
 
   useEffect(() => {
     const controller = new AbortController();
@@ -58,18 +50,6 @@ function SearchPage() {
     fetchVenues();
     return () => controller.abort();
   }, [setVenues, setLoading]);
-
-  // Always show all venues if search is not active or no filters
-  useEffect(() => {
-    if (
-      !searchFilters?.location &&
-      (!searchFilters?.guests || searchFilters?.guests <= 1)
-    ) {
-      setActiveResults(venues);
-    } else {
-      setActiveResults(fuzzyResults);
-    }
-  }, [searchFilters, venues, fuzzyResults]);
 
   const background = {
     backgroundImage: `url(${backgroundImage})`,

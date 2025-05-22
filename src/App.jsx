@@ -9,7 +9,9 @@ import { useSearch } from "./contexts/useSearch";
 import { ENDPOINTS } from "./utilities/constants";
 import SearchResults from "./components/SearchResults";
 import { useVenueStore } from "./store/useVenueStore";
-import { useFuzzySearch } from "./utilities/useFuzzySearch";
+import { useFilteredVenues } from "./utilities/useFilteredVenues";
+
+
 
 import uniqueVenuesImage from "./assets/background/travel-ancient-gate.jpg";
 import sunnyResortsImage from "./assets/background/travel-greece.jpg";
@@ -18,16 +20,12 @@ import cityLivingImage from "./assets/background/travel_cliff.jpg";
 function App() {
   const { isLoggedIn, isVenueManager, name } = useUser();
   const { searchFilters } = useSearch();
-  const { venues, setVenues } = useVenueStore();
+  const { setVenues } = useVenueStore();
   const [loading, setLoading] = useState(true);
   const { clearSearchFilters } = useSearch();
 
-  const isSearchActive = !!searchFilters?.location || searchFilters?.guests > 1;
+  const { results: filteredVenues, error: searchError, isSearchActive } = useFilteredVenues();
 
-  const { results: filteredVenues, error: searchError } = useFuzzySearch(
-    venues,
-    searchFilters
-  );
 
   useEffect(() => {
     const controller = new AbortController();
