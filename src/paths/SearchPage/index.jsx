@@ -80,7 +80,7 @@ function SearchPage() {
       </div>
 
       <div className="max-w-7xl mx-auto px-4 py-6">
-        <SearchResults />
+        <SearchResults forceShowResults={true} />
       </div>
     </div>
   );
