@@ -1,15 +1,12 @@
 import { useEffect, useRef } from "react";
-import { useSearch } from "../../contexts/useSearch";
 import { useVenueStore } from "../../store/useVenueStore";
-import { useFilteredVenues } from "../../utilities/useFilteredVenues";
 import { SearchBar } from "../../components/SearchBar";
-import VenueList from "../../components/VenueList";
+import SearchResults from "../../components/SearchResults";
 import backgroundImage from "../../assets/background/travel-street.jpg";
 import { ENDPOINTS } from "../../utilities/constants";
 
 function SearchPage() {
-  const { searchFilters } = useSearch();
-  const { setVenues, venues, setLoading, loading } = useVenueStore();
+  const { setVenues, venues, setLoading } = useVenueStore();
   const hasFetchedOnce = useRef(false);
 
   // ✅ Fetch all venues only once (even if filters change)
@@ -65,13 +62,6 @@ function SearchPage() {
     return () => controller.abort();
   }, [setVenues, setLoading, venues]);
 
-  // ✅ Filter venues AFTER fetching
-  const {
-    results: activeResults,
-    error: searchError,
-    isSearchActive,
-  } = useFilteredVenues();
-
   const background = {
     backgroundImage: `url(${backgroundImage})`,
     backgroundSize: "cover",
@@ -90,29 +80,7 @@ function SearchPage() {
       </div>
 
       <div className="max-w-7xl mx-auto px-4 py-6">
-        {loading ? (
-          <p className="text-center mt-10">Fetching venues. Please wait...</p>
-        ) : (
-          <>
-            {searchError && (
-              <p className="text-red-500 text-center mb-4">{searchError}</p>
-            )}
-
-            <h2 className="text-2xl font-bold text-espressoy mb-1">
-              {isSearchActive ? "Search results" : "Latest Venues"}
-              {searchFilters?.location && ` for "${searchFilters.location}"`}
-              {searchFilters?.guests > 1 &&
-                ` with at least ${searchFilters.guests} guests`}
-            </h2>
-
-            <p className="text-sm text-gray-600 mb-4">
-              Showing {activeResults.length} result
-              {activeResults.length !== 1 && "s"}
-            </p>
-
-            <VenueList venues={activeResults} />
-          </>
-        )}
+        <SearchResults />
       </div>
     </div>
   );

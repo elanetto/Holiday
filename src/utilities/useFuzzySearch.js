@@ -26,6 +26,13 @@ export function useFuzzySearch(venues, searchFilters) {
       return;
     }
 
+    if (!Array.isArray(venues)) {
+      const errorMessage = "Invalid input: 'venues' must be an array.";
+      console.error(errorMessage);
+      setError(errorMessage);
+      return { results: [], error: errorMessage };
+    }
+
     const { location = "", guests = 1 } = searchFilters || {};
 
     try {
