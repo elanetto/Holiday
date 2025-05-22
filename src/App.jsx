@@ -1,14 +1,14 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { SearchBar } from "./components/SearchBar";
 import backgroundImage from "./assets/background/travel-street.jpg";
 import { LiaMapMarkedAltSolid } from "react-icons/lia";
 import { FaArrowRightLong } from "react-icons/fa6";
 import { useUser } from "./contexts/useUser";
-import { useSearch } from "./contexts/useSearch";
 import SearchResults from "./components/SearchResults";
 import { useVenueStore } from "./store/useVenueStore";
-import { useFilteredVenues } from "./utilities/useFilteredVenues";
+import { ENDPOINTS } from "./utilities/constants";
+import { useSearch } from "./contexts/useSearch";
 
 import uniqueVenuesImage from "./assets/background/travel-ancient-gate.jpg";
 import sunnyResortsImage from "./assets/background/travel-greece.jpg";
@@ -17,52 +17,56 @@ import cityLivingImage from "./assets/background/travel_cliff.jpg";
 function App() {
   const { isLoggedIn, isVenueManager, name } = useUser();
   const { searchFilters } = useSearch();
-  const { setVenues } = useVenueStore();
-  const [loading, setLoading] = useState(true);
-  const {
-    results: filteredVenues,
-    error: searchError,
-    isSearchActive,
-  } = useFilteredVenues();
+  const { setVenues, venues, setIsLoading } = useVenueStore();
+  const hasFetchedOnce = useRef(false);
+
+  const location = searchFilters?.location || "";
+  const guests = searchFilters?.guests || 1;
+  const isSearchActive = !!location.trim() || guests > 1;
 
   useEffect(() => {
     const controller = new AbortController();
     const signal = controller.signal;
 
     const fetchVenues = async () => {
-      setLoading(true);
+      setIsLoading(true);
       const limit = 100;
       let currentPage = 1;
       let allVenues = [];
 
       try {
         while (true) {
-          const url = `/api/venues?limit=${limit}&page=${currentPage}&sort=created&sortOrder=desc&_owner=true`;
+          const url = `${ENDPOINTS.venues}?limit=${limit}&page=${currentPage}&sort=created&sortOrder=desc&_owner=true`;
           const res = await fetch(url, { signal });
           const data = await res.json();
 
+          if (!Array.isArray(data.data))
+            throw new Error("Unexpected response format");
+
           allVenues = [...allVenues, ...data.data];
 
-          if (data.meta?.isLastPage || data.data.length < limit) {
-            break;
-          }
+          if (data.meta?.isLastPage || data.data.length < limit) break;
 
           currentPage++;
         }
 
         setVenues(allVenues);
+        hasFetchedOnce.current = true;
       } catch (err) {
         if (err.name !== "AbortError") {
           console.error("Error loading venues:", err);
         }
       } finally {
-        setLoading(false);
+        setIsLoading(false);
       }
     };
 
-    fetchVenues();
+    if (!hasFetchedOnce.current && venues.length === 0) {
+      fetchVenues();
+    }
+
     return () => controller.abort();
-  }, [setVenues]);
+  }, [venues.length, setVenues, setIsLoading]);
 
   const background = {
     backgroundImage: `url(${backgroundImage})`,
@@ -96,12 +100,7 @@ function App() {
 
         {isSearchActive ? (
           <div className="mt-10">
-            <SearchResults
-              venues={filteredVenues}
-              searchFilters={searchFilters}
-              loading={loading}
-              searchError={searchError}
-            />
+            <SearchResults forceShowResults={true} />
           </div>
         ) : (
           <>

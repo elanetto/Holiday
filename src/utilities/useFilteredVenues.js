@@ -4,7 +4,7 @@ import { useSearch } from "../contexts/useSearch";
 import Fuse from "fuse.js";
 
 export function useFilteredVenues({ forceShowResults = false } = {}) {
-  const { venues } = useVenueStore();
+  const { venues, isLoading } = useVenueStore();
   const { searchFilters } = useSearch();
   const [results, setResults] = useState([]);
   const [error, setError] = useState(null);
@@ -14,7 +14,6 @@ export function useFilteredVenues({ forceShowResults = false } = {}) {
 
   const fuse = useMemo(() => {
     if (!Array.isArray(venues)) return null;
-
     return new Fuse(venues, {
       keys: ["name", "location.city", "location.country"],
       threshold: 0.4,
@@ -22,6 +21,8 @@ export function useFilteredVenues({ forceShowResults = false } = {}) {
   }, [venues]);
 
   useEffect(() => {
+    setError(null); // Clear previous errors
+
     if (!Array.isArray(venues)) {
       const errorMessage = "Invalid input: 'venues' must be an array.";
       console.error(errorMessage);
@@ -49,5 +50,7 @@ export function useFilteredVenues({ forceShowResults = false } = {}) {
     }
   }, [venues, fuse, searchFilters, isSearchActive, forceShowResults]);
 
-  return { results, error, isSearchActive };
+  const isReady = !isLoading && Array.isArray(venues) && venues.length > 0;
+
+  return { results, error, isSearchActive, isReady };
 }

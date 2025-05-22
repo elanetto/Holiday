@@ -11,7 +11,8 @@ export function useFuzzySearch(venues, searchFilters) {
   const [results, setResults] = useState([]);
   const [error, setError] = useState(null);
 
-  const isSearchActive = !!searchFilters?.location?.trim() || searchFilters?.guests > 1;
+  const isSearchActive =
+    !!searchFilters?.location?.trim() || searchFilters?.guests > 1;
 
   const fuse = useMemo(() => {
     if (!Array.isArray(venues)) return null;
@@ -23,6 +24,9 @@ export function useFuzzySearch(venues, searchFilters) {
   }, [venues]);
 
   useEffect(() => {
+    // ✅ Reset error on each new run
+    setError(null);
+
     if (!Array.isArray(venues)) {
       const errorMessage = "Invalid input: 'venues' must be an array.";
       console.error(errorMessage);
