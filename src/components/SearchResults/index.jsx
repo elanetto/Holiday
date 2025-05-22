@@ -2,13 +2,18 @@ import { useFilteredVenues } from "../../utilities/useFilteredVenues";
 import { useSearch } from "../../contexts/useSearch";
 import VenueList from "../VenueList";
 
-export default function SearchResults() {
+export default function SearchResults({ forceShowResults = false }) {
   const { searchFilters } = useSearch();
   const location = searchFilters?.location || "";
   const guests = searchFilters?.guests || 1;
   const isSearchActive = !!location.trim() || guests > 1;
 
-  const { results, error } = useFilteredVenues();
+  // 🛠️ FIX: Pass searchFilters into useFilteredVenues!
+  const { results, error } = useFilteredVenues(searchFilters);
+
+  const shouldShowResults = forceShowResults || isSearchActive;
+
+  if (!shouldShowResults) return null;
 
   return (
     <div className="mt-10">

@@ -1,19 +1,29 @@
 import { useEffect, useMemo, useState } from "react";
-import { useVenueStore } from "./../store/useVenueStore";
-import { useSearch } from "./../contexts/useSearch";
+import { useVenueStore } from "../store/useVenueStore";
 import Fuse from "fuse.js";
 
-export function useFilteredVenues() {
+/**
+ * Filters venues using fuzzy search based on the provided searchFilters.
+ * Falls back to returning all venues if no search is active.
+ */
+export function useFilteredVenues(searchFilters) {
   const { venues } = useVenueStore();
-  const { searchFilters } = useSearch();
   const [results, setResults] = useState([]);
   const [error, setError] = useState(null);
 
-  const isSearchActive =
-    !!searchFilters?.location?.trim() || searchFilters?.guests > 1;
+  const location = searchFilters?.location || "";
+  const guests = searchFilters?.guests || 1;
+  const isSearchActive = !!location.trim() || guests > 1;
 
   const fuse = useMemo(() => {
-    if (!Array.isArray(venues)) return null;
+    if (!Array.isArray(venues)) {
+      const errorMessage = "Invalid input: 'venues' must be an array.";
+      console.error(errorMessage);
+      setError(errorMessage);
+      setResults([]);
+      return null;
+    }
+
     return new Fuse(venues, {
       keys: ["name", "location.city", "location.country"],
       threshold: 0.4,
@@ -27,7 +37,6 @@ export function useFilteredVenues() {
         return;
       }
 
-      const { location = "", guests = 1 } = searchFilters || {};
       const matches = fuse.search(location);
       const matchedVenues = matches.map((m) => m.item);
       const filtered = matchedVenues.filter((v) => v.maxGuests >= guests);
@@ -36,7 +45,7 @@ export function useFilteredVenues() {
       console.error("Fuzzy search failed:", err);
       setError("An error occurred while searching. Please try again.");
     }
-  }, [searchFilters, venues, fuse, isSearchActive]);
+  }, [location, guests, venues, fuse, isSearchActive]);
 
   return { results, error, isSearchActive };
 }
