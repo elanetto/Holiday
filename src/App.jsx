@@ -8,22 +8,26 @@ import { useUser } from "./contexts/useUser";
 import { useSearch } from "./contexts/useSearch";
 import { ENDPOINTS } from "./utilities/constants";
 import SearchResults from "./components/SearchResults";
-import Fuse from "fuse.js";
 import { useVenueStore } from "./store/useVenueStore";
+import { useFuzzySearch } from "./utilities/useFuzzySearch";
 
 import uniqueVenuesImage from "./assets/background/travel-ancient-gate.jpg";
 import sunnyResortsImage from "./assets/background/travel-greece.jpg";
 import cityLivingImage from "./assets/background/travel_cliff.jpg";
 
 function App() {
-  const [filteredVenues, setFilteredVenues] = useState([]);
-  const [searchError, setSearchError] = useState(null);
-  const [loading, setLoading] = useState(true);
   const { isLoggedIn, isVenueManager, name } = useUser();
   const { searchFilters } = useSearch();
   const { venues, setVenues } = useVenueStore();
+  const [loading, setLoading] = useState(true);
+  const { clearSearchFilters } = useSearch();
 
   const isSearchActive = !!searchFilters?.location || searchFilters?.guests > 1;
+
+  const { results: filteredVenues, error: searchError } = useFuzzySearch(
+    venues,
+    searchFilters
+  );
 
   useEffect(() => {
     const controller = new AbortController();
@@ -66,37 +70,9 @@ function App() {
   }, [setVenues]);
 
   useEffect(() => {
-    const fetchSearchResults = () => {
-      setSearchError(null);
-      const { location = "", guests = 1 } = searchFilters || {};
-
-      if (!location) {
-        setFilteredVenues([]);
-        return;
-      }
-
-      try {
-        const fuse = new Fuse(venues, {
-          keys: ["name", "location.city", "location.country"],
-          threshold: 0.4,
-        });
-
-        const results = fuse.search(location);
-        const matchedVenues = results.map((result) => result.item);
-
-        const filtered = matchedVenues.filter(
-          (venue) => venue.maxGuests >= guests
-        );
-
-        setFilteredVenues(filtered);
-      } catch (err) {
-        console.error("Fuzzy search failed:", err);
-        setSearchError("An error occurred while searching. Please try again.");
-      }
-    };
-
-    fetchSearchResults();
-  }, [searchFilters, venues]);
+    clearSearchFilters();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const background = {
     backgroundImage: `url(${backgroundImage})`,

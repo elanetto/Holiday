@@ -1,5 +1,5 @@
 import { useMemo, useState, useRef, useEffect } from "react";
-import { Link, useNavigate, useLocation } from "react-router-dom";
+import { Link } from "react-router-dom";
 import logoYellow from "../../../assets/SVG/logo_yellow.svg?url";
 import logoOrange from "../../../assets/SVG/logo_orange.svg?url";
 import { useUser } from "../../../contexts/useUser";
@@ -8,20 +8,9 @@ import { FaUser, FaCheckCircle, FaSearch } from "react-icons/fa";
 
 export function Header() {
   const { isLoggedIn, avatar, logoutUser, user } = useUser();
-  const navigate = useNavigate();
   const [showDropdown, setShowDropdown] = useState(false);
   const dropdownRef = useRef(null);
-  const location = useLocation();
-
   const [logoSrc, setLogoSrc] = useState(logoYellow);
-
-  const handleLogoClick = () => {
-    if (location.pathname === "/") {
-      window.location.reload();
-    } else {
-      navigate("/");
-    }
-  };
 
   const userName = useMemo(() => {
     return user?.name || localStorage.getItem("name");
@@ -29,7 +18,6 @@ export function Header() {
 
   const handleLogout = () => {
     logoutUser();
-    navigate("/login");
   };
 
   const renderUserIcon = () => {
@@ -63,35 +51,39 @@ export function Header() {
     <header className="w-full">
       <div className="max-w-7xl mx-auto px-4 sm:px-8 py-4 sm:py-6 flex items-center justify-between">
         {/* Logo */}
-        <button
-          onClick={handleLogoClick}
+        <Link
+          to="/"
           onMouseEnter={() => setLogoSrc(logoOrange)}
           onMouseLeave={() => setLogoSrc(logoYellow)}
           className="focus:outline-none cursor-pointer transition"
         >
           <img src={logoSrc} alt="Logo for Holidaze" className="h-5 sm:h-7" />
-        </button>
+        </Link>
 
         {/* User section: Search icon + Avatar + Dropdown */}
         <div className="flex items-center gap-4 relative" ref={dropdownRef}>
           {/* 🔍 Search Icon */}
-          <button
-            onClick={() => navigate("/search")}
+          <Link
+            to="/search"
             className="text-xl cursor-pointer sm:text-2xl text-sunny hover:text-orangey transition"
             aria-label="Go to search page"
           >
             <FaSearch />
-          </button>
+          </Link>
 
           {/* 👤 Avatar */}
-          <div
-            onClick={() =>
-              isLoggedIn ? setShowDropdown((prev) => !prev) : navigate("/login")
-            }
-            className="cursor-pointer"
-          >
-            {renderUserIcon()}
-          </div>
+          {isLoggedIn ? (
+            <div
+              onClick={() => setShowDropdown((prev) => !prev)}
+              className="cursor-pointer"
+            >
+              {renderUserIcon()}
+            </div>
+          ) : (
+            <Link to="/login" className="cursor-pointer">
+              {renderUserIcon()}
+            </Link>
+          )}
 
           {/* Dropdown Menu */}
           {isLoggedIn && (
