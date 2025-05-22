@@ -1,7 +1,6 @@
 import { useFilteredVenues } from "../../utilities/useFilteredVenues";
 import { useSearch } from "../../contexts/useSearch";
 import VenueList from "../VenueList";
-import { useEffect } from "react";
 
 export default function SearchResults({ forceShowResults = false }) {
   const { searchFilters } = useSearch();
@@ -9,14 +8,7 @@ export default function SearchResults({ forceShowResults = false }) {
   const guests = searchFilters?.guests || 1;
   const isSearchActive = !!location.trim() || guests > 1;
 
-  const { results, error, refilter } = useFilteredVenues({ forceShowResults });
-
-  // ✅ Only call refilter if it exists
-  useEffect(() => {
-    if (typeof refilter === "function") {
-      refilter();
-    }
-  }, [searchFilters, refilter]);
+  const { results, error } = useFilteredVenues({ forceShowResults });
 
   const shouldShowResults = forceShowResults || isSearchActive;
 
