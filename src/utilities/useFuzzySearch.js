@@ -11,11 +11,10 @@ export function useFuzzySearch(venues, searchFilters) {
   const [results, setResults] = useState([]);
   const [error, setError] = useState(null);
 
-  const isSearchActive =
-    !!searchFilters?.location || searchFilters?.guests > 1;
+  const isSearchActive = !!searchFilters?.location || searchFilters?.guests > 1;
 
   const fuse = useMemo(() => {
-    return new Fuse(venues, {
+    return new Fuse(venues || [], {
       keys: ["name", "location.city", "location.country"],
       threshold: 0.4,
     });

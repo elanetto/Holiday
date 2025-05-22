@@ -13,6 +13,7 @@ export function useFilteredVenues() {
     !!searchFilters?.location?.trim() || searchFilters?.guests > 1;
 
   const fuse = useMemo(() => {
+    if (!Array.isArray(venues)) return null;
     return new Fuse(venues, {
       keys: ["name", "location.city", "location.country"],
       threshold: 0.4,
@@ -21,8 +22,8 @@ export function useFilteredVenues() {
 
   useEffect(() => {
     try {
-      if (!isSearchActive) {
-        setResults(venues);
+      if (!isSearchActive || !fuse) {
+        setResults(Array.isArray(venues) ? venues : []);
         return;
       }
 

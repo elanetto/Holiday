@@ -6,12 +6,9 @@ import { LiaMapMarkedAltSolid } from "react-icons/lia";
 import { FaArrowRightLong } from "react-icons/fa6";
 import { useUser } from "./contexts/useUser";
 import { useSearch } from "./contexts/useSearch";
-import { ENDPOINTS } from "./utilities/constants";
 import SearchResults from "./components/SearchResults";
 import { useVenueStore } from "./store/useVenueStore";
 import { useFilteredVenues } from "./utilities/useFilteredVenues";
-
-
 
 import uniqueVenuesImage from "./assets/background/travel-ancient-gate.jpg";
 import sunnyResortsImage from "./assets/background/travel-greece.jpg";
@@ -22,10 +19,11 @@ function App() {
   const { searchFilters } = useSearch();
   const { setVenues } = useVenueStore();
   const [loading, setLoading] = useState(true);
-  const { clearSearchFilters } = useSearch();
-
-  const { results: filteredVenues, error: searchError, isSearchActive } = useFilteredVenues();
-
+  const {
+    results: filteredVenues,
+    error: searchError,
+    isSearchActive,
+  } = useFilteredVenues();
 
   useEffect(() => {
     const controller = new AbortController();
@@ -39,7 +37,7 @@ function App() {
 
       try {
         while (true) {
-          const url = `${ENDPOINTS.venues}?limit=${limit}&page=${currentPage}&sort=created&sortOrder=desc&_owner=true`;
+          const url = `/api/venues?limit=${limit}&page=${currentPage}&sort=created&sortOrder=desc&_owner=true`;
           const res = await fetch(url, { signal });
           const data = await res.json();
 
@@ -63,14 +61,8 @@ function App() {
     };
 
     fetchVenues();
-
     return () => controller.abort();
   }, [setVenues]);
-
-  useEffect(() => {
-    clearSearchFilters();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   const background = {
     backgroundImage: `url(${backgroundImage})`,
