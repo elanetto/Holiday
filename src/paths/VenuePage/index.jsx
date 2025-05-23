@@ -4,7 +4,7 @@ import { ENDPOINTS } from "../../utilities/constants";
 import { Carousel } from "react-responsive-carousel";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import { PLACEHOLDER_VENUE } from "../../utilities/placeholders";
-import { BsCaretLeftFill, BsCaretRightFill } from "react-icons/bs";
+import { BsCaretLeftFill, BsCaretRightFill, BsX } from "react-icons/bs";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import { getCountryCoordinates } from "../../utilities/countryCoordinates";
@@ -14,9 +14,9 @@ const VenuePage = () => {
   const { id } = useParams();
   const [venue, setVenue] = useState(null);
   const [validImages, setValidImages] = useState([]);
-  const navigate = useNavigate();
-
   const [showFullDescription, setShowFullDescription] = useState(false);
+  const [fullscreenIndex, setFullscreenIndex] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchVenue = async () => {
@@ -33,7 +33,6 @@ const VenuePage = () => {
         });
       }
     };
-
     fetchVenue();
   }, [id, navigate]);
 
@@ -58,10 +57,54 @@ const VenuePage = () => {
 
   const markerPosition = getCountryCoordinates(venue.location.country);
 
-  const getTrimmedDescription = (text, limit = 200) => {
-    const words = text?.split(/\s+/);
-    if (!words || words.length <= limit) return text;
-    return words.slice(0, limit).join(" ") + "...";
+  const getTrimmedDescriptionHTML = (html, limit = 200) => {
+    if (!html) return "";
+
+    const tempDiv = document.createElement("div");
+    tempDiv.innerHTML = html;
+    let charCount = 0;
+    let result = "";
+    const tagsStack = [];
+    let firstHeadingSkipped = false;
+
+    const walkNodes = (nodes) => {
+      let localResult = "";
+
+      for (const node of nodes) {
+        if (charCount >= limit) break;
+
+        if (node.nodeType === Node.TEXT_NODE) {
+          const text = node.textContent || "";
+          const remaining = limit - charCount;
+          const toAdd = text.slice(0, remaining);
+          localResult += toAdd;
+          charCount += toAdd.length;
+        } else if (node.nodeType === Node.ELEMENT_NODE) {
+          const tag = node.tagName.toLowerCase();
+
+          // Skip the first heading tag (h1–h6)
+          if (!firstHeadingSkipped && /^h[1-6]$/.test(tag)) {
+            firstHeadingSkipped = true;
+            continue;
+          }
+
+          localResult += `<${tag}>`;
+          tagsStack.push(tag);
+          localResult += walkNodes(node.childNodes);
+          const lastTag = tagsStack.pop();
+          localResult += `</${lastTag}>`;
+        }
+
+        if (charCount >= limit) break;
+      }
+
+      return localResult;
+    };
+
+    result = walkNodes(tempDiv.childNodes);
+    if (charCount >= limit) result += "...";
+
+    return result;
   };
 
   return (
@@ -73,7 +116,7 @@ const VenuePage = () => {
         {venue.name}
       </h1>
 
-      {validImages.length > 1 ? (
+      {validImages.length > 0 && (
         <div className="relative">
           <Carousel
             showThumbs={true}
@@ -83,6 +126,9 @@ const VenuePage = () => {
             swipeable
             emulateTouch
             className="rounded-xl overflow-hidden mb-6"
+            selectedItem={
+              fullscreenIndex !== null ? fullscreenIndex : undefined
+            }
             renderArrowPrev={(onClickHandler, hasPrev, label) =>
               hasPrev && (
                 <button
@@ -109,13 +155,14 @@ const VenuePage = () => {
             }
             renderIndicator={(onClickHandler, isSelected, index, label) => {
               const baseClasses =
-                "inline-block w-3 h-3 mx-1 mb-10 rounded-full cursor-pointer border border-espressoy";
+                "inline-block w-3 h-3 mx-1 rounded-full cursor-pointer border border-white";
               const classes = isSelected
                 ? `${baseClasses} bg-sunny`
                 : `${baseClasses} bg-white`;
               return (
                 <li
                   className={classes}
+                  style={{ position: "relative", top: "-40px", zIndex: 50 }}
                   onClick={onClickHandler}
                   onKeyDown={onClickHandler}
                   value={index}
@@ -128,7 +175,11 @@ const VenuePage = () => {
             }}
           >
             {validImages.map((image, index) => (
-              <div key={index} className="relative">
+              <div
+                key={index}
+                className="relative cursor-pointer"
+                onClick={() => setFullscreenIndex(index)}
+              >
                 <img
                   src={image.url}
                   alt={image.alt || `Image ${index + 1}`}
@@ -142,28 +193,86 @@ const VenuePage = () => {
             ))}
           </Carousel>
         </div>
-      ) : (
-        <div className="mb-6 rounded-xl overflow-hidden">
+      )}
+
+{fullscreenIndex !== null && (
+  <div
+  className="fixed inset-0 bg-black bg-opacity-90 z-50 flex flex-col items-center justify-center p-4"
+  onClick={(e) => {
+    if (e.target === e.currentTarget) {
+      setFullscreenIndex(null);
+    }
+  }}
+>
+  <button
+    onClick={() => setFullscreenIndex(null)}
+    className="absolute top-4 right-4 text-white text-3xl z-50"
+    aria-label="Close fullscreen"
+  >
+    <BsX />
+  </button>
+
+  <div className="relative w-full max-w-4xl">
+    <Carousel
+      selectedItem={fullscreenIndex}
+      showThumbs={false}
+      showStatus={false}
+      infiniteLoop
+      showArrows={true}
+      useKeyboardArrows
+      emulateTouch
+      swipeable
+      className="w-full"
+      onChange={(index) => setFullscreenIndex(index)}
+      renderIndicator={() => null} // hide default indicators
+    >
+      {validImages.map((image, index) => (
+        <div key={index} onClick={(e) => e.stopPropagation()} className="relative">
           <img
-            src={validImages[0]?.url || PLACEHOLDER_VENUE}
-            alt={validImages[0]?.alt || venue.name}
-            className="w-full max-h-[500px] object-cover rounded-xl"
-            onError={(e) => (e.target.src = PLACEHOLDER_VENUE)}
+            src={image.url}
+            alt={image.alt || `Image ${index + 1}`}
+            className="max-h-[80vh] w-full object-contain mx-auto"
           />
-          <div className="bg-white p-3 text-center text-gray-600 italic text-sm">
-            {validImages[0]?.alt || venue.name}
+          <ul className="absolute bottom-16 left-1/2 transform -translate-x-1/2 flex z-50">
+
+            {validImages.map((_, dotIndex) => (
+              <li
+                key={dotIndex}
+                onClick={() => setFullscreenIndex(dotIndex)}
+                className={`w-3 h-3 mx-1 rounded-full border border-white cursor-pointer ${
+                  fullscreenIndex === dotIndex ? "bg-sunny" : "bg-white"
+                }`}
+              />
+            ))}
+          </ul>
+          <div className="text-white text-center text-sm mt-6">
+            {image.alt || `Image ${index + 1}`}
           </div>
         </div>
-      )}
+      ))}
+    </Carousel>
+  </div>
+</div>
+
+)}
+
 
       <div className="space-y-4">
         <h2 className="text-2xl font-bold">Description</h2>
         <div>
-          <p className="text-lg text-gray-800 leading-relaxed whitespace-pre-wrap">
-            {showFullDescription
-              ? venue.description
-              : getTrimmedDescription(venue.description, 200)}
-          </p>
+          {showFullDescription ? (
+            <div
+              className="description-styles"
+              dangerouslySetInnerHTML={{ __html: venue.description }}
+            />
+          ) : (
+            <div
+              className="description-styles"
+              dangerouslySetInnerHTML={{
+                __html: getTrimmedDescriptionHTML(venue.description, 200),
+              }}
+            />
+          )}
 
           {venue.description?.split(" ").length > 200 && (
             <button
@@ -174,6 +283,37 @@ const VenuePage = () => {
             </button>
           )}
         </div>
+
+        {venue.bookings?.length > 0 && (
+          <div className="mt-4">
+            <h2 className="text-xl font-semibold text-espressoy mb-2">
+              Booked Dates
+            </h2>
+            <ul className="text-sm text-gray-700 list-disc list-inside">
+              {venue.bookings.map((booking) => {
+                const from = new Date(booking.dateFrom).toLocaleDateString(
+                  "en-US",
+                  {
+                    month: "short",
+                    day: "numeric",
+                  }
+                );
+                const to = new Date(booking.dateTo).toLocaleDateString(
+                  "en-US",
+                  {
+                    month: "short",
+                    day: "numeric",
+                  }
+                );
+                return (
+                  <li key={booking.id}>
+                    📅 Booked: {from} – {to}
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        )}
 
         <div className="flex gap-4 flex-wrap">
           <span className="px-3 py-1 rounded-full bg-sunny text-white">

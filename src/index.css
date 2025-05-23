@@ -35,6 +35,45 @@
   }
 }
 
+@layer components {
+  .description-styles {
+    max-width: none;
+
+    h1 {
+      font-size: 1.875rem /* text-3xl */;
+      color: var(--color-espressoy);
+      font-weight: bold;
+      margin-top: 1.25rem;
+      margin-bottom: 0.75rem;
+    }
+
+    h2 {
+      font-size: 1.5rem /* text-2xl */;
+      color: var(--color-espressoy);
+      font-weight: bold;
+      margin-top: 1.25rem;
+      margin-bottom: 0.75rem;
+    }
+
+    p {
+      font-size: 1rem /* text-base */;
+      color: #4b5563; /* text-gray-700 */
+      margin-bottom: 1rem;
+    }
+
+    a {
+      color: var(--color-orangey);
+      text-decoration: underline;
+    }
+
+    a:hover {
+      color: var(--color-espressoy);
+    }
+  }
+}
+
+
+
 @layer utilities {
   .font-italiana {
     font-family: "Italiana", sans-serif;

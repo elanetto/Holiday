@@ -9,6 +9,8 @@ import countries from "i18n-iso-countries";
 import enLocale from "i18n-iso-countries/langs/en.json";
 import regionData from "country-region-data/data.json";
 import confetti from "canvas-confetti";
+import RichTextEditor from "./../Forms/RichTextEditor";
+import { BiWindowOpen, BiWindowClose } from "react-icons/bi";
 
 countries.registerLocale(enLocale);
 
@@ -77,6 +79,8 @@ export default function VenueForm({ mode = "create", venue = {} }) {
   const [country, setCountry] = useState(venue?.location?.country || "");
   const [city, setCity] = useState(venue?.location?.city || "");
   const [cityOptions, setCityOptions] = useState([]);
+
+  const [fullscreen, setFullscreen] = useState(false);
 
   const [formData, setFormData] = useState({
     name: venue.name || "",
@@ -289,268 +293,320 @@ export default function VenueForm({ mode = "create", venue = {} }) {
   return (
     <form
       onSubmit={handleSubmit}
-      className="bg-white p-6 rounded-xl max-w-3xl mx-auto shadow space-y-6"
+      className="bg-white p-6 rounded-xl max-w-7xl mx-auto shadow"
     >
-      <h2 className="text-xl font-bold text-espressoy">
+      <h2 className="text-xl font-bold text-espressoy mb-6">
         {mode === "edit" ? "Edit Venue" : "Create New Venue"}
       </h2>
 
-      {/* Name */}
-      <div>
-        <label className="text-sm block">Venue Name *</label>
-        <input
-          type="text"
-          value={formData.name}
-          onChange={(e) => handleChange("name", e.target.value)}
-          onBlur={() => handleBlur("name")}
-          className={getInputClassName(errors.name, touched.name)}
-        />
-        {errors.name && touched.name && (
-          <p className="text-error text-sm">{errors.name}</p>
-        )}
-      </div>
-
-      {/* Description */}
-      <div>
-        <label className="text-sm block">Description *</label>
-        <textarea
-          rows={3}
-          value={formData.description}
-          onChange={(e) => handleChange("description", e.target.value)}
-          onBlur={() => handleBlur("description")}
-          className={getInputClassName(errors.description, touched.description)}
-        />
-        {errors.description && touched.description && (
-          <p className="text-error text-sm">{errors.description}</p>
-        )}
-      </div>
-
-      {/* Price and Guests */}
-      <div className="flex gap-4">
-        <div className="flex-1">
-          <label className="text-sm block">Price per night *</label>
-          <input
-            type="number"
-            value={formData.price}
-            onChange={(e) => handleChange("price", Number(e.target.value))}
-            onBlur={() => handleBlur("price")}
-            className={getInputClassName(errors.price, touched.price)}
-          />
-          {errors.price && touched.price && (
-            <p className="text-error text-sm">{errors.price}</p>
-          )}
-        </div>
-
-        <div className="flex-1">
-          <label className="text-sm block">Max Guests *</label>
-          <input
-            type="number"
-            min={1}
-            max={100}
-            value={formData.maxGuests}
-            onChange={(e) => handleChange("maxGuests", Number(e.target.value))}
-            onBlur={() => handleBlur("maxGuests")}
-            className={getInputClassName(errors.maxGuests, touched.maxGuests)}
-          />
-          {errors.maxGuests && touched.maxGuests && (
-            <p className="text-error text-sm">{errors.maxGuests}</p>
-          )}
-        </div>
-      </div>
-
-      {/* Rating */}
-      <div>
-        <label className="text-sm block">Initial Rating (optional)</label>
-        <Select
-          options={[
-            { value: 0, label: "Unrated" },
-            { value: 1, label: "★☆☆☆☆" },
-            { value: 2, label: "★★☆☆☆" },
-            { value: 3, label: "★★★☆☆" },
-            { value: 4, label: "★★★★☆" },
-            { value: 5, label: "★★★★★" },
-          ]}
-          value={{
-            value: formData.rating,
-            label:
-              "★".repeat(formData.rating) + "☆".repeat(5 - formData.rating),
-          }}
-          onChange={(option) => handleChange("rating", option.value)}
-          className="text-left"
-          styles={customStyles}
-        />
-      </div>
-
-      {/* Amenities */}
-      <div>
-        <label className="text-sm block mb-2">Amenities</label>
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-          {["wifi", "parking", "breakfast", "pets"].map((feature) => (
-            <label key={feature} className="flex items-center gap-2">
-              <input
-                type="checkbox"
-                checked={formData.meta[feature]}
-                onChange={(e) =>
-                  setFormData((prev) => ({
-                    ...prev,
-                    meta: { ...prev.meta, [feature]: e.target.checked },
-                  }))
-                }
-              />
-              {feature.charAt(0).toUpperCase() + feature.slice(1)}
-            </label>
-          ))}
-        </div>
-      </div>
-
-      {/* Location */}
-      <div>
-        <label className="text-sm block mb-2">Location</label>
-        <div className="grid grid-cols-2 gap-4">
-          {/* Address */}
-          <input
-            type="text"
-            placeholder="Address"
-            value={formData.location.address}
-            onChange={(e) => handleLocationChange("address", e.target.value)}
-            onBlur={() => handleBlur("address")}
-            className={getInputClassName(errors.address, touched.address)}
-          />
-          {errors.address && touched.address && (
-            <p className="text-error text-sm mt-1 col-span-2">
-              {errors.address}
-            </p>
-          )}
-
-          {/* Zip Code */}
-          <input
-            type="text"
-            placeholder="Zip Code"
-            value={formData.location.zip}
-            onChange={(e) => handleLocationChange("zip", e.target.value)}
-            onBlur={() => handleBlur("zip")}
-            className={getInputClassName(errors.zip, touched.zip)}
-          />
-          {errors.zip && touched.zip && (
-            <p className="text-error text-sm mt-1 col-span-2">{errors.zip}</p>
-          )}
-
-          {/* Country */}
-          <div className="col-span-1">
-            <FlaggedCountryDropdown
-              value={country}
-              onChange={(val) => {
-                setCountry(val);
-                handleLocationChange("country", val);
-              }}
+      <div className="flex flex-col md:flex-row md:gap-12">
+        {/* LEFT SIDE: FORM FIELDS */}
+        <div className="md:w-3/5 space-y-6">
+          {/* Name */}
+          <div>
+            <label className="text-sm block">Venue Name *</label>
+            <input
+              type="text"
+              value={formData.name}
+              onChange={(e) => handleChange("name", e.target.value)}
+              onBlur={() => handleBlur("name")}
+              className={getInputClassName(errors.name, touched.name)}
             />
-            {touched.country && errors.country && (
-              <p className="text-error text-sm mt-1">{errors.country}</p>
+            {errors.name && touched.name && (
+              <p className="text-error text-sm">{errors.name}</p>
             )}
           </div>
 
-          {/* City */}
-          <div className="col-span-1">
-            <Select
-              options={cityOptions}
-              value={cityOptions.find((opt) => opt.value === city) || null}
-              onChange={(option) => {
-                setCity(option.value);
-                handleLocationChange("city", option.value);
-              }}
-              className="text-left"
-              placeholder="Select city..."
-              styles={customStyles}
-            />
-            {touched.city && errors.city && (
-              <p className="text-error text-sm mt-1">{errors.city}</p>
-            )}
-          </div>
-
-          {/* Continent */}
-          <input
-            type="text"
-            placeholder="Continent"
-            value={formData.location.continent}
-            onChange={(e) => handleLocationChange("continent", e.target.value)}
-            onBlur={() => handleBlur("continent")}
-            className={`border p-2 rounded col-span-2 ${
-              errors.continent && touched.continent
-                ? "border-error"
-                : "border-espressoy"
-            }`}
-          />
-          {errors.continent && touched.continent && (
-            <p className="text-error text-sm mt-1 col-span-2">
-              {errors.continent}
-            </p>
-          )}
-        </div>
-      </div>
-
-      {/* Images */}
-      <div>
-        <label className="text-sm block">Images *</label>
-        {formData.media.map((media, index) => (
-          <div key={index} className="mb-4 border p-2 rounded">
-            <input
-              type="text"
-              placeholder="Image URL"
-              value={media.url}
-              onChange={(e) => handleImageChange(index, "url", e.target.value)}
-              className={`w-full mb-2 border p-2 rounded ${
-                errors[`media-${index}-url`]
-                  ? "border-error"
-                  : "border-espressoy"
-              }`}
-            />
-            {errors[`media-${index}-url`] && (
-              <p className="text-error text-sm mt-1">
-                {errors[`media-${index}-url`]}
-              </p>
-            )}
-            <input
-              type="text"
-              placeholder="Alt text"
-              value={media.alt}
-              onChange={(e) => handleImageChange(index, "alt", e.target.value)}
-              className={getInputClassName(
-                errors[`media-${index}-alt`],
-                touched[`media-${index}-alt`]
+          {/* Description - NOW A RICH TEXT EDITOR */}
+          <div className="relative">
+            <label className="text-sm block mb-1">Description *</label>
+            <button
+              type="button"
+              onClick={() => setFullscreen((prev) => !prev)}
+              className="absolute right-0 top-0 text-sm text-espressoy underline flex items-center gap-1"
+            >
+              {fullscreen ? (
+                <>
+                  <span>Exit</span>
+                  <BiWindowClose className="h-4 w-4" />
+                </>
+              ) : (
+                <>
+                  <span>Fullscreen</span>
+                  <BiWindowOpen className="h-4 w-4" />
+                </>
               )}
-            />
-            {errors[`media-${index}-alt`] && (
-              <p className="text-error text-sm mt-1">
-                {errors[`media-${index}-alt`]}
-              </p>
+            </button>
+            {fullscreen && (
+              <div className="fixed inset-0 z-[9998] bg-black/40 backdrop-blur-sm" />
             )}
-            <div className="mt-2">
-              <img
-                src={media.url || PLACEHOLDER_VENUE}
-                alt={media.alt || "Venue preview image"}
-                className="h-64 w-full object-cover rounded"
+            <div
+              className={`mt-6 ${
+                fullscreen
+                  ? "fixed inset-0 z-[9999] overflow-auto w-screen h-screen m-0 p-16"
+                  : ""
+              }`}
+            >
+              <RichTextEditor
+                value={formData.description}
+                onChange={(val) => handleChange("description", val)}
+                fullscreen={fullscreen}
+                heightClass={fullscreen ? "h-[70vh]" : "h-64"}
               />
-              <p className="text-xs text-center mt-1 italic text-gray-600">
-                {media.alt || "No alt text provided"}
-              </p>
+              {fullscreen && (
+                <div className="mt-4 text-right">
+                  <button
+                    type="button"
+                    onClick={() => setFullscreen(false)}
+                    className="bg-sunny hover:bg-orangey text-white font-semibold px-4 py-2 rounded cursor-pointer"
+                  >
+                    Done Writing
+                  </button>
+                </div>
+              )}
+            </div>
+            {!fullscreen && errors.description && touched.description && (
+              <p className="text-error text-sm mt-1">{errors.description}</p>
+            )}
+          </div>
+
+          {/* Price and Guests */}
+          <div className="flex gap-4">
+            <div className="flex-1">
+              <label className="text-sm block">Price per night *</label>
+              <input
+                type="number"
+                value={formData.price}
+                onChange={(e) => handleChange("price", Number(e.target.value))}
+                onBlur={() => handleBlur("price")}
+                className={getInputClassName(errors.price, touched.price)}
+              />
+              {errors.price && touched.price && (
+                <p className="text-error text-sm">{errors.price}</p>
+              )}
+            </div>
+
+            <div className="flex-1">
+              <label className="text-sm block">Max Guests *</label>
+              <input
+                type="number"
+                min={1}
+                max={100}
+                value={formData.maxGuests}
+                onChange={(e) =>
+                  handleChange("maxGuests", Number(e.target.value))
+                }
+                onBlur={() => handleBlur("maxGuests")}
+                className={getInputClassName(
+                  errors.maxGuests,
+                  touched.maxGuests
+                )}
+              />
+              {errors.maxGuests && touched.maxGuests && (
+                <p className="text-error text-sm">{errors.maxGuests}</p>
+              )}
             </div>
           </div>
-        ))}
 
-        <button
-          type="button"
-          onClick={handleAddImage}
-          className="mt-2 px-4 py-2 bg-creamy border border-espressoy rounded hover:bg-orangey hover:text-white"
-        >
-          + Add another image
-        </button>
+          {/* Rating */}
+          <div>
+            <label className="text-sm block">Initial Rating (optional)</label>
+            <Select
+              options={[
+                { value: 0, label: "Unrated" },
+                { value: 1, label: "★☆☆☆☆" },
+                { value: 2, label: "★★☆☆☆" },
+                { value: 3, label: "★★★☆☆" },
+                { value: 4, label: "★★★★☆" },
+                { value: 5, label: "★★★★★" },
+              ]}
+              value={{
+                value: formData.rating,
+                label:
+                  "★".repeat(formData.rating) + "☆".repeat(5 - formData.rating),
+              }}
+              onChange={(option) => handleChange("rating", option.value)}
+              className="text-left"
+              styles={customStyles}
+            />
+          </div>
+
+          {/* Amenities */}
+          <div>
+            <label className="text-sm block mb-2">Amenities</label>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+              {["wifi", "parking", "breakfast", "pets"].map((feature) => (
+                <label key={feature} className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    checked={formData.meta[feature]}
+                    onChange={(e) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        meta: { ...prev.meta, [feature]: e.target.checked },
+                      }))
+                    }
+                  />
+                  {feature.charAt(0).toUpperCase() + feature.slice(1)}
+                </label>
+              ))}
+            </div>
+          </div>
+
+          {/* Location */}
+          <div>
+            <label className="text-sm block mb-2">Location</label>
+            <div className="grid grid-cols-2 gap-4">
+              {/* Address */}
+              <input
+                type="text"
+                placeholder="Address"
+                value={formData.location.address}
+                onChange={(e) =>
+                  handleLocationChange("address", e.target.value)
+                }
+                onBlur={() => handleBlur("address")}
+                className={getInputClassName(errors.address, touched.address)}
+              />
+              {errors.address && touched.address && (
+                <p className="text-error text-sm mt-1 col-span-2">
+                  {errors.address}
+                </p>
+              )}
+
+              {/* Zip Code */}
+              <input
+                type="text"
+                placeholder="Zip Code"
+                value={formData.location.zip}
+                onChange={(e) => handleLocationChange("zip", e.target.value)}
+                onBlur={() => handleBlur("zip")}
+                className={getInputClassName(errors.zip, touched.zip)}
+              />
+              {errors.zip && touched.zip && (
+                <p className="text-error text-sm mt-1 col-span-2">
+                  {errors.zip}
+                </p>
+              )}
+
+              {/* Country */}
+              <div className="col-span-1">
+                <FlaggedCountryDropdown
+                  value={country}
+                  onChange={(val) => {
+                    setCountry(val);
+                    handleLocationChange("country", val);
+                  }}
+                />
+                {touched.country && errors.country && (
+                  <p className="text-error text-sm mt-1">{errors.country}</p>
+                )}
+              </div>
+
+              {/* City */}
+              <div className="col-span-1">
+                <Select
+                  options={cityOptions}
+                  value={cityOptions.find((opt) => opt.value === city) || null}
+                  onChange={(option) => {
+                    setCity(option.value);
+                    handleLocationChange("city", option.value);
+                  }}
+                  className="text-left"
+                  placeholder="Select city..."
+                  styles={customStyles}
+                />
+                {touched.city && errors.city && (
+                  <p className="text-error text-sm mt-1">{errors.city}</p>
+                )}
+              </div>
+
+              {/* Continent */}
+              <input
+                type="text"
+                placeholder="Continent"
+                value={formData.location.continent}
+                onChange={(e) =>
+                  handleLocationChange("continent", e.target.value)
+                }
+                onBlur={() => handleBlur("continent")}
+                className={`border p-2 rounded col-span-2 ${
+                  errors.continent && touched.continent
+                    ? "border-error"
+                    : "border-espressoy"
+                }`}
+              />
+              {errors.continent && touched.continent && (
+                <p className="text-error text-sm mt-1 col-span-2">
+                  {errors.continent}
+                </p>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* RIGHT SIDE: IMAGES */}
+        <div className="md:w-2/5 space-y-4">
+          <label className="text-sm">Images *</label>
+          {formData.media.map((media, index) => (
+            <div key={index} className="border p-2 rounded">
+              <input
+                type="text"
+                placeholder="Image URL"
+                value={media.url}
+                onChange={(e) =>
+                  handleImageChange(index, "url", e.target.value)
+                }
+                className={`w-full mb-2 border p-2 rounded ${
+                  errors[`media-${index}-url`]
+                    ? "border-error"
+                    : "border-espressoy"
+                }`}
+              />
+              {errors[`media-${index}-url`] && (
+                <p className="text-error text-sm mt-1">
+                  {errors[`media-${index}-url`]}
+                </p>
+              )}
+              <input
+                type="text"
+                placeholder="Descriptive text: what is in the image?"
+                value={media.alt}
+                onChange={(e) =>
+                  handleImageChange(index, "alt", e.target.value)
+                }
+                className={getInputClassName(
+                  errors[`media-${index}-alt`],
+                  touched[`media-${index}-alt`]
+                )}
+              />
+              <div className="mt-2">
+                <img
+                  src={media.url || PLACEHOLDER_VENUE}
+                  alt={media.alt || "Venue preview image"}
+                  className="h-48 w-full object-cover rounded"
+                />
+                <p className="text-xs text-center mt-1 italic text-gray-600">
+                  {media.alt || "No descriptive text provided"}
+                </p>
+              </div>
+            </div>
+          ))}
+          <button
+            type="button"
+            onClick={handleAddImage}
+            className="w-full mt-2 px-4 py-2 bg-creamy border border-espressoy rounded hover:bg-orangey hover:text-white"
+          >
+            + Add another image
+          </button>
+        </div>
       </div>
 
       {/* Submit Button */}
       <button
         type="submit"
         disabled={loading}
-        className="w-full bg-sunny hover:bg-orangey hover:text-white text-espressoy py-2 rounded-full font-semibold"
+        className="mt-8 w-full bg-sunny hover:bg-orangey hover:text-white text-espressoy py-2 rounded-full font-semibold"
       >
         {loading
           ? "Saving..."
