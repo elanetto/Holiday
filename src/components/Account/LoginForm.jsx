@@ -13,7 +13,7 @@ export default function LoginForm() {
   const { loginUser } = useUser();
 
   const location = useLocation();
-  const from = location.state?.from?.pathname || `/account/${name}`;
+  const from = location.state?.from?.pathname || `/`;
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -84,7 +84,7 @@ export default function LoginForm() {
 
       toast.success("Logged in successfully 🎉");
       launchConfetti();
-      navigate(from || `/account/${encodeURIComponent(name)}`, {
+      navigate(from || `/`, {
         replace: true,
       });
     } catch (err) {

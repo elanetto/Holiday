@@ -1,8 +1,8 @@
 import useFetchVenues from "../../../hooks/useFetchVenues";
 import VenueCard from "../../../components/VenueCard";
 
-const CityLivingVenues = () => {
-  const { venues, loading, error } = useFetchVenues("CityLiving");
+const SummerResortsVenues = () => {
+  const { venues, loading, error } = useFetchVenues("SummerResorts");
 
   if (loading) {
     return <div className="text-center py-8">Loading venues...</div>;
@@ -15,7 +15,7 @@ const CityLivingVenues = () => {
   return (
     <div className="w-full max-w-6xl mx-auto mt-16 mb-18">
       <h2 className="text-2xl font-bold text-espressoy text-center mb-8 p-8">
-        Your next urban adventure awaits...
+        Discover your perfect summer escape...
       </h2>
 
       {venues.length > 0 ? (
@@ -26,11 +26,11 @@ const CityLivingVenues = () => {
         </div>
       ) : (
         <p className="text-center text-gray-600">
-          No urban adventures available at the moment.
+          No summer resorts available at the moment.
         </p>
       )}
     </div>
   );
 };
 
-export default CityLivingVenues;
+export default SummerResortsVenues;
