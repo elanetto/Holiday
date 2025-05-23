@@ -358,7 +358,7 @@ export default function VenueForm({ mode = "create", venue = {} }) {
                   <button
                     type="button"
                     onClick={() => setFullscreen(false)}
-                    className="bg-sunny hover:bg-orangey text-white font-semibold px-4 py-2 rounded"
+                    className="bg-sunny hover:bg-orangey text-white font-semibold px-4 py-2 rounded cursor-pointer"
                   >
                     Done Writing
                   </button>
