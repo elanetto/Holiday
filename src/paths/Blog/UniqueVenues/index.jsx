@@ -48,7 +48,7 @@ const UniqueVenuesBlog = () => {
               />
               <div>
                 <p className="font-semibold text-espressoy">
-                  Written by Rita Skeeter
+                  Written by Molly Weasley
                 </p>
                 <p className="text-sm text-gray-500">May 23, 2025</p>
               </div>
