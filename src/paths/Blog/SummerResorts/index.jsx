@@ -2,7 +2,7 @@ import summerResortImage from "./../../../assets/venue/summer/travel-summer-6.jp
 import profilePic from "./../../../assets/venue/journalist/CedricDiggeroy.jpg";
 import poolsidePic from "./../../../assets/venue/unique/unique-beach-4.jpg";
 import sunsetPic from "./../../../assets/venue/summer/travel-summer-3.jpg";
-import SummerResortsVenues from "./SummerResortsVenues"
+import SummerResortsVenues from "./SummerResortsVenues";
 
 const SummerResortsBlog = () => {
   return (
