@@ -1,5 +1,4 @@
 import cityLivingImage from "./../../../assets/venue/city/travel-singapore-3.jpg";
-import profilePic from "./../../../assets/venue/journalist/ritaskeeter.jpg";
 import hotelPic from "./../../../assets/venue/hotel-details/hotel-detail-6.jpg";
 import streetPic from "./../../../assets/venue/city/travel-france-3.jpg";
 import CityLivingVenues from "./CityLivingVenues";
@@ -57,7 +56,7 @@ const CityLivingBlog = () => {
           <div className="order-3 lg:order-1 lg:pt-0 pt-10">
             <div className="flex items-center gap-4">
               <img
-                src={profilePic}
+                src="https://raw.githubusercontent.com/elanetto/Holiday/refs/heads/features/src/assets/venue/journalist/RitaSkeeter.jpg"
                 alt="Author profile"
                 className="w-22 h-22 rounded-full object-cover"
               />
