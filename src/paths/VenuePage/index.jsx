@@ -262,12 +262,12 @@ const VenuePage = () => {
         <div>
           {showFullDescription ? (
             <div
-              className="prose-brand"
+              className="description-styles"
               dangerouslySetInnerHTML={{ __html: venue.description }}
             />
           ) : (
             <div
-              className="prose-brand"
+              className="description-styles"
               dangerouslySetInnerHTML={{
                 __html: getTrimmedDescriptionHTML(venue.description, 200),
               }}

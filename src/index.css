@@ -36,26 +36,42 @@
 }
 
 @layer components {
-  .prose-brand {
-    @apply prose max-w-none;
+  .description-styles {
+    max-width: none;
 
     h1 {
-      @apply text-3xl text-espressoy;
+      font-size: 1.875rem /* text-3xl */;
+      color: var(--color-espressoy);
+      font-weight: bold;
+      margin-top: 1.25rem;
+      margin-bottom: 0.75rem;
     }
 
     h2 {
-      @apply text-2xl text-goldy mt-6;
+      font-size: 1.5rem /* text-2xl */;
+      color: var(--color-espressoy);
+      font-weight: bold;
+      margin-top: 1.25rem;
+      margin-bottom: 0.75rem;
     }
 
     p {
-      @apply text-base text-gray-800;
+      font-size: 1rem /* text-base */;
+      color: #4b5563; /* text-gray-700 */
+      margin-bottom: 1rem;
     }
 
     a {
-      @apply text-orangey underline hover:text-espressoy;
+      color: var(--color-orangey);
+      text-decoration: underline;
+    }
+
+    a:hover {
+      color: var(--color-espressoy);
     }
   }
 }
+
 
 
 @layer utilities {
