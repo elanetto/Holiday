@@ -2,6 +2,7 @@ import uniqueVenueImage from "./../../../assets/venue/unique/unique-stay-japan-2
 import profilePic from "./../../../assets/venue/journalist/MollyWeasley.jpg";
 import domePic from "./../../../assets/venue/unique/unique-dome-1.jpg";
 import streetPic from "./../../../assets/venue/unique/unique-stay-japan-4.jpg";
+import UniqueVenues from "./UniqueVenues";
 
 const UniqueVenuesBlog = () => {
   return (
@@ -80,7 +81,7 @@ const UniqueVenuesBlog = () => {
           </div>
         </div>
       </div>
-      {/* You can add <UniqueVenues /> here if you want to list venues created by a “UniqueVenues” manager */}
+       <UniqueVenues />
     </div>
   );
 };
