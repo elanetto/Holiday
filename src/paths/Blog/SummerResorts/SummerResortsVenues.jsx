@@ -9,6 +9,7 @@ const SummerResortsVenues = () => {
   const [error, setError] = useState("");
 
   useEffect(() => {
+    const controller = new AbortController();
     const fetchVenues = async () => {
       const token = localStorage.getItem("token");
       const apiKey = localStorage.getItem("apiKey");
@@ -29,6 +30,7 @@ const SummerResortsVenues = () => {
               Authorization: `Bearer ${token}`,
               "X-Noroff-API-Key": apiKey,
             },
+            signal: controller.signal,
           }
         );
         setVenues(res.data.data || []);
@@ -41,6 +43,10 @@ const SummerResortsVenues = () => {
     };
 
     fetchVenues();
+
+    return () => {
+      controller.abort();
+    };
   }, []);
 
   if (loading) {

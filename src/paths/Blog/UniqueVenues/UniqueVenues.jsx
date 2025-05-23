@@ -9,6 +9,7 @@ const UniqueVenues = () => {
   const [error, setError] = useState("");
 
   useEffect(() => {
+    const controller = new AbortController();
     const fetchVenues = async () => {
       const token = localStorage.getItem("token");
       const apiKey = localStorage.getItem("apiKey");
@@ -29,6 +30,7 @@ const UniqueVenues = () => {
               Authorization: `Bearer ${token}`,
               "X-Noroff-API-Key": apiKey,
             },
+            signal: controller.signal,
           }
         );
         setVenues(res.data.data || []);
@@ -41,6 +43,10 @@ const UniqueVenues = () => {
     };
 
     fetchVenues();
+
+    return () => {
+      controller.abort();
+    };
   }, []);
 
   if (loading) {

@@ -9,6 +9,8 @@ const CityLivingVenues = () => {
   const [error, setError] = useState("");
 
   useEffect(() => {
+    const controller = new AbortController();
+
     const fetchVenues = async () => {
       const token = localStorage.getItem("token");
       const apiKey = localStorage.getItem("apiKey");
@@ -29,18 +31,27 @@ const CityLivingVenues = () => {
               Authorization: `Bearer ${token}`,
               "X-Noroff-API-Key": apiKey,
             },
+            signal: controller.signal,
           }
         );
         setVenues(res.data.data || []);
       } catch (err) {
-        console.error(err);
-        setError("Could not load venues. Please try again later.");
+        if (axios.isCancel(err)) {
+          console.log("Request canceled:", err.message);
+        } else {
+          console.error(err);
+          setError("Could not load venues. Please try again later.");
+        }
       } finally {
         setLoading(false);
       }
     };
 
     fetchVenues();
+
+    return () => {
+      controller.abort();
+    };
   }, []);
 
   if (loading) {
