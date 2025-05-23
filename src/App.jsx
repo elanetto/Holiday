@@ -10,9 +10,9 @@ import { useVenueStore } from "./store/useVenueStore";
 import { ENDPOINTS } from "./utilities/constants";
 import { useSearch } from "./contexts/useSearch";
 
-import uniqueVenuesImage from "./assets/background/travel-ancient-gate.jpg";
-import sunnyResortsImage from "./assets/background/travel-greece.jpg";
-import cityLivingImage from "./assets/background/travel_cliff.jpg";
+import uniqueVenuesImage from "./assets/venue/unique/unique-stay-japan-2.jpg";
+import sunnyResortsImage from "./assets/venue/summer/travel-summer-6.jpg";
+import cityLivingImage from "./assets/venue/city/travel-singapore-3.jpg";
 
 function App() {
   const { isLoggedIn, isVenueManager, name } = useUser();
@@ -81,9 +81,9 @@ function App() {
       link: "/blog/unique-venues",
     },
     {
-      title: "Sunny Resorts",
+      title: "Summer Resorts",
       image: sunnyResortsImage,
-      link: "/blog/sunny-resorts",
+      link: "/blog/summer-resorts",
     },
     { title: "City Living", image: cityLivingImage, link: "/blog/city-living" },
   ];

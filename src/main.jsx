@@ -16,6 +16,9 @@ import CheckoutPage from "./paths/CheckoutPage/index.jsx";
 import SuccessPage from "./paths/Success/index.jsx";
 import SearchPage from "./paths/SearchPage/index.jsx";
 import PrivateRoute from "./paths/PrivateRoute/index.jsx";
+import CityLivingBlog from "./paths/Blog/CityLiving";
+import SummerResortsBlog from "./paths/Blog/SummerResorts";
+import UniqueVenuesBlog from "./paths/Blog/UniqueVenues";
 
 import { Toaster } from "react-hot-toast";
 import { SearchProvider } from "./contexts/SearchProvider.jsx";
@@ -45,13 +48,22 @@ const router = createBrowserRouter([
       { path: "edit-venue/:id", element: <EditVenuePage /> },
       { path: "checkout", element: <CheckoutPage /> },
       { path: "success", element: <SuccessPage /> },
+
+      {
+        path: "blog",
+        children: [
+          { path: "city-living", element: <CityLivingBlog /> },
+          { path: "unique-venues", element: <UniqueVenuesBlog /> },
+          { path: "summer-resorts", element: <SummerResortsBlog /> },
+        ],
+      },
+
       { path: "404", element: <NotFound /> },
       { path: "*", element: <NotFound /> },
     ],
   },
 ]);
 
-// ✅ Render with RouterProvider — do NOT use <BrowserRouter>!
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <UserProvider>
