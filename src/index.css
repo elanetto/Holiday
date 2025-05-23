@@ -35,6 +35,29 @@
   }
 }
 
+@layer components {
+  .prose-brand {
+    @apply prose max-w-none;
+
+    h1 {
+      @apply text-3xl text-espressoy;
+    }
+
+    h2 {
+      @apply text-2xl text-goldy mt-6;
+    }
+
+    p {
+      @apply text-base text-gray-800;
+    }
+
+    a {
+      @apply text-orangey underline hover:text-espressoy;
+    }
+  }
+}
+
+
 @layer utilities {
   .font-italiana {
     font-family: "Italiana", sans-serif;
