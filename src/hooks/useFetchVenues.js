@@ -19,9 +19,6 @@ export const useFetchVenues = (tag) => {
 
         const results = res.data.data || [];
 
-        console.log("Filtering by tag (search query):", tag);
-        console.log("Results:", results);
-
         setVenues(results);
       } catch (err) {
         if (axios.isCancel(err)) {
