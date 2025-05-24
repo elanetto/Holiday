@@ -1,4 +1,4 @@
-import useFetchVenues from "../../../hooks/useFetchVenues";
+import { useFetchVenues } from "../../../hooks/useFetchVenues";
 import VenueCard from "../../../components/VenueCard";
 
 const SummerResortsVenues = () => {
