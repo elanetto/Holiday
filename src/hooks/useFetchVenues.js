@@ -2,35 +2,24 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { ENDPOINTS } from "../utilities/constants";
 
-const useFetchVenues = (username) => {
+export const useFetchVenues = (tag) => {
   const [venues, setVenues] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
   useEffect(() => {
     const controller = new AbortController();
+
     const fetchVenues = async () => {
-      const token = localStorage.getItem("token");
-      const apiKey = localStorage.getItem("apiKey");
-
-      if (!token || !apiKey) {
-        setError("Missing authentication credentials.");
-        setLoading(false);
-        return;
-      }
-
       try {
         const res = await axios.get(
-          `${ENDPOINTS.profiles}/${username}/venues`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "X-Noroff-API-Key": apiKey,
-            },
-            signal: controller.signal,
-          }
+          `${ENDPOINTS.venues}/search?q=${encodeURIComponent(tag)}`,
+          { signal: controller.signal }
         );
-        setVenues(res.data.data || []);
+
+        const results = res.data.data || [];
+
+        setVenues(results);
       } catch (err) {
         if (axios.isCancel(err)) {
           console.log("Request canceled:", err.message);
@@ -48,9 +37,7 @@ const useFetchVenues = (username) => {
     return () => {
       controller.abort();
     };
-  }, [username]);
+  }, [tag]);
 
   return { venues, loading, error };
 };
-
-export default useFetchVenues;
