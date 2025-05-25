@@ -74,6 +74,7 @@ export function Header() {
           }}
         >
           <button
+            type="button"
             onClick={handleLogoClick}
             className="focus:outline-none cursor-pointer transition"
           >

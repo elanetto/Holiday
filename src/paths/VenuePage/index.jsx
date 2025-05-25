@@ -24,6 +24,8 @@ const VenuePage = () => {
   const [fullscreenIndex, setFullscreenIndex] = useState(null);
   const navigate = useNavigate();
 
+  const DESCRIPTION_MAX_CHARS = 200;
+
   useEffect(() => {
     const fetchVenue = async () => {
       try {
@@ -66,7 +68,7 @@ const VenuePage = () => {
 
   const markerPosition = getCountryCoordinates(venue.location.country);
 
-  const getTrimmedDescriptionHTML = (html, limit = 200) => {
+  const getTrimmedDescriptionHTML = (html, limit = DESCRIPTION_MAX_CHARS) => {
     if (!html) return "";
 
     const tempDiv = document.createElement("div");
@@ -113,7 +115,7 @@ const VenuePage = () => {
 
     // Add ellipsis if we trimmed something
     const rawText = tempDiv.textContent.trim();
-    if (charCount < rawText.length) result += "...";
+    if (charCount < rawText.length && !rawText.endsWith("...")) result += "...";
 
     return result;
   };
@@ -310,12 +312,16 @@ const VenuePage = () => {
               <div
                 className="description-styles"
                 dangerouslySetInnerHTML={{
-                  __html: getTrimmedDescriptionHTML(venue.description, 200),
+                  __html: getTrimmedDescriptionHTML(
+                    venue.description,
+                    DESCRIPTION_MAX_CHARS
+                  ),
                 }}
               />
             )}
 
-            {getTextContentLength(venue.description) > 200 && (
+            {getTextContentLength(venue.description) >
+              DESCRIPTION_MAX_CHARS && (
               <button
                 onClick={() => setShowFullDescription((prev) => !prev)}
                 className="mt-2 text-sm text-orangey font-medium underline hover:text-espressoy transition"
