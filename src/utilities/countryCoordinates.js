@@ -16,6 +16,13 @@ const COUNTRY_COORDINATES = {
   belgium: [50.5039, 4.4699],
   austria: [47.5162, 14.5501],
   cuba: [21.5218, -77.7812],
+  singapore: [1.3521, 103.8198],
+  dubai: [25.276987, 55.296249],
+  malaysia: [4.2105, 101.9758],
+  china: [35.8617, 104.1954],
+  cyprus: [35.1264, 33.4299],
+  jordan: [30.5852, 36.2384],
+  maldives: [3.2028, 73.2207],
 };
 
 const COUNTRY_ALIASES = {
@@ -29,6 +36,7 @@ const COUNTRY_ALIASES = {
   frankrike: "france",
   italia: "italy",
   spania: "spain",
+  kypros: "cyprus", 
 };
 
 /**

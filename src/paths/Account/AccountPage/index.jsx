@@ -85,7 +85,8 @@ const AccountPage = () => {
               <h2 className="text-xl font-bold text-espressoy">My Profile</h2>
             </div>
 
-            <ProfileTab name={name} avatar={avatar} />
+            {/* Add key to force remount when username changes */}
+            <ProfileTab key={username} />
           </>
         );
       case "edit":

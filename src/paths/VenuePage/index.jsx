@@ -10,6 +10,12 @@ import "leaflet/dist/leaflet.css";
 import { getCountryCoordinates } from "../../utilities/countryCoordinates";
 import BookNow from "../../components/Booking/BookNow";
 
+const getTextContentLength = (html) => {
+  const temp = document.createElement("div");
+  temp.innerHTML = html;
+  return temp.textContent.trim().length;
+};
+
 const VenuePage = () => {
   const { id } = useParams();
   const [venue, setVenue] = useState(null);
@@ -82,7 +88,6 @@ const VenuePage = () => {
         } else if (node.nodeType === Node.ELEMENT_NODE) {
           const tag = node.tagName.toLowerCase();
 
-          // Skip the first heading tag (h1–h6)
           if (!firstHeadingSkipped && /^h[1-6]$/.test(tag)) {
             firstHeadingSkipped = true;
             continue;
@@ -102,7 +107,10 @@ const VenuePage = () => {
     };
 
     result = walkNodes(tempDiv.childNodes);
-    if (charCount >= limit) result += "...";
+
+    // Add ellipsis if we trimmed something
+    const rawText = tempDiv.textContent.trim();
+    if (charCount < rawText.length) result += "...";
 
     return result;
   };
@@ -195,71 +203,72 @@ const VenuePage = () => {
         </div>
       )}
 
-{fullscreenIndex !== null && (
-  <div
-  className="fixed inset-0 bg-black bg-opacity-90 z-50 flex flex-col items-center justify-center p-4"
-  onClick={(e) => {
-    if (e.target === e.currentTarget) {
-      setFullscreenIndex(null);
-    }
-  }}
->
-  <button
-    onClick={() => setFullscreenIndex(null)}
-    className="absolute top-4 right-4 text-white text-3xl z-50"
-    aria-label="Close fullscreen"
-  >
-    <BsX />
-  </button>
+      {fullscreenIndex !== null && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-90 z-50 flex flex-col items-center justify-center p-4"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) {
+              setFullscreenIndex(null);
+            }
+          }}
+        >
+          <button
+            onClick={() => setFullscreenIndex(null)}
+            className="absolute top-4 right-4 text-white text-3xl z-50"
+            aria-label="Close fullscreen"
+          >
+            <BsX />
+          </button>
 
-  <div className="relative w-full max-w-4xl">
-    <Carousel
-      selectedItem={fullscreenIndex}
-      showThumbs={false}
-      showStatus={false}
-      infiniteLoop
-      showArrows={true}
-      useKeyboardArrows
-      emulateTouch
-      swipeable
-      className="w-full"
-      onChange={(index) => setFullscreenIndex(index)}
-      renderIndicator={() => null} // hide default indicators
-    >
-      {validImages.map((image, index) => (
-        <div key={index} onClick={(e) => e.stopPropagation()} className="relative">
-          <img
-            src={image.url}
-            alt={image.alt || `Image ${index + 1}`}
-            className="max-h-[80vh] w-full object-contain mx-auto"
-          />
-          <ul className="absolute bottom-16 left-1/2 transform -translate-x-1/2 flex z-50">
-
-            {validImages.map((_, dotIndex) => (
-              <li
-                key={dotIndex}
-                onClick={() => setFullscreenIndex(dotIndex)}
-                className={`w-3 h-3 mx-1 rounded-full border border-white cursor-pointer ${
-                  fullscreenIndex === dotIndex ? "bg-sunny" : "bg-white"
-                }`}
-              />
-            ))}
-          </ul>
-          <div className="text-white text-center text-sm mt-6">
-            {image.alt || `Image ${index + 1}`}
+          <div className="relative w-full max-w-4xl">
+            <Carousel
+              selectedItem={fullscreenIndex}
+              showThumbs={false}
+              showStatus={false}
+              infiniteLoop
+              showArrows={true}
+              useKeyboardArrows
+              emulateTouch
+              swipeable
+              className="w-full"
+              onChange={(index) => setFullscreenIndex(index)}
+              renderIndicator={() => null} // hide default indicators
+            >
+              {validImages.map((image, index) => (
+                <div
+                  key={index}
+                  onClick={(e) => e.stopPropagation()}
+                  className="relative"
+                >
+                  <img
+                    src={image.url}
+                    alt={image.alt || `Image ${index + 1}`}
+                    className="max-h-[80vh] w-full object-contain mx-auto"
+                  />
+                  <ul className="absolute bottom-16 left-1/2 transform -translate-x-1/2 flex z-50">
+                    {validImages.map((_, dotIndex) => (
+                      <li
+                        key={dotIndex}
+                        onClick={() => setFullscreenIndex(dotIndex)}
+                        className={`w-3 h-3 mx-1 rounded-full border border-white cursor-pointer ${
+                          fullscreenIndex === dotIndex ? "bg-sunny" : "bg-white"
+                        }`}
+                      />
+                    ))}
+                  </ul>
+                  <div className="text-white text-center text-sm mt-6">
+                    {image.alt || `Image ${index + 1}`}
+                  </div>
+                </div>
+              ))}
+            </Carousel>
           </div>
         </div>
-      ))}
-    </Carousel>
-  </div>
-</div>
-
-)}
-
+      )}
 
       <div className="space-y-4">
         <h2 className="text-2xl font-bold">Description</h2>
-        <div>
+        <div className="break-words whitespace-pre-wrap">
           {showFullDescription ? (
             <div
               className="description-styles"
@@ -274,7 +283,7 @@ const VenuePage = () => {
             />
           )}
 
-          {venue.description?.split(" ").length > 200 && (
+          {getTextContentLength(venue.description) > 200 && (
             <button
               onClick={() => setShowFullDescription((prev) => !prev)}
               className="mt-2 text-sm text-orangey font-medium underline hover:text-espressoy transition"

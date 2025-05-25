@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import { ENDPOINTS } from "../../../../utilities/constants";
@@ -7,10 +7,16 @@ import {
   PLACEHOLDER_BANNER,
 } from "../../../../utilities/placeholders";
 import VenueCard from "../../../../components/VenueCard";
+import { useUser } from "../../../../contexts/useUser";
 
 const ProfileTab = () => {
   const params = useParams();
-  const username = params.username || localStorage.getItem("name");
+  const { name: loggedInName } = useUser();
+
+  const username = useMemo(() => {
+    return params.username || loggedInName;
+  }, [params.username, loggedInName]);
+
   const [profile, setProfile] = useState(null);
   const [venues, setVenues] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -27,9 +33,10 @@ const ProfileTab = () => {
         return;
       }
 
-      try {
-        setLoading(true);
+      setLoading(true);
+      setError("");
 
+      try {
         const [profileRes, userVenuesRes] = await Promise.all([
           axios.get(`${ENDPOINTS.profiles}/${username}`, {
             headers: {

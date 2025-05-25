@@ -11,6 +11,7 @@ import regionData from "country-region-data/data.json";
 import confetti from "canvas-confetti";
 import RichTextEditor from "./../Forms/RichTextEditor";
 import { BiWindowOpen, BiWindowClose } from "react-icons/bi";
+import ConfirmModal from "./../Modals/ConfirmModal";
 
 countries.registerLocale(enLocale);
 
@@ -82,6 +83,9 @@ export default function VenueForm({ mode = "create", venue = {} }) {
 
   const [fullscreen, setFullscreen] = useState(false);
 
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [imageToDeleteIndex, setImageToDeleteIndex] = useState(null);
+
   const [formData, setFormData] = useState({
     name: venue.name || "",
     description: venue.description || "",
@@ -104,7 +108,7 @@ export default function VenueForm({ mode = "create", venue = {} }) {
     media:
       venue.media && venue.media.length > 0
         ? venue.media
-        : [{ url: PLACEHOLDER_VENUE, alt: "Default venue preview" }],
+        : [{ url: PLACEHOLDER_VENUE, alt: "Describe the image here" }],
   });
 
   useEffect(() => {
@@ -140,34 +144,64 @@ export default function VenueForm({ mode = "create", venue = {} }) {
       newErrors.maxGuests = "Max guests cannot be more than 100";
     }
 
+    // Continent: required, max 3 words and 30 chars
+    const continentWords = formData.location.continent.trim().split(/\s+/);
     if (!formData.location.continent.trim()) {
       newErrors.continent = "Continent is required";
+    } else if (
+      continentWords.length > 3 ||
+      formData.location.continent.trim().length > 30
+    ) {
+      newErrors.continent = "Continent must be max 3 words and 30 characters";
     }
 
+    // Address: required, max 3 words and 30 chars
+    const addressWords = formData.location.address.trim().split(/\s+/);
     if (!formData.location.address.trim()) {
       newErrors.address = "Address is required";
+    } else if (
+      addressWords.length > 3 ||
+      formData.location.address.trim().length > 30
+    ) {
+      newErrors.address = "Address must be max 3 words and 30 characters";
     }
+
+    // Zip: required, digits only, max 8
     if (!formData.location.zip.trim()) {
       newErrors.zip = "Zip code is required";
+    } else if (!/^\d{1,8}$/.test(formData.location.zip.trim())) {
+      newErrors.zip = "Zip code must be up to 8 digits only";
     }
 
-    if (!/^[\p{Lu}][\p{L}\s'-]{2,}$/u.test(formData.name.trim())) {
+    // Name
+    if (
+      !/^[A-Z][a-zA-Z0-9\s,'\-:.\u2013\u2014]{2,}$/.test(formData.name.trim())
+    ) {
       newErrors.name =
-        "Name must start with a capital letter, contain only letters, spaces, hyphens, or apostrophes, and be at least 3 characters long";
+        "Name must start with a capital letter and can include letters, numbers, spaces, commas, colons, hyphens, apostrophes, and periods.";
     }
 
+    // Description
     if (formData.description.trim().split(/\s+/).length < 2) {
       newErrors.description = "Description must be at least two words";
     }
 
-    if (formData.price <= 0) newErrors.price = "Price must be greater than 0";
-    if (formData.maxGuests <= 0)
-      newErrors.maxGuests = "Max guests must be greater than 0";
+    // Price
+    if (formData.price <= 0) {
+      newErrors.price = "Price must be greater than 0";
+    }
 
-    if (!formData.location.city.trim()) newErrors.city = "City is required";
-    if (!formData.location.country.trim())
+    // City
+    if (!formData.location.city.trim()) {
+      newErrors.city = "City is required";
+    }
+
+    // Country
+    if (!formData.location.country.trim()) {
       newErrors.country = "Country is required";
+    }
 
+    // Media
     formData.media.forEach((media, index) => {
       if (!media.url || media.url === PLACEHOLDER_VENUE) {
         newErrors[`media-${index}-url`] =
@@ -179,6 +213,12 @@ export default function VenueForm({ mode = "create", venue = {} }) {
       if (!media.alt || media.alt.trim().length < 3) {
         newErrors[`media-${index}-alt`] =
           "Alt text must be at least 3 characters";
+      } else {
+        const wordCount = media.alt.trim().split(/\s+/).length;
+        if (wordCount > 20 || media.alt.trim().length > 80) {
+          newErrors[`media-${index}-alt`] =
+            "Alt text must be max 20 words and 80 characters";
+        }
       }
     });
 
@@ -213,8 +253,48 @@ export default function VenueForm({ mode = "create", venue = {} }) {
     setFormData((prev) => ({ ...prev, media: updatedMedia }));
   };
 
+  const handleDeleteImage = (index) => {
+    setImageToDeleteIndex(index);
+    setShowConfirmModal(true);
+  };
+
+  const confirmDeleteImage = () => {
+    setFormData((prev) => {
+      const updatedMedia = [...prev.media];
+      updatedMedia.splice(imageToDeleteIndex, 1);
+      return { ...prev, media: updatedMedia };
+    });
+    setShowConfirmModal(false);
+    setImageToDeleteIndex(null);
+  };
+
+  const cancelDeleteImage = () => {
+    setShowConfirmModal(false);
+    setImageToDeleteIndex(null);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Mark all fields as touched to show validation messages
+    setTouched({
+      name: true,
+      description: true,
+      price: true,
+      maxGuests: true,
+      address: true,
+      zip: true,
+      city: true,
+      country: true,
+      continent: true,
+      ...Object.fromEntries(
+        formData.media.flatMap((_, index) => [
+          [`media-${index}-url`, true],
+          [`media-${index}-alt`, true],
+        ])
+      ),
+    });
+
     const validationErrors = validate();
     if (Object.keys(validationErrors).length > 0) return;
 
@@ -458,36 +538,36 @@ export default function VenueForm({ mode = "create", venue = {} }) {
             <label className="text-sm block mb-2">Location</label>
             <div className="grid grid-cols-2 gap-4">
               {/* Address */}
-              <input
-                type="text"
-                placeholder="Address"
-                value={formData.location.address}
-                onChange={(e) =>
-                  handleLocationChange("address", e.target.value)
-                }
-                onBlur={() => handleBlur("address")}
-                className={getInputClassName(errors.address, touched.address)}
-              />
-              {errors.address && touched.address && (
-                <p className="text-error text-sm mt-1 col-span-2">
-                  {errors.address}
-                </p>
-              )}
+              <div className="flex flex-col">
+                <input
+                  type="text"
+                  placeholder="Address"
+                  value={formData.location.address}
+                  onChange={(e) =>
+                    handleLocationChange("address", e.target.value)
+                  }
+                  onBlur={() => handleBlur("address")}
+                  className={getInputClassName(errors.address, touched.address)}
+                />
+                {errors.address && touched.address && (
+                  <p className="text-error text-sm mt-1">{errors.address}</p>
+                )}
+              </div>
 
               {/* Zip Code */}
-              <input
-                type="text"
-                placeholder="Zip Code"
-                value={formData.location.zip}
-                onChange={(e) => handleLocationChange("zip", e.target.value)}
-                onBlur={() => handleBlur("zip")}
-                className={getInputClassName(errors.zip, touched.zip)}
-              />
-              {errors.zip && touched.zip && (
-                <p className="text-error text-sm mt-1 col-span-2">
-                  {errors.zip}
-                </p>
-              )}
+              <div className="flex flex-col">
+                <input
+                  type="text"
+                  placeholder="Zip Code"
+                  value={formData.location.zip}
+                  onChange={(e) => handleLocationChange("zip", e.target.value)}
+                  onBlur={() => handleBlur("zip")}
+                  className={getInputClassName(errors.zip, touched.zip)}
+                />
+                {errors.zip && touched.zip && (
+                  <p className="text-error text-sm mt-1">{errors.zip}</p>
+                )}
+              </div>
 
               {/* Country */}
               <div className="col-span-1">
@@ -549,7 +629,7 @@ export default function VenueForm({ mode = "create", venue = {} }) {
         <div className="md:w-2/5 space-y-4">
           <label className="text-sm">Images *</label>
           {formData.media.map((media, index) => (
-            <div key={index} className="border p-2 rounded">
+            <div key={index} className="border p-2 rounded relative">
               <input
                 type="text"
                 placeholder="Image URL"
@@ -575,12 +655,33 @@ export default function VenueForm({ mode = "create", venue = {} }) {
                 onChange={(e) =>
                   handleImageChange(index, "alt", e.target.value)
                 }
+                onBlur={() =>
+                  setTouched((prev) => ({
+                    ...prev,
+                    [`media-${index}-alt`]: true,
+                  }))
+                }
                 className={getInputClassName(
                   errors[`media-${index}-alt`],
                   touched[`media-${index}-alt`]
                 )}
               />
-              <div className="mt-2">
+              {errors[`media-${index}-alt`] &&
+                touched[`media-${index}-alt`] && (
+                  <p className="text-error text-sm mt-1">
+                    {errors[`media-${index}-alt`]}
+                  </p>
+                )}
+
+              <div className="mt-2 relative">
+                <button
+                  type="button"
+                  onClick={() => handleDeleteImage(index)}
+                  className="absolute top-2 right-2 bg-red-800 text-white text-xs px-2 py-1 rounded hover:bg-red-500 z-10"
+                  aria-label="Delete image"
+                >
+                  X
+                </button>
                 <img
                   src={media.url || PLACEHOLDER_VENUE}
                   alt={media.alt || "Venue preview image"}
@@ -606,7 +707,7 @@ export default function VenueForm({ mode = "create", venue = {} }) {
       <button
         type="submit"
         disabled={loading}
-        className="mt-8 w-full bg-sunny hover:bg-orangey hover:text-white text-espressoy py-2 rounded-full font-semibold"
+        className="mt-8 w-full md:w-auto px-8 bg-sunny hover:bg-orangey hover:text-white text-espressoy py-2 rounded-full font-semibold mx-auto block"
       >
         {loading
           ? "Saving..."
@@ -614,6 +715,13 @@ export default function VenueForm({ mode = "create", venue = {} }) {
           ? "Update Venue"
           : "Create Venue"}
       </button>
+      {showConfirmModal && (
+        <ConfirmModal
+          message="Are you sure you want to delete this image?"
+          onConfirm={confirmDeleteImage}
+          onCancel={cancelDeleteImage}
+        />
+      )}
     </form>
   );
 }
