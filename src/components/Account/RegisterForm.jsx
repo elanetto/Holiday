@@ -100,7 +100,15 @@ export default function RegisterForm() {
       }
     } catch (err) {
       console.error("Register error:", err);
-      setErrors({ form: err.response?.data?.error || "Something went wrong." });
+
+      const defaultMsg = "Something went wrong. Please try again.";
+      const detailedMsg =
+        err.response?.data?.errors?.[0]?.message ||
+        err.response?.data?.error ||
+        defaultMsg;
+
+      toast.error(detailedMsg); // Optional
+      setErrors({ form: detailedMsg });
     }
   };
 
@@ -258,7 +266,7 @@ export default function RegisterForm() {
               <strong>Important:</strong> Your{" "}
               <span className="font-semibold text-error">
                 username, email, and password
-              </span>
+              </span>{" "}
               cannot be changed later. Please double-check them before signing
               up.
             </p>

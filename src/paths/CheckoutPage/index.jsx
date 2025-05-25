@@ -1,13 +1,17 @@
+// Enhanced, professional-looking CheckoutPage component with robust validation and improved payment form
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-hot-toast";
 import confetti from "canvas-confetti";
+import { PLACEHOLDER_VENUE } from "../../utilities/placeholders";
 
 const CheckoutPage = () => {
   const { state } = useLocation();
   const navigate = useNavigate();
   const [step, setStep] = useState(1);
+  const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState({});
 
   const [formData, setFormData] = useState({
     fullName: "",
@@ -15,9 +19,12 @@ const CheckoutPage = () => {
     phone: "",
     address: "",
     paymentMethod: "",
+    cardNumber: "",
+    expiryDate: "",
+    cvv: "",
+    vippsPhone: "",
+    paypalEmail: "",
   });
-
-  const [loading, setLoading] = useState(false);
 
   const token = localStorage.getItem("token");
   const apiKey = localStorage.getItem("apiKey");
@@ -25,7 +32,8 @@ const CheckoutPage = () => {
   if (!state) {
     return (
       <div className="p-6 text-center text-red-600">
-        Missing booking information. Please go back and select your booking again.
+        Missing booking information. Please go back and select your booking
+        again.
       </div>
     );
   }
@@ -34,16 +42,67 @@ const CheckoutPage = () => {
 
   const handleChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
+    setErrors((prev) => ({ ...prev, [field]: "" }));
+  };
+
+  const validateStep1 = () => {
+    const step1Errors = {};
+    if (!formData.fullName.trim())
+      step1Errors.fullName = "Full name is required";
+    if (!formData.email.trim()) step1Errors.email = "Email is required";
+    if (!formData.phone.trim()) step1Errors.phone = "Phone number is required";
+    if (!formData.address.trim()) step1Errors.address = "Address is required";
+    setErrors(step1Errors);
+    return Object.keys(step1Errors).length === 0;
+  };
+
+  const validateCard = () => {
+    const cardErrors = {};
+    const cardNumberRegex = /^\d{13,19}$/;
+    const expiryRegex = /^(0[1-9]|1[0-2])\/(\d{2})$/;
+    const cvvRegex = /^\d{3}$/;
+
+    if (!cardNumberRegex.test(formData.cardNumber)) {
+      cardErrors.cardNumber = "Enter a valid card number (13-19 digits)";
+    }
+    if (!expiryRegex.test(formData.expiryDate)) {
+      cardErrors.expiryDate = "Use MM/YY format";
+    }
+    if (!cvvRegex.test(formData.cvv)) {
+      cardErrors.cvv = "CVV must be 3 digits";
+    }
+    setErrors(cardErrors);
+    return Object.keys(cardErrors).length === 0;
+  };
+
+  const handleNextStep = () => {
+    if (step === 1 && validateStep1()) {
+      setStep(2);
+    } else if (step === 2) {
+      const method = formData.paymentMethod;
+      const newErrors = {};
+      if (!method) {
+        toast.error("Please select a payment method.");
+        return;
+      }
+      if (method === "card" && !validateCard()) return;
+      if (method === "vipps" && !/^\d{8}$/.test(formData.vippsPhone.trim())) {
+        newErrors.vippsPhone = "Enter a valid 8-digit phone number";
+      }
+      if (
+        method === "paypal" &&
+        !/^\S+@\S+\.\S+$/.test(formData.paypalEmail.trim())
+      ) {
+        newErrors.paypalEmail = "Enter a valid email address";
+      }
+      setErrors(newErrors);
+      if (Object.keys(newErrors).length > 0) return;
+      setStep(3);
+    }
   };
 
   const handleConfirmBooking = async () => {
-    if (!formData.fullName || !formData.email || !formData.phone || !formData.address || !formData.paymentMethod) {
-      toast.error("Please complete all fields.");
-      return;
-    }
-
     setLoading(true);
-
     try {
       await axios.post(
         "https://v2.api.noroff.dev/holidaze/bookings",
@@ -64,17 +123,14 @@ const CheckoutPage = () => {
 
       toast.success("Booking confirmed! 🎉");
       confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
-
       navigate("/success", {
-        state: {
-          venueId: venue.id,
-          venueName: venue.name,
-        },
+        state: { venueId: venue.id, venueName: venue.name },
       });
     } catch (error) {
       console.error("Booking error:", error);
       const errorMessage =
-        error.response?.data?.message || `Error: ${error.response?.status || "Unknown error"}`;
+        error.response?.data?.message ||
+        `Error: ${error.response?.status || "Unknown error"}`;
       toast.error(`Booking failed. ${errorMessage}`);
     } finally {
       setLoading(false);
@@ -83,72 +139,75 @@ const CheckoutPage = () => {
 
   return (
     <div className="p-6 max-w-3xl mx-auto space-y-6">
-      <h1 className="text-3xl font-bold text-espressoy mb-4 text-center">Checkout</h1>
+      <h1 className="text-3xl font-bold text-espressoy text-center">
+        Checkout
+      </h1>
 
-      <div className="flex justify-center mb-4">
-        <div className="flex gap-4">
-          <button
-            className={`px-4 py-2 rounded-full ${
-              step === 1 ? "bg-orangey text-white" : "bg-gray-200"
-            }`}
-            onClick={() => setStep(1)}
-          >
-            1. Info
-          </button>
-          <button
-            className={`px-4 py-2 rounded-full ${
-              step === 2 ? "bg-orangey text-white" : "bg-gray-200"
-            }`}
-            onClick={() => setStep(2)}
-          >
-            2. Payment
-          </button>
-          <button
-            className={`px-4 py-2 rounded-full ${
-              step === 3 ? "bg-orangey text-white" : "bg-gray-200"
-            }`}
-            onClick={() => setStep(3)}
-          >
-            3. Confirm
-          </button>
+      <div className="bg-creamy p-6 rounded-lg mb-6">
+        <h2 className="text-lg font-semibold text-espressoy mb-2">
+          Booking Summary
+        </h2>
+        <div className="flex gap-4 items-center">
+          <img
+            src={venue.media?.[0]?.url || PLACEHOLDER_VENUE}
+            alt={venue.media?.[0]?.alt || "Venue image"}
+            className="w-24 h-24 object-cover rounded"
+          />
+          <div className="text-left">
+            <p className="font-bold text-xl">{venue.name}</p>
+            <p className="text-sm text-gray-600">
+              {new Date(startDate).toLocaleDateString()} →{" "}
+              {new Date(endDate).toLocaleDateString()}
+            </p>
+            <p className="text-sm text-gray-600">
+              {guests} guest{guests > 1 && "s"}
+            </p>
+            <p className="text-md mt-2 text-espressoy font-semibold">
+              Total: NOK {totalPrice.toLocaleString()}
+            </p>
+          </div>
         </div>
       </div>
 
-      <div className="bg-white p-6 rounded-xl shadow space-y-4">
+      <div className="flex justify-center gap-4 my-4">
+        {["Info", "Payment", "Confirm"].map((label, i) => (
+          <button
+            key={i}
+            className={`px-4 py-2 rounded-full text-sm font-medium transition-colors duration-200 ${
+              step === i + 1
+                ? "bg-orangey text-white"
+                : "bg-gray-200 text-gray-800"
+            }`}
+            onClick={() => setStep(i + 1)}
+          >
+            {i + 1}. {label}
+          </button>
+        ))}
+      </div>
+
+      <div className="bg-white p-6 w-[350px] mx-auto space-y-4 text-center rounded-xl">
         {step === 1 && (
           <div className="space-y-4">
-            <h2 className="text-2xl font-bold mb-2">Personal Information</h2>
-            <input
-              type="text"
-              placeholder="Full Name"
-              value={formData.fullName}
-              onChange={(e) => handleChange("fullName", e.target.value)}
-              className="w-full border border-espressoy p-2 rounded"
-            />
-            <input
-              type="email"
-              placeholder="Email"
-              value={formData.email}
-              onChange={(e) => handleChange("email", e.target.value)}
-              className="w-full border border-espressoy p-2 rounded"
-            />
-            <input
-              type="text"
-              placeholder="Phone Number"
-              value={formData.phone}
-              onChange={(e) => handleChange("phone", e.target.value)}
-              className="w-full border border-espressoy p-2 rounded"
-            />
-            <input
-              type="text"
-              placeholder="Address"
-              value={formData.address}
-              onChange={(e) => handleChange("address", e.target.value)}
-              className="w-full border border-espressoy p-2 rounded"
-            />
+            <h2 className="text-xl font-semibold text-espressoy">
+              Personal Information
+            </h2>
+            {["fullName", "email", "phone", "address"].map((field) => (
+              <div key={field} className="text-left">
+                <input
+                  type={field === "email" ? "email" : "text"}
+                  placeholder={field.charAt(0).toUpperCase() + field.slice(1)}
+                  value={formData[field]}
+                  onChange={(e) => handleChange(field, e.target.value)}
+                  className="w-full border border-espressoy p-2 rounded"
+                />
+                {errors[field] && (
+                  <p className="text-red-500 text-sm mt-1">{errors[field]}</p>
+                )}
+              </div>
+            ))}
             <button
-              onClick={() => setStep(2)}
-              className="w-full bg-sunny hover:bg-orangey hover:text-white text-espressoy py-2 rounded-full font-semibold"
+              onClick={handleNextStep}
+              className="w-full bg-sunny hover:bg-orangey cursor-pointer hover:text-white text-espressoy py-2 rounded-full font-semibold"
             >
               Continue to Payment
             </button>
@@ -157,7 +216,9 @@ const CheckoutPage = () => {
 
         {step === 2 && (
           <div className="space-y-4">
-            <h2 className="text-2xl font-bold mb-2">Payment Method</h2>
+            <h2 className="text-xl font-semibold text-espressoy">
+              Payment Method
+            </h2>
             <select
               value={formData.paymentMethod}
               onChange={(e) => handleChange("paymentMethod", e.target.value)}
@@ -168,9 +229,71 @@ const CheckoutPage = () => {
               <option value="vipps">VIPPS</option>
               <option value="paypal">PayPal</option>
             </select>
+
+            {formData.paymentMethod === "card" && (
+              <div className="space-y-2">
+                {["cardNumber", "expiryDate", "cvv"].map((field) => (
+                  <div key={field} className="text-left">
+                    <input
+                      type="text"
+                      placeholder={
+                        field === "cardNumber"
+                          ? "Card Number"
+                          : field === "expiryDate"
+                          ? "MM/YY"
+                          : "CVV"
+                      }
+                      value={formData[field]}
+                      onChange={(e) => handleChange(field, e.target.value)}
+                      className="w-full border border-espressoy p-2 rounded"
+                    />
+                    {errors[field] && (
+                      <p className="text-red-500 text-sm mt-1">
+                        {errors[field]}
+                      </p>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {formData.paymentMethod === "vipps" && (
+              <div className="text-left">
+                <input
+                  type="text"
+                  placeholder="VIPPS Phone Number"
+                  value={formData.vippsPhone}
+                  onChange={(e) => handleChange("vippsPhone", e.target.value)}
+                  className="w-full border border-espressoy p-2 rounded"
+                />
+                {errors.vippsPhone && (
+                  <p className="text-red-500 text-sm mt-1">
+                    {errors.vippsPhone}
+                  </p>
+                )}
+              </div>
+            )}
+
+            {formData.paymentMethod === "paypal" && (
+              <div className="text-left">
+                <input
+                  type="email"
+                  placeholder="PayPal Email"
+                  value={formData.paypalEmail}
+                  onChange={(e) => handleChange("paypalEmail", e.target.value)}
+                  className="w-full border border-espressoy p-2 rounded"
+                />
+                {errors.paypalEmail && (
+                  <p className="text-red-500 text-sm mt-1">
+                    {errors.paypalEmail}
+                  </p>
+                )}
+              </div>
+            )}
+
             <button
-              onClick={() => setStep(3)}
-              className="w-full bg-sunny hover:bg-orangey hover:text-white text-espressoy py-2 rounded-full font-semibold"
+              onClick={handleNextStep}
+              className="w-full bg-sunny hover:bg-orangey cursor-pointer hover:text-white text-espressoy py-2 rounded-full font-semibold"
             >
               Continue to Confirm
             </button>
@@ -179,16 +302,28 @@ const CheckoutPage = () => {
 
         {step === 3 && (
           <div className="space-y-4 text-center">
-            <h2 className="text-2xl font-bold mb-2">Confirm Your Booking</h2>
-            <p><span className="font-semibold">Venue:</span> {venue.name}</p>
-            <p><span className="font-semibold">Dates:</span> {new Date(startDate).toLocaleDateString()} → {new Date(endDate).toLocaleDateString()}</p>
-            <p><span className="font-semibold">Guests:</span> {guests}</p>
-            <p><span className="font-semibold">Total Price:</span> NOK {totalPrice.toLocaleString()}</p>
-
+            <h2 className="text-xl font-semibold text-espressoy">
+              Confirm Your Booking
+            </h2>
+            <p>
+              <span className="font-bold">Venue:</span> {venue.name}
+            </p>
+            <p>
+              <span className="font-bold">Dates:</span>{" "}
+              {new Date(startDate).toLocaleDateString()} →{" "}
+              {new Date(endDate).toLocaleDateString()}
+            </p>
+            <p>
+              <span className="font-bold">Guests:</span> {guests}
+            </p>
+            <p>
+              <span className="font-bold">Total Price:</span> NOK{" "}
+              {totalPrice.toLocaleString()}
+            </p>
             <button
               onClick={handleConfirmBooking}
               disabled={loading}
-              className="w-full bg-greeney hover:bg-orangey hover:text-white text-espressoy py-2 rounded-full font-semibold mt-4"
+              className="w-full bg-orangey cursor-pointer hover:bg-sunny text-white hover:text-espressoy py-2 rounded-full font-semibold mt-4"
             >
               {loading ? "Booking..." : "Confirm Booking"}
             </button>
