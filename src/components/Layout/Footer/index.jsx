@@ -2,7 +2,7 @@ import { FaFacebookF, FaInstagram, FaTwitter, FaGithub } from "react-icons/fa";
 
 export function Footer() {
   return (
-    <footer className="bg-espressoy text-creamy w-full py-12 px-4 sm:px-8">
+    <footer className="bg-espressoy text-creamy w-full mt-16 py-12 px-4 sm:px-8">
       <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-3 gap-10">
         {/* Logo & Description */}
         <div className="space-y-4">
