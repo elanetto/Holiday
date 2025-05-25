@@ -86,7 +86,7 @@ const AccountPage = () => {
             </div>
 
             {/* Add key to force remount when username changes */}
-            <ProfileTab key={username} />
+            <ProfileTab key={name || "default"} />
           </>
         );
       case "edit":

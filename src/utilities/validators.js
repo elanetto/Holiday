@@ -11,7 +11,7 @@ export function validateAltText(altText) {
 
   const wordCount = trimmed.split(/\s+/).length;
   if (wordCount > 20 || trimmed.length > 80) {
-    return "Descriptive text about the image must be max 20 words and 80 characters";
+    return "Descriptive text about the image must be at most 20 words and 80 characters";
   }
 
   return null;

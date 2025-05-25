@@ -75,6 +75,7 @@ export function Header() {
         >
           <button
             type="button"
+            aria-label="Go to homepage"
             onClick={handleLogoClick}
             className="focus:outline-none cursor-pointer transition"
           >

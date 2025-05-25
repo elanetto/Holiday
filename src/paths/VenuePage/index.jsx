@@ -3,7 +3,10 @@ import { useEffect, useState } from "react";
 import { ENDPOINTS } from "../../utilities/constants";
 import { Carousel } from "react-responsive-carousel";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
-import { PLACEHOLDER_VENUE, PLACEHOLDER_AVATAR } from "../../utilities/placeholders";
+import {
+  PLACEHOLDER_VENUE,
+  PLACEHOLDER_AVATAR,
+} from "../../utilities/placeholders";
 import { BsCaretLeftFill, BsCaretRightFill, BsX } from "react-icons/bs";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
@@ -114,8 +117,7 @@ const VenuePage = () => {
 
     result = walkNodes(tempDiv.childNodes);
 
-    const trimmedRawText = rawText.slice(0, result.length);
-    if (charCount < rawText.length && trimmedRawText !== result) {
+    if (charCount < rawText.length) {
       result += "...";
     }
 
@@ -386,7 +388,7 @@ const VenuePage = () => {
           <BookNow venue={venue} />
           <div className="bg-lightyellow rounded-xl shadow p-4">
             <h2 className="text-xl text-gray-900 pb-2 font-bold">
-              Ameneties and price
+              Amenities and price
             </h2>
             <img
               src={validImages[0]?.url}
