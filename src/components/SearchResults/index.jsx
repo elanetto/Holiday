@@ -35,14 +35,8 @@ export default function SearchResults({ forceShowResults = false }) {
     );
   }
 
-  if (!shouldShowResults || !isReady) return null;
-
-  if (!shouldShowResults || !isReady) return null;
-
   return (
     <div className="mt-10">
-      {error && <p className="text-red-500 text-center mb-4">{error}</p>}
-
       <div className="mb-4">
         <h2 className="text-2xl font-bold text-espressoy">
           {isSearchActive ? "You searched" : "Latest Venues"}

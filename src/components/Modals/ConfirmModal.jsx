@@ -1,6 +1,11 @@
 import React from "react";
 
-export default function ConfirmModal({ title, message, onConfirm, onCancel }) {
+export default function ConfirmModal({
+  title = "Are you sure?",
+  message,
+  onConfirm,
+  onCancel,
+}) {
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
@@ -10,26 +15,27 @@ export default function ConfirmModal({ title, message, onConfirm, onCancel }) {
       aria-describedby="modal-message"
     >
       <div className="bg-white rounded-xl p-6 max-w-sm w-full shadow-lg text-center">
-        {title && (
-          <h2
-            id="modal-title"
-            className="text-xl font-bold text-espressoy mb-2"
-          >
-            {title}
-          </h2>
-        )}
+        <h2
+          id="modal-title"
+          className="text-xl font-bold text-espressoy mb-2"
+        >
+          {title}
+        </h2>
+
         <p id="modal-message" className="text-espressoy mb-4">
           {message}
         </p>
 
         <div className="flex justify-center gap-4">
           <button
+            type="button"
             onClick={onCancel}
             className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
           >
             Cancel
           </button>
           <button
+            type="button"
             onClick={onConfirm}
             className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
           >
