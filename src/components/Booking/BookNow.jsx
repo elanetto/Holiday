@@ -79,17 +79,19 @@ const BookNow = ({ venue }) => {
         <div className="flex items-center gap-2">
           <button
             type="button"
+            aria-label="Decrease guest count"
             onClick={() => setGuests((g) => Math.max(g - 1, 1))}
             className="px-3 py-1 rounded-full hover:bg-orangey hover:text-white bg-white border border-espressoy"
           >
             -
           </button>
-          <span>{guests}</span>
+
+          <span className="px-3">{guests}</span>
+
           <button
             type="button"
-            onClick={() =>
-              setGuests((g) => Math.min(g + 1, venue.maxGuests))
-            }
+            aria-label="Increase guest count"
+            onClick={() => setGuests((g) => g + 1)}
             className="px-3 py-1 rounded-full hover:bg-orangey hover:text-white bg-white border border-espressoy"
           >
             +
