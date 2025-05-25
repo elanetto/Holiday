@@ -117,6 +117,7 @@ const VenuePage = () => {
 
     result = walkNodes(tempDiv.childNodes);
 
+    // Add ellipsis only if the full raw text exceeds the visible character limit
     if (charCount < rawText.length) {
       result += "...";
     }
