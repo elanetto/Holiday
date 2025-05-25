@@ -75,3 +75,25 @@ export function validateDescription(description) {
 export function validatePrice(price) {
   return price <= 0 ? "Price must be greater than 0" : null;
 }
+
+/**
+ * Validates media URL.
+ */
+export function validateImageUrl(url, placeholder) {
+  if (!url || url === placeholder) {
+    return "Image URL is required and must not be a placeholder";
+  } else if (!/^https?:\/\/.+\..+/.test(url)) {
+    return "Image URL must be a valid link";
+  }
+  return null;
+}
+
+/**
+ * Validates host name.
+ */
+export function validateHostName(name) {
+  if (!name || typeof name !== "string" || name.trim().length < 2) {
+    return "Host name is invalid or too short";
+  }
+  return null;
+}

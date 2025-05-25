@@ -14,6 +14,7 @@ import { BiWindowOpen, BiWindowClose } from "react-icons/bi";
 import ConfirmModal from "./../Modals/ConfirmModal";
 import {
   validateAltText,
+  validateImageUrl,
   validateMaxGuests,
   validateShortText,
   validateZip,
@@ -197,12 +198,8 @@ export default function VenueForm({ mode = "create", venue = {} }) {
 
     // Media
     formData.media.forEach((media, index) => {
-      if (!media.url || media.url === PLACEHOLDER_VENUE) {
-        newErrors[`media-${index}-url`] =
-          "Image URL is required and must not be a placeholder";
-      } else if (!/^https?:\/\/.+\..+/.test(media.url)) {
-        newErrors[`media-${index}-url`] = "Image URL must be a valid link";
-      }
+      const urlError = validateImageUrl(media.url, PLACEHOLDER_VENUE);
+      if (urlError) newErrors[`media-${index}-url`] = urlError;
 
       const altError = validateAltText(media.alt);
       if (altError) newErrors[`media-${index}-alt`] = altError;
@@ -563,7 +560,11 @@ export default function VenueForm({ mode = "create", venue = {} }) {
                     setCountry(val);
                     handleLocationChange("country", val);
                   }}
+                  onBlur={() =>
+                    setTouched((prev) => ({ ...prev, country: true }))
+                  }
                 />
+
                 {touched.country && errors.country && (
                   <p className="text-error text-sm mt-1">{errors.country}</p>
                 )}

@@ -17,7 +17,7 @@ const COUNTRY_COORDINATES = {
   austria: [47.5162, 14.5501],
   cuba: [21.5218, -77.7812],
   singapore: [1.3521, 103.8198],
-  dubai: [25.276987, 55.296249],
+  "united arab emirates": [25.276987, 55.296249],
   malaysia: [4.2105, 101.9758],
   china: [35.8617, 104.1954],
   cyprus: [35.1264, 33.4299],

@@ -37,7 +37,12 @@ export const UserProvider = ({ children }) => {
   };
 
   const logoutUser = () => {
-    localStorage.clear();
+    localStorage.removeItem("token");
+    localStorage.removeItem("name");
+    localStorage.removeItem("email");
+    localStorage.removeItem("isVenueManager");
+    localStorage.removeItem("avatar");
+    localStorage.removeItem("apiKey");
     setUser(null);
     // Ensure window reload to fully reset state-dependent components
     window.location.reload();

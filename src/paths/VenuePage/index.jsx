@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { ENDPOINTS } from "../../utilities/constants";
 import { Carousel } from "react-responsive-carousel";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
-import { PLACEHOLDER_VENUE } from "../../utilities/placeholders";
+import { PLACEHOLDER_VENUE, PLACEHOLDER_AVATAR } from "../../utilities/placeholders";
 import { BsCaretLeftFill, BsCaretRightFill, BsX } from "react-icons/bs";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
@@ -73,6 +73,7 @@ const VenuePage = () => {
 
     const tempDiv = document.createElement("div");
     tempDiv.innerHTML = html;
+    const rawText = tempDiv.textContent.trim(); // ✅ Move this here
     let charCount = 0;
     let result = "";
     const tagsStack = [];
@@ -113,9 +114,10 @@ const VenuePage = () => {
 
     result = walkNodes(tempDiv.childNodes);
 
-    // Add ellipsis if we trimmed something
-    const rawText = tempDiv.textContent.trim();
-    if (charCount < rawText.length && !rawText.endsWith("...")) result += "...";
+    const trimmedRawText = rawText.slice(0, result.length);
+    if (charCount < rawText.length && trimmedRawText !== result) {
+      result += "...";
+    }
 
     return result;
   };
@@ -362,6 +364,25 @@ const VenuePage = () => {
 
         {/* RIGHT SIDE – Booking Summary + BookNow */}
         <div className="lg:w-1/3 space-y-4">
+          {venue.owner && (
+            <Link
+              to={`/profile/${encodeURIComponent(venue.owner.name)}`}
+              className="flex items-center gap-2 mt-4 group"
+            >
+              <img
+                src={venue.owner.avatar?.url?.trim() || PLACEHOLDER_AVATAR}
+                alt={
+                  venue.owner.avatar?.alt?.trim() ||
+                  `${venue.owner.name}'s avatar`
+                }
+                className="w-14 h-14 rounded-full object-cover group-hover:brightness-90 transition"
+              />
+
+              <span className="text-espressoy font-medium hover:underline">
+                Hosted by {venue.owner.name}
+              </span>
+            </Link>
+          )}
           <BookNow venue={venue} />
           <div className="bg-lightyellow rounded-xl shadow p-4">
             <h2 className="text-xl text-gray-900 pb-2 font-bold">
