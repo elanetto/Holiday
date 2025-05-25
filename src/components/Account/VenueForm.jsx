@@ -108,7 +108,7 @@ export default function VenueForm({ mode = "create", venue = {} }) {
     media:
       venue.media && venue.media.length > 0
         ? venue.media
-        : [{ url: PLACEHOLDER_VENUE, alt: "Describe the image here" }],
+        : [{ url: PLACEHOLDER_VENUE, alt: "Describe the image" }],
   });
 
   useEffect(() => {
@@ -212,12 +212,12 @@ export default function VenueForm({ mode = "create", venue = {} }) {
 
       if (!media.alt || media.alt.trim().length < 3) {
         newErrors[`media-${index}-alt`] =
-          "Alt text must be at least 3 characters";
+          "Descriptive text about the image must be at least 3 characters";
       } else {
         const wordCount = media.alt.trim().split(/\s+/).length;
         if (wordCount > 20 || media.alt.trim().length > 80) {
           newErrors[`media-${index}-alt`] =
-            "Alt text must be max 20 words and 80 characters";
+            "Descriptive text about the image must be max 20 words and 80 characters";
         }
       }
     });

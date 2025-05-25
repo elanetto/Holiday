@@ -8,11 +8,23 @@ export default function SearchResults({ forceShowResults = false }) {
   const guests = searchFilters?.guests || 1;
   const isSearchActive = !!location.trim() || guests > 1;
 
-  const { results, error, isReady, loading } = useFilteredVenues({ forceShowResults });
+  const { results, error, isReady, loading } = useFilteredVenues({
+    forceShowResults,
+  });
   const shouldShowResults = forceShowResults || isSearchActive;
 
   // Filter out any undefined or null venues to avoid rendering crashes
-  const validResults = Array.isArray(results) ? results.filter((v) => v && v.id) : [];
+  const validResults = Array.isArray(results)
+    ? results.filter((v) => v && v.id)
+    : [];
+
+  if (error) {
+    return (
+      <div className="mt-10 flex flex-col items-center justify-center text-center min-h-[200px]">
+        <p className="text-red-500 text-center mb-4">{error}</p>
+      </div>
+    );
+  }
 
   if (loading || (!shouldShowResults && !isReady)) {
     return (
@@ -22,6 +34,8 @@ export default function SearchResults({ forceShowResults = false }) {
       </div>
     );
   }
+
+  if (!shouldShowResults || !isReady) return null;
 
   if (!shouldShowResults || !isReady) return null;
 
