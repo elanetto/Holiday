@@ -269,153 +269,143 @@ const VenuePage = () => {
         </div>
       )}
 
-      <div className="space-y-4">
-        <h2 className="text-2xl font-bold">Description</h2>
-        <div className="break-words whitespace-pre-wrap">
-          {showFullDescription ? (
-            <div
-              className="description-styles"
-              dangerouslySetInnerHTML={{ __html: venue.description }}
-            />
-          ) : (
-            <div
-              className="description-styles"
-              dangerouslySetInnerHTML={{
-                __html: getTrimmedDescriptionHTML(venue.description, 200),
-              }}
-            />
-          )}
+      <div className="flex flex-col lg:flex-row gap-8 mt-8">
+        {/* LEFT SIDE – Description, Map, etc. */}
 
-          {getTextContentLength(venue.description) > 200 && (
-            <button
-              onClick={() => setShowFullDescription((prev) => !prev)}
-              className="mt-2 text-sm text-orangey font-medium underline hover:text-espressoy transition"
-            >
-              {showFullDescription ? "Show less" : "Read more"}
-            </button>
-          )}
-        </div>
-
-        {venue.bookings?.length > 0 && (
-          <div className="mt-4">
-            <h2 className="text-xl font-semibold text-espressoy mb-2">
-              Booked Dates
-            </h2>
-            <ul className="text-sm text-gray-700 list-disc list-inside">
-              {venue.bookings.map((booking) => {
-                const from = new Date(booking.dateFrom).toLocaleDateString(
-                  "en-US",
-                  {
-                    month: "short",
-                    day: "numeric",
-                  }
-                );
-                const to = new Date(booking.dateTo).toLocaleDateString(
-                  "en-US",
-                  {
-                    month: "short",
-                    day: "numeric",
-                  }
-                );
-                return (
-                  <li key={booking.id}>
-                    📅 Booked: {from} – {to}
-                  </li>
-                );
-              })}
-            </ul>
+        <div className="lg:w-2/3 space-y-6">
+          <div className="flex flex-wrap gap-2 items-center text-sm mb-4">
+            <span className="px-4 py-2 rounded-full bg-lightyellow text-espressoy">
+              💰 {venue.price} NOK/night
+            </span>
+            {venue.meta?.wifi && (
+              <span className="px-4 py-2 rounded-full bg-lightyellow text-espressoy">
+                📶 WiFi
+              </span>
+            )}
+            {venue.meta?.parking && (
+              <span className="px-4 py-2 rounded-full bg-lightyellow text-espressoy">
+                🄹 Parking
+              </span>
+            )}
+            {venue.meta?.breakfast && (
+              <span className="px-4 py-2 rounded-full bg-lightyellow text-espressoy">
+                🥐 Breakfast
+              </span>
+            )}
+            {venue.meta?.pets && (
+              <span className="px-4 py-2 rounded-full bg-lightyellow text-espressoy">
+                🐶 Pets allowed
+              </span>
+            )}
           </div>
-        )}
 
-        <div className="flex gap-4 flex-wrap">
-          <span className="px-3 py-1 rounded-full bg-sunny text-white">
-            💰 {venue.price} NOK/night
-          </span>
-          <span className="px-3 py-1 rounded-full bg-goldy text-white">
-            👥 Max {venue.maxGuests} guests
-          </span>
-          <span className="px-3 py-1 rounded-full bg-greeney text-white">
-            ⭐ {venue.rating || 0}/5
-          </span>
-        </div>
-
-        <div className="mt-6">
-          <h2 className="text-xl font-semibold text-espressoy mb-2">
-            Amenities
-          </h2>
-          <ul className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-sm">
-            {venue.meta?.wifi && <li>📶 WiFi</li>}
-            {venue.meta?.parking && <li>🄹️ Parking</li>}
-            {venue.meta?.breakfast && <li>🥐 Breakfast</li>}
-            {venue.meta?.pets && <li>🐶 Pets allowed</li>}
-          </ul>
-        </div>
-
-        <div className="mt-6">
-          <h2 className="text-xl font-semibold text-espressoy mb-2">
-            Location
-          </h2>
-          <p>
-            {venue.location.address}, {venue.location.city},{" "}
-            {venue.location.country}
-          </p>
-          <div className="h-64 w-full mt-4 rounded overflow-hidden">
-            <MapContainer
-              center={markerPosition || [20, 0]}
-              zoom={markerPosition ? 4 : 2}
-              style={{ height: "100%", width: "100%" }}
-              scrollWheelZoom={false}
-            >
-              <TileLayer
-                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                attribution="&copy; <a href='https://www.openstreetmap.org/copyright'>OpenStreetMap</a> contributors"
+          <h2 className="text-2xl font-bold">Description</h2>
+          <div className="break-words whitespace-pre-wrap">
+            {showFullDescription ? (
+              <div
+                className="description-styles"
+                dangerouslySetInnerHTML={{ __html: venue.description }}
               />
-              {markerPosition && (
-                <Marker position={markerPosition}>
-                  <Popup>{venue.location.country}</Popup>
-                </Marker>
-              )}
-            </MapContainer>
-          </div>
-        </div>
-
-        {venue && <BookNow venue={venue} />}
-
-        <div className="mt-6">
-          <h2 className="text-xl font-semibold text-espressoy mb-2">Host</h2>
-          <div className="rounded-xl overflow-hidden shadow">
-            {venue.owner?.banner?.url && (
-              <img
-                src={venue.owner.banner.url}
-                alt={venue.owner.banner.alt || `${venue.owner.name}'s banner`}
-                className="w-full h-40 object-cover"
+            ) : (
+              <div
+                className="description-styles"
+                dangerouslySetInnerHTML={{
+                  __html: getTrimmedDescriptionHTML(venue.description, 200),
+                }}
               />
             )}
-            <Link
-              to={`/profile/${venue.owner?.name}`}
-              className="p-4 flex gap-4 items-center hover:bg-creamy cursor-pointer"
-            >
-              <img
-                src={venue.owner?.avatar?.url || PLACEHOLDER_VENUE}
-                alt={venue.owner?.avatar?.alt || venue.owner?.name}
-                className="w-16 h-16 rounded-full object-cover"
-                onError={(e) => (e.target.src = PLACEHOLDER_VENUE)}
-              />
-              <div>
-                <p className="font-bold text-lg">{venue.owner?.name}</p>
-                <p className="text-sm text-gray-500">{venue.owner?.email}</p>
-                {venue.owner?.bio && (
-                  <p className="text-sm mt-1">{venue.owner.bio}</p>
+
+            {getTextContentLength(venue.description) > 200 && (
+              <button
+                onClick={() => setShowFullDescription((prev) => !prev)}
+                className="mt-2 text-sm text-orangey font-medium underline hover:text-espressoy transition"
+              >
+                {showFullDescription ? "Show less" : "Read more"}
+              </button>
+            )}
+          </div>
+
+          <div>
+            <h2 className="text-xl font-semibold text-espressoy mb-2">
+              Location
+            </h2>
+            <p>
+              {venue.location.address}, {venue.location.city},{" "}
+              {venue.location.country}
+            </p>
+            <div className="h-64 w-full mt-4 rounded overflow-hidden mb-16">
+              <MapContainer
+                center={markerPosition || [20, 0]}
+                zoom={markerPosition ? 4 : 2}
+                style={{ height: "100%", width: "100%" }}
+                scrollWheelZoom={false}
+              >
+                <TileLayer
+                  url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                  attribution="&copy; OpenStreetMap contributors"
+                />
+                {markerPosition && (
+                  <Marker position={markerPosition}>
+                    <Popup>{venue.location.country}</Popup>
+                  </Marker>
                 )}
-              </div>
-            </Link>
-            <div className="bg-creamy px-4 py-2 text-sm text-gray-600 border-t border-espressoy">
-              <p>Created: {new Date(venue.created).toLocaleDateString()}</p>
-              <p>
-                Last updated: {new Date(venue.updated).toLocaleDateString()}
-              </p>
+              </MapContainer>
             </div>
           </div>
+        </div>
+
+        {/* RIGHT SIDE – Booking Summary + BookNow */}
+        <div className="lg:w-1/3 space-y-4">
+          <BookNow venue={venue} />
+          <div className="bg-lightyellow rounded-xl shadow p-4">
+            <h2 className="text-xl text-gray-900 pb-2 font-bold">
+              Ameneties and price
+            </h2>
+            <img
+              src={validImages[0]?.url}
+              alt={validImages[0]?.alt || "Venue image"}
+              className="w-full h-40 object-cover rounded-md mb-3"
+            />
+            <h3 className="text-lg font-bold text-espressoy mb-1">
+              {venue.name}
+            </h3>
+            <p className="text-sm text-gray-600 mb-2">
+              💰 {venue.price} NOK/night pr. person
+            </p>
+            <ul className="grid grid-cols-2 gap-2 text-sm text-gray-700 mb-4">
+              {venue.meta?.wifi && <li>📶 WiFi</li>}
+              {venue.meta?.parking && <li>🄹 Parking</li>}
+              {venue.meta?.breakfast && <li>🥐 Breakfast</li>}
+              {venue.meta?.pets && <li>🐶 Pets allowed</li>}
+            </ul>
+          </div>
+          {venue.bookings?.length > 0 && (
+            <div className="mb-16">
+              <h2 className="text-xl font-semibold text-espressoy mb-2">
+                Booked Dates
+              </h2>
+              <ul className="text-sm text-gray-700 list-disc list-inside">
+                {venue.bookings.map((booking) => {
+                  const from = new Date(booking.dateFrom).toLocaleDateString(
+                    "en-US",
+                    { month: "short", day: "numeric" }
+                  );
+                  const to = new Date(booking.dateTo).toLocaleDateString(
+                    "en-US",
+                    {
+                      month: "short",
+                      day: "numeric",
+                    }
+                  );
+                  return (
+                    <li key={booking.id}>
+                      📅 Booked: {from} – {to}
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
+          )}
         </div>
       </div>
     </div>

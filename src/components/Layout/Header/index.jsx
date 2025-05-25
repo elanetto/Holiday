@@ -1,5 +1,5 @@
 import { useMemo, useState, useRef, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { useLocation, useNavigate, Link } from "react-router-dom";
 import logoYellow from "../../../assets/SVG/logo_yellow.svg?url";
 import logoOrange from "../../../assets/SVG/logo_orange.svg?url";
 import { useUser } from "../../../contexts/useUser";
@@ -11,6 +11,9 @@ export function Header() {
   const [showDropdown, setShowDropdown] = useState(false);
   const dropdownRef = useRef(null);
   const [logoSrc, setLogoSrc] = useState(logoYellow);
+  const [showTooltip, setShowTooltip] = useState(false);
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const userName = useMemo(() => {
     return user?.name || localStorage.getItem("name");
@@ -18,6 +21,14 @@ export function Header() {
 
   const handleLogout = () => {
     logoutUser();
+  };
+
+  const handleLogoClick = () => {
+    if (location.pathname === "/") {
+      window.location.reload();
+    } else {
+      navigate("/");
+    }
   };
 
   const renderUserIcon = () => {
@@ -49,16 +60,31 @@ export function Header() {
 
   return (
     <header className="w-full">
-      <div className="max-w-7xl mx-auto px-4 sm:px-8 py-4 sm:py-6 flex items-center justify-between">
-        {/* Logo */}
-        <button
-          onClick={() => (window.location.href = "/")}
-          onMouseEnter={() => setLogoSrc(logoOrange)}
-          onMouseLeave={() => setLogoSrc(logoYellow)}
-          className="focus:outline-none cursor-pointer transition"
+      <div className="max-w-7xl mx-auto px-4 sm:px-8 py-4 sm:py-6 flex items-center justify-between relative">
+        {/* Logo with tooltip */}
+        <div
+          className="relative"
+          onMouseEnter={() => {
+            setLogoSrc(logoOrange);
+            if (location.pathname === "/") setShowTooltip(true);
+          }}
+          onMouseLeave={() => {
+            setLogoSrc(logoYellow);
+            setShowTooltip(false);
+          }}
         >
-          <img src={logoSrc} alt="Logo for Holidaze" className="h-5 sm:h-7" />
-        </button>
+          <button
+            onClick={handleLogoClick}
+            className="focus:outline-none cursor-pointer transition"
+          >
+            <img src={logoSrc} alt="Logo for Holidaze" className="h-5 sm:h-7" />
+          </button>
+          {showTooltip && (
+            <div className="absolute top-full mt-1 left-1/2 -translate-x-1/2 bg-gray-800 text-white text-xs rounded px-2 py-1 shadow z-50">
+              Click to refresh
+            </div>
+          )}
+        </div>
 
         {/* User section: Search icon + Avatar + Dropdown */}
         <div className="flex items-center gap-4 relative" ref={dropdownRef}>
