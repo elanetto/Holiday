@@ -2,12 +2,18 @@ import { useEffect, useRef } from "react";
 import { useVenueStore } from "../../store/useVenueStore";
 import { SearchBar } from "../../components/SearchBar";
 import SearchResults from "../../components/SearchResults";
-import backgroundImage from "../../assets/background/travel-street.jpg";
+import backgroundImage from "../../assets/venue/unique/unique-beach-4.jpg";
 import { ENDPOINTS } from "../../utilities/constants";
 
 function SearchPage() {
-  const { setVenues, venues, setLoading } = useVenueStore();
+  const { setVenues, venues, setLoading, loading } = useVenueStore();
   const hasFetchedOnce = useRef(false);
+
+  useEffect(() => {
+    const store = useVenueStore.getState();
+    store.setVenues([]);
+    store.setLoading(true);
+  }, []);
 
   // ✅ Fetch all venues only once (even if filters change)
   useEffect(() => {
@@ -80,7 +86,18 @@ function SearchPage() {
       </div>
 
       <div className="max-w-7xl mx-auto px-4 py-6">
-        <SearchResults forceShowResults={true} />
+        {loading ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+            {[...Array(12)].map((_, i) => (
+              <div
+                key={i}
+                className="h-64 bg-gray-200 rounded-xl animate-pulse shadow"
+              />
+            ))}
+          </div>
+        ) : (
+          <SearchResults forceShowResults={true} />
+        )}
       </div>
     </div>
   );

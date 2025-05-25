@@ -17,7 +17,8 @@ import cityLivingImage from "./assets/venue/city/travel-singapore-3.jpg";
 function App() {
   const { isLoggedIn, isVenueManager, name } = useUser();
   const { searchFilters } = useSearch();
-  const { setVenues, venues, setIsLoading } = useVenueStore();
+  const { setVenues, venues, setLoading } = useVenueStore();
+
   const hasFetchedOnce = useRef(false);
 
   const location = searchFilters?.location || "";
@@ -29,7 +30,8 @@ function App() {
     const signal = controller.signal;
 
     const fetchVenues = async () => {
-      setIsLoading(true);
+      setLoading(true);
+
       const limit = 100;
       let currentPage = 1;
       let allVenues = [];
@@ -57,7 +59,7 @@ function App() {
           console.error("Error loading venues:", err);
         }
       } finally {
-        setIsLoading(false);
+        setLoading(false);
       }
     };
 
@@ -66,7 +68,7 @@ function App() {
     }
 
     return () => controller.abort();
-  }, [venues.length, setVenues, setIsLoading]);
+  }, [venues.length, setVenues, setLoading]);
 
   const background = {
     backgroundImage: `url(${backgroundImage})`,
