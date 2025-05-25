@@ -36,7 +36,7 @@ const COUNTRY_ALIASES = {
   frankrike: "france",
   italia: "italy",
   spania: "spain",
-  kypros: "cyprus", 
+  kypros: "cyprus",
 };
 
 /**

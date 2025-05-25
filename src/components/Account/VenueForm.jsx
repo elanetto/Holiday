@@ -108,7 +108,7 @@ export default function VenueForm({ mode = "create", venue = {} }) {
     media:
       venue.media && venue.media.length > 0
         ? venue.media
-        : [{ url: PLACEHOLDER_VENUE, alt: "Describe the image" }],
+        : [{ url: PLACEHOLDER_VENUE, alt: "Venue preview image" }],
   });
 
   useEffect(() => {
