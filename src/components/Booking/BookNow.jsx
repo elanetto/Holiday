@@ -91,7 +91,7 @@ const BookNow = ({ venue }) => {
           <button
             type="button"
             aria-label="Increase guest count"
-            onClick={() => setGuests((g) => g + 1)}
+            onClick={() => setGuests((g) => Math.min(g + 1, venue.maxGuests))}
             className="px-3 py-1 rounded-full hover:bg-orangey hover:text-white bg-white border border-espressoy"
           >
             +
