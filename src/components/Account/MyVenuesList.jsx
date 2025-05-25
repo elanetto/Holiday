@@ -131,6 +131,7 @@ const MyVenuesList = () => {
                 <button
                   onClick={() => handleDeleteClick(venue.id)}
                   className="px-2 py-1 text-sm bg-error text-white rounded hover:bg-red-700"
+                  aria-label={`Delete ${venue.name}`}
                 >
                   Delete
                 </button>

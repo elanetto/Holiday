@@ -12,6 +12,15 @@ import confetti from "canvas-confetti";
 import RichTextEditor from "./../Forms/RichTextEditor";
 import { BiWindowOpen, BiWindowClose } from "react-icons/bi";
 import ConfirmModal from "./../Modals/ConfirmModal";
+import {
+  validateAltText,
+  validateMaxGuests,
+  validateShortText,
+  validateZip,
+  validateVenueName,
+  validateDescription,
+  validatePrice,
+} from "../../utilities/validators";
 
 countries.registerLocale(enLocale);
 
@@ -138,58 +147,43 @@ export default function VenueForm({ mode = "create", venue = {} }) {
   const validate = () => {
     const newErrors = {};
 
-    if (formData.maxGuests <= 0) {
-      newErrors.maxGuests = "Max guests must be greater than 0";
-    } else if (formData.maxGuests > 100) {
-      newErrors.maxGuests = "Max guests cannot be more than 100";
-    }
+    // Max guests
+    const guestsError = validateMaxGuests(formData.maxGuests);
+    if (guestsError) newErrors.maxGuests = guestsError;
 
-    // Continent: required, max 3 words and 30 chars
-    const continentWords = formData.location.continent.trim().split(/\s+/);
-    if (!formData.location.continent.trim()) {
-      newErrors.continent = "Continent is required";
-    } else if (
-      continentWords.length > 3 ||
-      formData.location.continent.trim().length > 30
-    ) {
-      newErrors.continent = "Continent must be max 3 words and 30 characters";
-    }
+    // Continent
+    const continentError = validateShortText(
+      formData.location.continent,
+      "Continent",
+      3,
+      30
+    );
+    if (continentError) newErrors.continent = continentError;
 
-    // Address: required, max 3 words and 30 chars
-    const addressWords = formData.location.address.trim().split(/\s+/);
-    if (!formData.location.address.trim()) {
-      newErrors.address = "Address is required";
-    } else if (
-      addressWords.length > 3 ||
-      formData.location.address.trim().length > 30
-    ) {
-      newErrors.address = "Address must be max 3 words and 30 characters";
-    }
+    // Address
+    const addressError = validateShortText(
+      formData.location.address,
+      "Address",
+      3,
+      30
+    );
+    if (addressError) newErrors.address = addressError;
 
-    // Zip: required, digits only, max 8
-    if (!formData.location.zip.trim()) {
-      newErrors.zip = "Zip code is required";
-    } else if (!/^\d{1,8}$/.test(formData.location.zip.trim())) {
-      newErrors.zip = "Zip code must be up to 8 digits only";
-    }
+    // Zip
+    const zipError = validateZip(formData.location.zip);
+    if (zipError) newErrors.zip = zipError;
 
     // Name
-    if (
-      !/^[A-Z][a-zA-Z0-9\s,'\-:.\u2013\u2014]{2,}$/.test(formData.name.trim())
-    ) {
-      newErrors.name =
-        "Name must start with a capital letter and can include letters, numbers, spaces, commas, colons, hyphens, apostrophes, and periods.";
-    }
+    const nameError = validateVenueName(formData.name);
+    if (nameError) newErrors.name = nameError;
 
     // Description
-    if (formData.description.trim().split(/\s+/).length < 2) {
-      newErrors.description = "Description must be at least two words";
-    }
+    const descriptionError = validateDescription(formData.description);
+    if (descriptionError) newErrors.description = descriptionError;
 
     // Price
-    if (formData.price <= 0) {
-      newErrors.price = "Price must be greater than 0";
-    }
+    const priceError = validatePrice(formData.price);
+    if (priceError) newErrors.price = priceError;
 
     // City
     if (!formData.location.city.trim()) {
@@ -210,16 +204,8 @@ export default function VenueForm({ mode = "create", venue = {} }) {
         newErrors[`media-${index}-url`] = "Image URL must be a valid link";
       }
 
-      if (!media.alt || media.alt.trim().length < 3) {
-        newErrors[`media-${index}-alt`] =
-          "Descriptive text about the image must be at least 3 characters";
-      } else {
-        const wordCount = media.alt.trim().split(/\s+/).length;
-        if (wordCount > 20 || media.alt.trim().length > 80) {
-          newErrors[`media-${index}-alt`] =
-            "Descriptive text about the image must be max 20 words and 80 characters";
-        }
-      }
+      const altError = validateAltText(media.alt);
+      if (altError) newErrors[`media-${index}-alt`] = altError;
     });
 
     setErrors(newErrors);
