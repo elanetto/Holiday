@@ -16,8 +16,8 @@ export function Footer() {
         <div className="space-y-2 text-sm">
           <h3 className="font-semibold text-creamy uppercase tracking-wide">Quick Links</h3>
           <ul className="space-y-1">
-            <li><a href="#" className="hover:underline hover:text-sunny">Home</a></li>
-            <li><a href="#" className="hover:underline hover:text-sunny">Venues</a></li>
+            <li><a href="/home" className="hover:underline hover:text-sunny">Home</a></li>
+            <li><a href="/search" className="hover:underline hover:text-sunny">Venues</a></li>
             <li><a href="#" className="hover:underline hover:text-sunny">Bookings</a></li>
             <li><a href="#" className="hover:underline hover:text-sunny">My Account</a></li>
           </ul>
