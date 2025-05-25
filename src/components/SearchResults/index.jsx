@@ -1,6 +1,7 @@
 import { useFilteredVenues } from "../../utilities/useFilteredVenues";
 import { useSearch } from "../../contexts/useSearch";
 import VenueList from "../VenueList";
+import { useMemo } from "react";
 
 export default function SearchResults({ forceShowResults = false }) {
   const { searchFilters } = useSearch();
@@ -14,9 +15,12 @@ export default function SearchResults({ forceShowResults = false }) {
   const shouldShowResults = forceShowResults || isSearchActive;
 
   // Filter out any undefined or null venues to avoid rendering crashes
-  const validResults = Array.isArray(results)
+  const validResults = useMemo(() => {
+  return Array.isArray(results)
     ? results.filter((v) => v && v.id)
     : [];
+}, [results]);
+
 
   if (error) {
     return (
