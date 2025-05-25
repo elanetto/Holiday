@@ -52,10 +52,13 @@ const VenuePage = () => {
               testImg.src = img.url;
               testImg.onload = () => resolve(img);
               testImg.onerror = () =>
-                resolve({ url: PLACEHOLDER_VENUE, alt: "Placeholder" });
+                resolve({ url: PLACEHOLDER_VENUE, alt: "Placeholder image" });
             })
         )
       ).then((results) => setValidImages(results));
+    } else {
+      // Fallback if no images provided
+      setValidImages([{ url: PLACEHOLDER_VENUE, alt: "Placeholder image" }]);
     }
   }, [venue]);
 
@@ -143,7 +146,7 @@ const VenuePage = () => {
                   type="button"
                   onClick={onClickHandler}
                   title={label}
-                  className="absolute left-4 top-1/2 -translate-y-1/2 bg-sunny p-2 rounded-full z-10 shadow cursor-pointer"
+                  className="absolute left-4 top-1/2 -translate-y-1/2 bg-sunny hover:bg-orangey p-2 rounded-full z-10 shadow cursor-pointer"
                 >
                   <BsCaretLeftFill className="text-espressoy w-6 h-6" />
                 </button>
@@ -155,7 +158,7 @@ const VenuePage = () => {
                   type="button"
                   onClick={onClickHandler}
                   title={label}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 bg-sunny p-2 rounded-full z-10 shadow cursor-pointer"
+                  className="absolute right-4 top-1/2 -translate-y-1/2 bg-sunny hover:bg-orangey p-2 rounded-full z-10 shadow cursor-pointer"
                 >
                   <BsCaretRightFill className="text-espressoy w-6 h-6" />
                 </button>
@@ -191,7 +194,7 @@ const VenuePage = () => {
                 <img
                   src={image.url}
                   alt={image.alt || `Image ${index + 1}`}
-                  className="w-full max-h-[500px] object-cover"
+                  className="w-full max-h-[500px] object-cover rounded-xl"
                   onError={(e) => (e.target.src = PLACEHOLDER_VENUE)}
                 />
                 <div className="bg-white p-3 text-center text-black text-sm">

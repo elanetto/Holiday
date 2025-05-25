@@ -1,9 +1,12 @@
 import React from "react";
 
-export default function ConfirmModal({ message, onConfirm, onCancel }) {
+export default function ConfirmModal({ title, message, onConfirm, onCancel }) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
       <div className="bg-white rounded-xl p-6 max-w-sm w-full shadow-lg text-center">
+        {title && (
+          <h2 className="text-xl font-bold text-espressoy mb-2">{title}</h2>
+        )}
         <p className="text-espressoy mb-4">{message}</p>
         <div className="flex justify-center gap-4">
           <button

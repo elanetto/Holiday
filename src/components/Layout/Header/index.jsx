@@ -51,14 +51,14 @@ export function Header() {
     <header className="w-full">
       <div className="max-w-7xl mx-auto px-4 sm:px-8 py-4 sm:py-6 flex items-center justify-between">
         {/* Logo */}
-        <Link
-          to="/"
+        <button
+          onClick={() => (window.location.href = "/")}
           onMouseEnter={() => setLogoSrc(logoOrange)}
           onMouseLeave={() => setLogoSrc(logoYellow)}
           className="focus:outline-none cursor-pointer transition"
         >
           <img src={logoSrc} alt="Logo for Holidaze" className="h-5 sm:h-7" />
-        </Link>
+        </button>
 
         {/* User section: Search icon + Avatar + Dropdown */}
         <div className="flex items-center gap-4 relative" ref={dropdownRef}>

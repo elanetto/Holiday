@@ -1,24 +1,29 @@
 import { useFilteredVenues } from "../../utilities/useFilteredVenues";
 import { useSearch } from "../../contexts/useSearch";
-import { useVenueStore } from "../../store/useVenueStore";
 import VenueList from "../VenueList";
 
 export default function SearchResults({ forceShowResults = false }) {
   const { searchFilters } = useSearch();
-  const { isLoading } = useVenueStore();
   const location = searchFilters?.location || "";
   const guests = searchFilters?.guests || 1;
   const isSearchActive = !!location.trim() || guests > 1;
 
-  const { results, error, isReady } = useFilteredVenues({ forceShowResults });
+  const { results, error, isReady, loading } = useFilteredVenues({ forceShowResults });
   const shouldShowResults = forceShowResults || isSearchActive;
 
-  if (isLoading || !isReady) {
-    return <p className="text-center mt-10">Loading venues...</p>;
-  }
-  
+  // Filter out any undefined or null venues to avoid rendering crashes
+  const validResults = Array.isArray(results) ? results.filter((v) => v && v.id) : [];
 
-  if (!shouldShowResults) return null;
+  if (loading || (!shouldShowResults && !isReady)) {
+    return (
+      <div className="mt-10 flex flex-col items-center justify-center text-center min-h-[200px]">
+        <div className="w-16 h-16 border-4 border-sunny border-t-transparent rounded-full animate-spin shadow-lg" />
+        <p className="text-gray-600 mt-4 text-sm">Loading venues...</p>
+      </div>
+    );
+  }
+
+  if (!shouldShowResults || !isReady) return null;
 
   return (
     <div className="mt-10">
@@ -31,12 +36,11 @@ export default function SearchResults({ forceShowResults = false }) {
           {guests > 1 && ` with at least ${guests} guests`}
         </h2>
         <p className="text-sm text-gray-600 mt-1">
-          Showing {results.length} result
-          {results.length !== 1 && "s"}
+          Showing {validResults.length} result{validResults.length !== 1 && "s"}
         </p>
       </div>
 
-      <VenueList venues={results} />
+      <VenueList venues={validResults} />
     </div>
   );
 }

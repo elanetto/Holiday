@@ -2,7 +2,7 @@ import { create } from "zustand";
 
 export const useVenueStore = create((set) => ({
   venues: [],
-  isLoading: true,
+  loading: false,
   setVenues: (venues) => set({ venues }),
-  setIsLoading: (isLoading) => set({ isLoading }),
+  setLoading: (loading) => set({ loading }),
 }));

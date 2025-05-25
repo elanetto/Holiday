@@ -101,9 +101,13 @@ const MyVenuesList = () => {
               alt={venue.media?.[0]?.alt || venue.name}
               className="w-full h-48 object-cover rounded"
             />
-            <h3 className="mt-2 text-lg font-bold text-espressoy truncate">
+            <h3
+              className="mt-2 text-lg font-bold text-espressoy truncate"
+              title={venue.name}
+            >
               {venue.name}
             </h3>
+
             <p className="text-sm text-gray-600">
               {venue.location.city}, {venue.location.country}
             </p>
