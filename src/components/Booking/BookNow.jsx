@@ -85,7 +85,7 @@ const BookNow = ({ venue }) => {
         }}
         className="mt-0 p-6 bg-sunny rounded-2xl space-y-6 max-w-2xl mx-auto flex flex-col items-center justify-center"
       >
-        <h2 className="text-xl font-semibold text-espressoy">
+        <h2 className="text-2xl font-ledger font-semibold text-espressoy">
           Book This Venue
         </h2>
 

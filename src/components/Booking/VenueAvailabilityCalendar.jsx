@@ -5,7 +5,7 @@ const VenueAvailabilityCalendar = ({ bookedRanges }) => {
 
   return (
     <div className="w-full">
-      <h3 className="text-xl font-semibold text-espressoy mb-2">
+      <h3 className="text-2xl font-ledger text-center font-semibold text-espressoy mb-2">
         Availability
       </h3>
       <DatePicker
