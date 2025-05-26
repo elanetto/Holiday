@@ -8,7 +8,6 @@ import { formatPrice } from "../../utilities/formatPrice";
 
 const BookNow = ({ venue }) => {
   const navigate = useNavigate();
-
   const { searchFilters } = useSearch();
 
   const [dates, setDates] = useState([
@@ -18,8 +17,14 @@ const BookNow = ({ venue }) => {
   const [guests, setGuests] = useState(searchFilters?.guests || 1);
 
   const [startDate, endDate] = dates;
-
   const token = localStorage.getItem("token");
+
+  // 🟡 Extract booked date intervals
+  const bookedRanges =
+    venue.bookings?.map((booking) => ({
+      start: new Date(booking.dateFrom),
+      end: new Date(booking.dateTo),
+    })) || [];
 
   if (!venue || !venue.id || typeof venue.maxGuests === "undefined") {
     return (
@@ -88,6 +93,7 @@ const BookNow = ({ venue }) => {
           minDate={new Date()}
           dateFormat="MMM d"
           popperClassName="z-[9999]"
+          excludeDateIntervals={bookedRanges}
         />
       </div>
 

@@ -13,6 +13,7 @@ import { ENDPOINTS } from "../../../utilities/constants";
 import { Menu, X } from "lucide-react";
 import { useSearchParams } from "react-router-dom";
 import { toast } from "react-hot-toast";
+import VenueManagerBookingsTab from "./AccountTabs/VenueBookingsTab";
 
 const AccountPage = () => {
   const { username } = useParams();
@@ -114,6 +115,8 @@ const AccountPage = () => {
             </button>
           </div>
         );
+      case "venue-bookings":
+        return isVenueManager ? <VenueManagerBookingsTab /> : null;
       default:
         return null;
     }
@@ -133,6 +136,7 @@ const AccountPage = () => {
       ? [
           { key: "venues", label: "My Venues" },
           { key: "new", label: "Add New Venue" },
+          { key: "venue-bookings", label: "Venue Bookings" },
         ]
       : []),
   ];
