@@ -97,3 +97,27 @@ export function validateHostName(name) {
   }
   return null;
 }
+
+export function validateFullName(name) {
+  const trimmed = name.trim();
+  const parts = trimmed.split(/\s+/);
+
+  if (parts.length < 2 || parts.some((part) => part.length < 2)) {
+    return "Please enter your full name";
+  }
+
+  return null;
+}
+
+export function validateNorwegianAddress(address) {
+  const trimmed = address.trim();
+
+  // Match at least one letter word, followed by space, then at least one number
+  const pattern = /^[A-Za-zæøåÆØÅ\s]{2,}\s\d+[A-Za-z]?$/;
+
+  if (!pattern.test(trimmed)) {
+    return "Please enter your street name and number";
+  }
+
+  return null;
+}

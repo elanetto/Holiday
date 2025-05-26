@@ -22,6 +22,7 @@ import {
   validateDescription,
   validatePrice,
 } from "../../utilities/validators";
+import StarRatingSelect from "../StarRatingSelect";
 
 countries.registerLocale(enLocale);
 
@@ -474,23 +475,9 @@ export default function VenueForm({ mode = "create", venue = {} }) {
           {/* Rating */}
           <div>
             <label className="text-sm block">Initial Rating (optional)</label>
-            <Select
-              options={[
-                { value: 0, label: "Unrated" },
-                { value: 1, label: "★☆☆☆☆" },
-                { value: 2, label: "★★☆☆☆" },
-                { value: 3, label: "★★★☆☆" },
-                { value: 4, label: "★★★★☆" },
-                { value: 5, label: "★★★★★" },
-              ]}
-              value={{
-                value: formData.rating,
-                label:
-                  "★".repeat(formData.rating) + "☆".repeat(5 - formData.rating),
-              }}
-              onChange={(option) => handleChange("rating", option.value)}
-              className="text-left"
-              styles={customStyles}
+            <StarRatingSelect
+              value={formData.rating}
+              onChange={(val) => handleChange("rating", val)}
             />
           </div>
 
