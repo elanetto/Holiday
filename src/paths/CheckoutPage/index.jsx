@@ -230,7 +230,7 @@ const CheckoutPage = () => {
 
       <div className="flex justify-center gap-4 my-4">
         {["Info", "Payment", "Confirm"].map((label, i) => {
-          const isDisabled = !isStepValid(i);
+          const isDisabled = !isStepValid(i + 1);
 
           return (
             <button

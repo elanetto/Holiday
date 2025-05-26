@@ -410,6 +410,7 @@ const VenuePage = () => {
         </div>
 
         {/* RIGHT SIDE – Booking Summary + BookNow */}
+        {/* Negative margin used to visually align this section with the left-side content */}
         <div className="lg:w-1/3 space-y-4 self-start mt-[-6px]">
           <BookNow venue={venue} />
           <div className="bg-lightyellow rounded-xl shadow p-4">
