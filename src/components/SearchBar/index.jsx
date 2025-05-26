@@ -1,13 +1,13 @@
 import { useState } from "react";
 import { useSearch } from "../../contexts/useSearch";
 import DatePicker from "react-datepicker";
-import { FaMapMarkerAlt, FaCalendarAlt, FaUser } from "react-icons/fa";
+import { FaMapMarkedAlt, FaCalendarAlt, FaUser } from "react-icons/fa";
 import "react-datepicker/dist/react-datepicker.css";
 
 export const SearchBar = () => {
   const { searchFilters, setSearchFilters } = useSearch();
   const [location, setLocation] = useState(searchFilters?.location || "");
-  const [guests, setGuests] = useState(searchFilters?.guests || 1);
+  const [guests, setGuests] = useState(searchFilters?.guests || 2);
   const [dates, setDates] = useState([
     searchFilters?.checkIn ? new Date(searchFilters.checkIn) : null,
     searchFilters?.checkOut ? new Date(searchFilters.checkOut) : null,
@@ -31,74 +31,80 @@ export const SearchBar = () => {
         e.preventDefault();
         handleSearch();
       }}
-      className="flex flex-col md:flex-row justify-center items-center gap-4 bg-sunny px-4 py-6 md:p-4 rounded-2xl shadow-md w-full max-w-2xl mx-auto"
+      className="flex flex-col md:flex-row justify-center items-center gap-3 md:gap-4 p-18 md:p-4 w-full max-w-6xl mx-auto bg-transparent"
     >
-      {/* Location */}
-      <div className="bg-white flex flex-col items-start px-4 py-2 rounded-2xl w-full md:w-auto">
-        <label
-          htmlFor="location"
-          className="text-xs font-semibold text-espressoy flex items-center gap-1"
-        >
-          <FaMapMarkerAlt />
-          Location
-        </label>
-        <input
-          type="text"
-          id="location"
-          placeholder="Where to?"
-          value={location}
-          onChange={(e) => setLocation(e.target.value)}
-          className="bg-transparent text-sm font-medium focus:outline-none placeholder:text-gray-400"
-        />
-      </div>
-
-      {/* Date Range */}
-      <div className="flex flex-col bg-white items-start px-4 py-2 rounded-2xl w-full md:w-auto">
-        <label className="text-xs font-semibold text-espressoy flex items-center gap-1">
-          <FaCalendarAlt />
-          Dates
-        </label>
-        <DatePicker
-          selectsRange
-          startDate={startDate}
-          endDate={endDate}
-          onChange={(update) => setDates(update)}
-          placeholderText="Add dates"
-          className="bg-transparent text-sm font-medium focus:outline-none w-[130px]"
-          minDate={new Date()}
-          dateFormat="MMM d"
-        />
-      </div>
-
-      {/* Guests */}
-      <div className="flex flex-col bg-white items-start px-4 py-2 rounded-2xl w-full md:w-auto">
-        <label className="text-xs font-semibold text-espressoy flex items-center gap-1">
-          <FaUser />
-          Guests
-        </label>
-        <div className="flex items-center gap-3">
-          <button
-            type="button"
-            onClick={() => setGuests((g) => Math.max(g - 1, 1))}
-            className="text-xl font-bold px-2 hover:text-orangey"
-          >
-            −
-          </button>
-          <span className="text-sm font-medium">{guests}</span>
-          <button
-            type="button"
-            onClick={() => setGuests((g) => g + 1)}
-            className="text-xl font-bold px-2 hover:text-orangey"
-          >
-            +
-          </button>
+      {/* DESTINATION */}
+      <div className="flex items-center bg-white rounded-2xl px-5 py-3 w-full md:w-auto md:min-w-[220px] shadow-sm">
+        <FaMapMarkedAlt className="w-6 h-6 text-espressoy mr-3" />
+        <div className="flex flex-col w-full">
+          <label className="text-[10px] font-bold uppercase text-black mb-1">
+            Destination
+          </label>
+          <input
+            type="text"
+            placeholder="Where to...?"
+            value={location}
+            onChange={(e) => setLocation(e.target.value)}
+            className="text-base font-medium text-black placeholder:text-gray-500 bg-transparent focus:outline-none w-full"
+          />
         </div>
       </div>
 
-      {/* Search Button */}
+      {/* DATES */}
+      <div className="flex items-center bg-white rounded-2xl px-5 py-3 w-full md:w-auto md:min-w-[220px] shadow-sm">
+        <FaCalendarAlt className="w-6 h-6 text-espressoy mr-3" />
+        <div className="flex flex-col w-full">
+          <label className="text-[10px] font-bold uppercase text-black mb-1">
+            Dates
+          </label>
+          <DatePicker
+            selectsRange
+            startDate={startDate}
+            endDate={endDate}
+            onChange={(update) => setDates(update)}
+            placeholderText="Choose dates..."
+            className="text-base font-medium text-black placeholder:text-gray-500 bg-transparent focus:outline-none w-full"
+            minDate={new Date()}
+            dateFormat="MMM d"
+          />
+        </div>
+      </div>
+
+      {/* TRAVELLERS */}
+      <div className="flex items-center bg-white rounded-2xl px-5 py-3 w-full md:w-auto md:min-w-[220px] shadow-sm">
+        <FaUser className="w-6 h-6 text-espressoy mr-3" />
+        <div className="flex flex-col w-full">
+          <label className="text-[10px] font-bold uppercase text-black mb-1">
+            Travellers
+          </label>
+          <div className="flex items-center justify-between w-full">
+            <span className="text-base font-medium">
+              {guests} {guests === 1 ? "person" : "people"}
+            </span>
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => setGuests((g) => Math.max(1, g - 1))}
+                className="bg-orangey text-white w-6 h-6 rounded-full flex items-center justify-center text-lg font-bold hover:scale-110 transition"
+              >
+                −
+              </button>
+              <button
+                type="button"
+                onClick={() => setGuests((g) => g + 1)}
+                className="bg-orangey text-white w-6 h-6 rounded-full flex items-center justify-center text-lg font-bold hover:scale-110 transition"
+              >
+                +
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* SEARCH BUTTON */}
       <button
         type="submit"
-        className="bg-espressoy cursor-pointer text-white font-semibold px-8 py-4 rounded-full hover:bg-orangey transition"
+        className="w-full md:w-auto bg-sunny text-black font-semibold text-base px-8 py-4 rounded-full hover:bg-orangey transition cursor-pointer"
       >
         Search
       </button>
