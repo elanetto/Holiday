@@ -218,9 +218,9 @@ select {
 
 /* Custom calendar header background */
 .react-datepicker__header {
-  background-color: #ffefcf !important; 
+  background-color: #feb629 !important;
   border-bottom: none;
-  color: #201309; 
+  color: #201309;
 }
 
 /* Optional: make month and year bold */
@@ -231,4 +231,35 @@ select {
 
 * {
   overflow-wrap: break-word;
+}
+
+.leaflet-container {
+  z-index: 0 !important;
+}
+
+/* Make sure selected range still looks good */
+.react-datepicker__day--in-range {
+  background-color: #fdeac7;
+}
+
+/* Style the right-arrow button */
+.react-datepicker__navigation--next {
+  border-color: white !important;
+}
+
+/* --- React DatePicker Custom Styling Fixes --- */
+.booked-date {
+  background-color: #ffefcf !important;
+  color: #8a5e00 !important;
+  border-radius: 50% !important;
+}
+
+.react-datepicker__navigation--next {
+  border-color: white !important;
+}
+
+/* Optional: make arrows bigger/visible */
+.react-datepicker__navigation-icon::before {
+  border-color: white !important;
+  border-width: 2px 2px 0 0;
 }
