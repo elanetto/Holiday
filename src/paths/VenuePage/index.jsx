@@ -150,7 +150,7 @@ const VenuePage = () => {
     <div className="p-4 max-w-5xl mx-auto">
       <div className="flex items-start justify-between mb-4 gap-4 flex-wrap">
         <h1
-          className="text-3xl font-bold text-espressoy truncate break-words max-w-full"
+          className="text-3xl font-ledger font-bold text-espressoy truncate break-words max-w-full"
           title={venue?.name || "Unnamed Venue"}
         >
           {truncateTitle(venue.name || "Unnamed Venue")}
@@ -342,7 +342,7 @@ const VenuePage = () => {
             )}
           </div>
 
-          <h2 className="text-2xl font-bold">Description</h2>
+          <h2 className="text-2xl font-ledger font-bold">Description</h2>
           <div className="break-words whitespace-pre-wrap">
             {showFullDescription ? (
               <div
@@ -373,7 +373,7 @@ const VenuePage = () => {
           </div>
 
           <div>
-            <h2 className="text-xl font-semibold text-espressoy mb-2">
+            <h2 className="text-xl font-ledger font-semibold text-espressoy mb-2">
               Location
             </h2>
             <p className="break-words overflow-hidden">
@@ -429,7 +429,7 @@ const VenuePage = () => {
             <VenueAvailabilityCalendar bookedRanges={bookedRanges} />
           )}
           <div className="bg-lightyellow rounded-xl shadow p-4">
-            <h2 className="text-xl text-gray-900 pb-2 font-bold">
+            <h2 className="text-2xl text-center font-ledger text-gray-900 pb-2 font-bold">
               Amenities and price
             </h2>
             <img
