@@ -95,7 +95,7 @@ function App() {
       <div className="max-w-7xl mx-auto px-4 py-6">
         <div
           style={background}
-          className="h-80 w-full flex items-center justify-center rounded-2xl shadow relative z-50"
+          className="h-[480px] md:h-80 w-full flex items-center justify-center rounded-2xl shadow relative z-50"
         >
           <SearchBar />
         </div>
@@ -180,7 +180,7 @@ function App() {
             )}
 
             {isLoggedIn && isVenueManager && (
-              <div className="mt-14 mb-20 w-full bg-green-200 rounded-2xl shadow px-6 py-8">
+              <div className="mt-14 mb-20 w-full bg-sunny rounded-2xl shadow px-6 py-8">
                 <div className="max-w-3xl mx-auto flex flex-col sm:flex-row items-center justify-center gap-10 text-center sm:text-left">
                   <div className="text-6xl text-espressoy">
                     <LiaMapMarkedAltSolid />

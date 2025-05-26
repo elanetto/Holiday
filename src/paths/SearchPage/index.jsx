@@ -79,7 +79,7 @@ function SearchPage() {
       <div className="max-w-7xl mx-auto px-4 py-6">
         <div
           style={background}
-          className="h-80 w-full flex items-center justify-center rounded-2xl shadow"
+          className="h-[480px] md:h-80 w-full flex items-center justify-center rounded-2xl shadow"
         >
           <SearchBar />
         </div>
