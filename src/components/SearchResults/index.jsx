@@ -7,20 +7,26 @@ export default function SearchResults({ forceShowResults = false }) {
   const { searchFilters } = useSearch();
   const location = searchFilters?.location || "";
   const guests = searchFilters?.guests || 1;
-  const isSearchActive = !!location.trim() || guests > 1;
+  const selectedFrom = searchFilters?.dateFrom
+    ? new Date(searchFilters.dateFrom)
+    : null;
+  const selectedTo = searchFilters?.dateTo
+    ? new Date(searchFilters.dateTo)
+    : null;
+
+  const isSearchActive =
+    !!location.trim() || guests > 1 || (selectedFrom && selectedTo);
 
   const { results, error, isReady, loading } = useFilteredVenues({
     forceShowResults,
   });
   const shouldShowResults = forceShowResults || isSearchActive;
 
-  // Filter out any undefined or null venues to avoid rendering crashes
   const validResults = useMemo(() => {
-  return Array.isArray(results)
-    ? results.filter((v) => v && v.id)
-    : [];
-}, [results]);
-
+    return Array.isArray(results)
+      ? results.filter((v) => v && v.id)
+      : [];
+  }, [results]);
 
   if (error) {
     return (
@@ -48,11 +54,16 @@ export default function SearchResults({ forceShowResults = false }) {
           {guests > 1 && ` with at least ${guests} guests`}
         </h2>
         <p className="text-sm text-gray-600 mt-1">
-          Showing {validResults.length} result{validResults.length !== 1 && "s"}
+          Showing {validResults.length} result
+          {validResults.length !== 1 && "s"}
         </p>
       </div>
 
-      <VenueList venues={validResults} />
+      <VenueList
+        venues={validResults}
+        selectedFrom={selectedFrom}
+        selectedTo={selectedTo}
+      />
     </div>
   );
 }

@@ -22,6 +22,7 @@ import {
 import { GiCroissant } from "react-icons/gi";
 import StarRating from "../../components/StarRating";
 import { formatPrice } from "../../utilities/formatPrice";
+import VenueAvailabilityCalendar from "../../components/Booking/VenueAvailabilityCalendar";
 
 const getTextContentLength = (html) => {
   const temp = document.createElement("div");
@@ -81,6 +82,10 @@ const VenuePage = () => {
 
   const markerPosition = getCountryCoordinates(venue.location.country);
 
+  const truncateTitle = (title, maxLength = 40) => {
+    return title.length > maxLength ? title.slice(0, maxLength) + "..." : title;
+  };
+
   const getTrimmedDescriptionHTML = (html, limit = DESCRIPTION_MAX_CHARS) => {
     if (!html) return "";
 
@@ -135,14 +140,20 @@ const VenuePage = () => {
     return result;
   };
 
+  const bookedRanges =
+    venue.bookings?.map((booking) => ({
+      start: new Date(booking.dateFrom),
+      end: new Date(booking.dateTo),
+    })) || [];
+
   return (
     <div className="p-4 max-w-5xl mx-auto">
       <div className="flex items-start justify-between mb-4 gap-4 flex-wrap">
         <h1
-          className="text-3xl font-bold text-espressoy truncate"
-          title={venue.name}
+          className="text-3xl font-bold text-espressoy truncate break-words max-w-full"
+          title={venue?.name || "Unnamed Venue"}
         >
-          {venue.name}
+          {truncateTitle(venue.name || "Unnamed Venue")}
         </h1>
 
         {venue.rating ? (
@@ -365,10 +376,11 @@ const VenuePage = () => {
             <h2 className="text-xl font-semibold text-espressoy mb-2">
               Location
             </h2>
-            <p>
+            <p className="break-words overflow-hidden">
               {venue.location.address}, {venue.location.city},{" "}
               {venue.location.country}
             </p>
+
             <div className="h-64 w-full mt-4 rounded overflow-hidden mb-16">
               <MapContainer
                 center={markerPosition || [20, 0]}
@@ -401,7 +413,7 @@ const VenuePage = () => {
                   className="w-14 h-14 rounded-full object-cover group-hover:brightness-90 transition"
                 />
 
-                <span className="text-espressoy font-medium hover:underline">
+                <span className="text-espressoy font-medium hover:underline break-words">
                   Hosted by {venue.owner.name}
                 </span>
               </Link>
@@ -413,6 +425,9 @@ const VenuePage = () => {
         {/* Negative margin used to visually align this section with the left-side content */}
         <div className="lg:w-1/3 space-y-4 self-start mt-[-6px]">
           <BookNow venue={venue} />
+          {venue.bookings?.length > 0 && (
+            <VenueAvailabilityCalendar bookedRanges={bookedRanges} />
+          )}
           <div className="bg-lightyellow rounded-xl shadow p-4">
             <h2 className="text-xl text-gray-900 pb-2 font-bold">
               Amenities and price
@@ -429,8 +444,8 @@ const VenuePage = () => {
             ) : (
               <p className="text-sm text-gray-400 mt-1">No rating yet</p>
             )}
-            <h3 className="text-lg font-bold text-espressoy mb-1">
-              {venue.name}
+            <h3 className="font-semibold text-lg text-espressoy break-words">
+              {truncateTitle(venue?.name || "Unnamed Venue")}
             </h3>
             <p className="text-sm text-gray-600 mb-2">
               <FaMoneyBillWave className="inline mr-1" />
@@ -463,33 +478,6 @@ const VenuePage = () => {
               )}
             </ul>
           </div>
-          {venue.bookings?.length > 0 && (
-            <div className="mb-16">
-              <h2 className="text-xl font-semibold text-espressoy mb-2">
-                Booked Dates
-              </h2>
-              <ul className="text-sm text-gray-700 list-disc list-inside">
-                {venue.bookings.map((booking) => {
-                  const from = new Date(booking.dateFrom).toLocaleDateString(
-                    "en-US",
-                    { month: "short", day: "numeric" }
-                  );
-                  const to = new Date(booking.dateTo).toLocaleDateString(
-                    "en-US",
-                    {
-                      month: "short",
-                      day: "numeric",
-                    }
-                  );
-                  return (
-                    <li key={booking.id}>
-                      📅 Booked: {from} – {to}
-                    </li>
-                  );
-                })}
-              </ul>
-            </div>
-          )}
         </div>
       </div>
     </div>

@@ -3,10 +3,13 @@ import { useVenueStore } from "../../store/useVenueStore";
 import { SearchBar } from "../../components/SearchBar";
 import SearchResults from "../../components/SearchResults";
 import backgroundImage from "../../assets/venue/unique/unique-beach-4.jpg";
+import FetchAllVenues from "../../components/VenueList/FetchAllVenues";
 import { ENDPOINTS } from "../../utilities/constants";
+import { useSearch } from "../../contexts/useSearch";
 
 function SearchPage() {
   const { setVenues, venues, setLoading, loading } = useVenueStore();
+  const { searchFilters } = useSearch();
   const hasFetchedOnce = useRef(false);
 
   useEffect(() => {
@@ -15,7 +18,6 @@ function SearchPage() {
     store.setLoading(true);
   }, []);
 
-  // ✅ Fetch all venues only once (even if filters change)
   useEffect(() => {
     if (hasFetchedOnce.current || venues.length > 0) return;
 
@@ -30,7 +32,7 @@ function SearchPage() {
 
       try {
         while (true) {
-          const url = `${ENDPOINTS.venues}?limit=${limit}&page=${currentPage}&sort=created&sortOrder=desc&_owner=true`;
+          const url = `${ENDPOINTS.venues}?limit=${limit}&page=${currentPage}&sort=created&sortOrder=desc&_owner=true&_bookings=true`;
 
           const res = await fetch(url, { signal });
 
@@ -68,6 +70,11 @@ function SearchPage() {
     return () => controller.abort();
   }, [setVenues, setLoading, venues]);
 
+  const isSearchActive =
+    !!searchFilters?.location?.trim() ||
+    searchFilters?.guests > 1 ||
+    (searchFilters?.dateFrom && searchFilters?.dateTo);
+
   const background = {
     backgroundImage: `url(${backgroundImage})`,
     backgroundSize: "cover",
@@ -95,8 +102,10 @@ function SearchPage() {
               />
             ))}
           </div>
-        ) : (
+        ) : isSearchActive ? (
           <SearchResults forceShowResults={true} />
+        ) : (
+          <FetchAllVenues />
         )}
       </div>
     </div>
