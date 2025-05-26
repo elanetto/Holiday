@@ -7,7 +7,6 @@ import confetti from "canvas-confetti";
 import { PLACEHOLDER_VENUE } from "../../utilities/placeholders";
 import { formatPrice } from "../../utilities/formatPrice";
 import {
-  validateShortText,
   validateFullName,
   validateNorwegianAddress,
 } from "../../utilities/validators";
@@ -135,10 +134,10 @@ const CheckoutPage = () => {
   const isStepValid = (index) => {
     if (index === 1) {
       return (
-        !validateShortText(formData.fullName, "Full name", 4, 30) &&
+        !validateFullName(formData.fullName) &&
         /^\S+@\S+\.\S+$/.test(formData.email.trim()) &&
         /^\d{7,15}$/.test(formData.phone.trim()) &&
-        !validateShortText(formData.address, "Address", 6, 50)
+        !validateNorwegianAddress(formData.address)
       );
     }
 
