@@ -35,12 +35,16 @@ export const SearchBar = () => {
     >
       {/* Location */}
       <div className="bg-white flex flex-col items-start px-4 py-2 rounded-2xl w-full md:w-auto">
-        <label className="text-xs font-semibold text-espressoy flex items-center gap-1">
+        <label
+          htmlFor="location"
+          className="text-xs font-semibold text-espressoy flex items-center gap-1"
+        >
           <FaMapMarkerAlt />
           Location
         </label>
         <input
           type="text"
+          id="location"
           placeholder="Where to?"
           value={location}
           onChange={(e) => setLocation(e.target.value)}
