@@ -423,7 +423,7 @@ const VenuePage = () => {
 
         {/* RIGHT SIDE – Booking Summary + BookNow */}
         {/* Negative margin used to visually align this section with the left-side content */}
-        <div className="lg:w-1/3 space-y-4 self-start mt-[-6px]">
+        <div className="w-full lg:w-1/3 space-y-4 self-start mt-[-6px] mx-auto lg:mx-0">
           <BookNow venue={venue} />
           {venue.bookings?.length > 0 && (
             <VenueAvailabilityCalendar bookedRanges={bookedRanges} />
