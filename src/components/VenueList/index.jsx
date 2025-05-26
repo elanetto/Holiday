@@ -1,7 +1,17 @@
 import { useEffect, useState } from "react";
 import VenueCard from "../VenueCard";
+import { isVenueFullyBooked } from "../../utilities/bookings";
+import { useSearch } from "../../contexts/useSearch";
 
 const VenueList = ({ venues = [] }) => {
+  const { searchFilters } = useSearch();
+  const selectedFrom = searchFilters?.dateFrom
+    ? new Date(searchFilters.dateFrom)
+    : null;
+  const selectedTo = searchFilters?.dateTo
+    ? new Date(searchFilters.dateTo)
+    : null;
+
   const [sortedVenues, setSortedVenues] = useState([]);
   const [visibleVenues, setVisibleVenues] = useState([]);
   const [sortBy, setSortBy] = useState("created");
@@ -100,9 +110,30 @@ const VenueList = ({ venues = [] }) => {
         </p>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-          {visibleVenues.map((venue) => (
-            <VenueCard key={venue.id} venue={venue} />
-          ))}
+          {visibleVenues.map((venue) => {
+            const fullyBooked =
+              selectedFrom && selectedTo && venue.bookings
+                ? isVenueFullyBooked(venue, selectedFrom, selectedTo)
+                : false;
+
+            // Debugging info:
+            console.log("Venue:", venue.name);
+            console.log("FULL VENUE OBJECT:", venue);
+
+            console.log("Bookings:", venue.bookings);
+            console.log("Selected From:", selectedFrom);
+            console.log("Selected To:", selectedTo);
+            console.log("Is Fully Booked?", fullyBooked);
+
+            return (
+              <VenueCard
+                key={venue.id}
+                venue={venue}
+                fullyBooked={venue.isBookedForSelectedDates}
+                tooSmallForGuests={venue.tooSmallForGuests}
+              />
+            );
+          })}
         </div>
       )}
 

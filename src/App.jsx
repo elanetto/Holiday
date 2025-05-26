@@ -26,10 +26,10 @@ function App() {
   const isSearchActive = !!location.trim() || guests > 1;
 
   useEffect(() => {
-    const controller = new AbortController();
-    const signal = controller.signal;
-
     const fetchVenues = async () => {
+      const controller = new AbortController();
+      const signal = controller.signal;
+
       setLoading(true);
 
       const limit = 100;
@@ -38,7 +38,15 @@ function App() {
 
       try {
         while (true) {
-          const url = `${ENDPOINTS.venues}?limit=${limit}&page=${currentPage}&sort=created&sortOrder=desc&_owner=true`;
+          const url = ENDPOINTS.venuesWithQuery({
+            page: currentPage,
+            limit,
+            sort: "created",
+            sortOrder: "desc",
+            includeOwner: true,
+            includeBookings: true,
+          });
+
           const res = await fetch(url, { signal });
           const data = await res.json();
 
@@ -48,7 +56,6 @@ function App() {
           allVenues = [...allVenues, ...data.data];
 
           if (data.meta?.isLastPage || data.data.length < limit) break;
-
           currentPage++;
         }
 
@@ -61,13 +68,14 @@ function App() {
       } finally {
         setLoading(false);
       }
+
+      // ✅ Clean up fetch if unmounted
+      return () => controller.abort();
     };
 
     if (!hasFetchedOnce.current && venues.length === 0) {
       fetchVenues();
     }
-
-    return () => controller.abort();
   }, [venues.length, setVenues, setLoading]);
 
   const background = {
