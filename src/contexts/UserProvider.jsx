@@ -7,6 +7,7 @@ export const UserProvider = ({ children }) => {
   const [name, setName] = useState("");
   const [isVenueManager, setIsVenueManager] = useState(false);
   const [apiKey, setApiKey] = useState("");
+  const [loading, setLoading] = useState(true); // ✅ Added loading state
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -30,6 +31,8 @@ export const UserProvider = ({ children }) => {
       setIsVenueManager(venueManagerFlag);
       setApiKey(storedApiKey || "");
     }
+
+    setLoading(false); // ✅ Done checking login status
   }, []);
 
   const loginUser = ({ token, name, email, avatar, isVenueManager, apiKey }) => {
@@ -66,6 +69,7 @@ export const UserProvider = ({ children }) => {
         apiKey,
         loginUser,
         logoutUser,
+        loading, // ✅ Expose loading state
       }}
     >
       {children}
