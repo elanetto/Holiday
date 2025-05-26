@@ -16,7 +16,7 @@ const CityLivingBlog = () => {
       <div className="w-full lg:w-5/6 flex flex-col lg:flex-row gap-8">
         {/* Main Text Section */}
         <div className="lg:w-3/4 text-gray-800 space-y-6 pr-8">
-          <h1 className="text-3xl sm:text-4xl font-bold text-espressoy mb-2 pt-4">
+          <h1 className="text-3xl sm:text-4xl font-bold text-espressoy mb-2 pt-4 font-ledger">
             City Living – A World of Urban Adventures Awaits
           </h1>
           <p className="text-base sm:text-lg leading-relaxed pt-8">
