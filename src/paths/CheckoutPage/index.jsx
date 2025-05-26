@@ -5,6 +5,12 @@ import axios from "axios";
 import { toast } from "react-hot-toast";
 import confetti from "canvas-confetti";
 import { PLACEHOLDER_VENUE } from "../../utilities/placeholders";
+import { formatPrice } from "../../utilities/formatPrice";
+import {
+  validateShortText,
+  validateFullName,
+  validateNorwegianAddress,
+} from "../../utilities/validators";
 
 const CheckoutPage = () => {
   const { state } = useLocation();
@@ -47,11 +53,27 @@ const CheckoutPage = () => {
 
   const validateStep1 = () => {
     const step1Errors = {};
-    if (!formData.fullName.trim())
-      step1Errors.fullName = "Full name is required";
-    if (!formData.email.trim()) step1Errors.email = "Email is required";
-    if (!formData.phone.trim()) step1Errors.phone = "Phone number is required";
-    if (!formData.address.trim()) step1Errors.address = "Address is required";
+
+    const nameError = validateFullName(formData.fullName);
+    if (nameError) step1Errors.fullName = nameError;
+
+    const email = formData.email.trim();
+    if (!email) {
+      step1Errors.email = "Email is required";
+    } else if (!/^\S+@\S+\.\S+$/.test(email)) {
+      step1Errors.email = "Email format is invalid";
+    }
+
+    const phone = formData.phone.trim();
+    if (!phone) {
+      step1Errors.phone = "Phone number is required";
+    } else if (!/^\d{7,15}$/.test(phone)) {
+      step1Errors.phone = "Phone number must be between 7–15 digits";
+    }
+
+    const addressError = validateNorwegianAddress(formData.address);
+    if (addressError) step1Errors.address = addressError;
+
     setErrors(step1Errors);
     return Object.keys(step1Errors).length === 0;
   };
@@ -71,34 +93,71 @@ const CheckoutPage = () => {
     if (!cvvRegex.test(formData.cvv)) {
       cardErrors.cvv = "CVV must be 3 digits";
     }
+
     setErrors(cardErrors);
     return Object.keys(cardErrors).length === 0;
   };
 
   const handleNextStep = () => {
-    if (step === 1 && validateStep1()) {
-      setStep(2);
+    if (step === 1) {
+      if (validateStep1()) {
+        setStep(2);
+      }
     } else if (step === 2) {
       const method = formData.paymentMethod;
       const newErrors = {};
+
       if (!method) {
         toast.error("Please select a payment method.");
         return;
       }
+
       if (method === "card" && !validateCard()) return;
+
       if (method === "vipps" && !/^\d{8}$/.test(formData.vippsPhone.trim())) {
         newErrors.vippsPhone = "Enter a valid 8-digit phone number";
       }
+
       if (
         method === "paypal" &&
         !/^\S+@\S+\.\S+$/.test(formData.paypalEmail.trim())
       ) {
         newErrors.paypalEmail = "Enter a valid email address";
       }
+
       setErrors(newErrors);
       if (Object.keys(newErrors).length > 0) return;
+
       setStep(3);
     }
+  };
+
+  const isStepValid = (index) => {
+    if (index === 1) {
+      return (
+        !validateShortText(formData.fullName, "Full name", 4, 30) &&
+        /^\S+@\S+\.\S+$/.test(formData.email.trim()) &&
+        /^\d{7,15}$/.test(formData.phone.trim()) &&
+        !validateShortText(formData.address, "Address", 6, 50)
+      );
+    }
+
+    if (index === 2) {
+      const method = formData.paymentMethod;
+      if (!method) return false;
+      if (method === "card") {
+        return (
+          /^\d{13,19}$/.test(formData.cardNumber.trim()) &&
+          /^(0[1-9]|1[0-2])\/(\d{2})$/.test(formData.expiryDate.trim()) &&
+          /^\d{3}$/.test(formData.cvv.trim())
+        );
+      }
+      if (method === "vipps") return /^\d{8}$/.test(formData.vippsPhone.trim());
+      if (method === "paypal")
+        return /^\S+@\S+\.\S+$/.test(formData.paypalEmail.trim());
+    }
+
+    return true;
   };
 
   const handleConfirmBooking = async () => {
@@ -163,26 +222,35 @@ const CheckoutPage = () => {
               {guests} guest{guests > 1 && "s"}
             </p>
             <p className="text-md mt-2 text-espressoy font-semibold">
-              Total: NOK {totalPrice.toLocaleString()}
+              Total: {formatPrice(totalPrice)} NOK
             </p>
           </div>
         </div>
       </div>
 
       <div className="flex justify-center gap-4 my-4">
-        {["Info", "Payment", "Confirm"].map((label, i) => (
-          <button
-            key={i}
-            className={`px-4 py-2 rounded-full text-sm font-medium transition-colors duration-200 ${
-              step === i + 1
-                ? "bg-orangey text-white"
-                : "bg-gray-200 text-gray-800"
-            }`}
-            onClick={() => setStep(i + 1)}
-          >
-            {i + 1}. {label}
-          </button>
-        ))}
+        {["Info", "Payment", "Confirm"].map((label, i) => {
+          const isDisabled = !isStepValid(i);
+
+          return (
+            <button
+              key={i}
+              disabled={isDisabled}
+              onClick={() => {
+                if (!isDisabled) setStep(i + 1);
+              }}
+              className={`px-4 py-2 rounded-full text-sm font-medium transition ${
+                step === i + 1
+                  ? "bg-orangey text-white"
+                  : isDisabled
+                  ? "bg-lightyellow text-gray-400 cursor-not-allowed"
+                  : "bg-espressoy text-white hover:bg-orangey"
+              }`}
+            >
+              {i + 1}. {label}
+            </button>
+          );
+        })}
       </div>
 
       <div className="bg-white p-6 w-[350px] mx-auto space-y-4 text-center rounded-xl">
@@ -317,9 +385,10 @@ const CheckoutPage = () => {
               <span className="font-bold">Guests:</span> {guests}
             </p>
             <p>
-              <span className="font-bold">Total Price:</span> NOK{" "}
-              {totalPrice.toLocaleString()}
+              <span className="font-bold">Total Price:</span>{" "}
+              {formatPrice(totalPrice)} NOK
             </p>
+
             <button
               onClick={handleConfirmBooking}
               disabled={loading}

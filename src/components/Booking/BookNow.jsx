@@ -1,12 +1,22 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import DatePicker from "react-datepicker";
+import { FaCalendarAlt, FaUser } from "react-icons/fa";
 import "react-datepicker/dist/react-datepicker.css";
+import { useSearch } from "../../contexts/useSearch";
+import { formatPrice } from "../../utilities/formatPrice";
 
 const BookNow = ({ venue }) => {
   const navigate = useNavigate();
-  const [dates, setDates] = useState([null, null]);
-  const [guests, setGuests] = useState(1);
+
+  const { searchFilters } = useSearch();
+
+  const [dates, setDates] = useState([
+    searchFilters?.checkIn ? new Date(searchFilters.checkIn) : null,
+    searchFilters?.checkOut ? new Date(searchFilters.checkOut) : null,
+  ]);
+  const [guests, setGuests] = useState(searchFilters?.guests || 1);
+
   const [startDate, endDate] = dates;
 
   const token = localStorage.getItem("token");
@@ -53,46 +63,53 @@ const BookNow = ({ venue }) => {
   };
 
   return (
-    <div className="mt-8 p-4 border border-espressoy rounded-xl bg-white space-y-4 shadow">
+    <form
+      onSubmit={(e) => {
+        e.preventDefault();
+        handleProceedToCheckout();
+      }}
+      className="mt-0 p-6 bg-sunny rounded-2xl space-y-6 max-w-2xl mx-auto flex flex-col items-center justify-center"
+    >
       <h2 className="text-xl font-semibold text-espressoy">Book This Venue</h2>
 
-      {/* Date Range Picker */}
-      <div className="w-full">
-        <label className="text-sm block mb-1">Booking Dates</label>
+      {/* Date Range */}
+      <div className="flex flex-col items-center bg-white px-4 py-2 rounded-2xl w-full">
+        <label className="text-xs font-semibold text-espressoy flex items-center gap-1 mb-1">
+          <FaCalendarAlt />
+          Booking Dates
+        </label>
         <DatePicker
           selectsRange
           startDate={startDate}
           endDate={endDate}
           onChange={(update) => setDates(update)}
           placeholderText="Select dates"
-          className="p-2 rounded-xl w-full cursor-pointer text-center bg-white border border-espressoy"
-          calendarClassName="bg-white rounded-lg shadow-lg p-4"
+          className="bg-transparent text-sm text-center font-medium focus:outline-none w-full cursor-pointer"
           minDate={new Date()}
-          dateFormat="d MMM"
+          dateFormat="MMM d"
           popperClassName="z-[9999]"
         />
       </div>
 
       {/* Guests */}
-      <div>
-        <label className="text-sm block mb-1">Guests</label>
-        <div className="flex items-center gap-2">
+      <div className="flex flex-col bg-white items-center px-4 py-2 rounded-2xl w-full">
+        <label className="text-xs font-semibold text-espressoy flex items-center gap-1 mb-1">
+          <FaUser />
+          Guests
+        </label>
+        <div className="flex items-center gap-3">
           <button
             type="button"
-            aria-label="Decrease guest count"
             onClick={() => setGuests((g) => Math.max(g - 1, 1))}
-            className="px-3 py-1 rounded-full hover:bg-orangey hover:text-white bg-white border border-espressoy"
+            className="text-xl font-bold px-2 hover:text-orangey"
           >
-            -
+            −
           </button>
-
-          <span className="px-3">{guests}</span>
-
+          <span className="text-sm font-medium">{guests}</span>
           <button
             type="button"
-            aria-label="Increase guest count"
             onClick={() => setGuests((g) => Math.min(g + 1, venue.maxGuests))}
-            className="px-3 py-1 rounded-full hover:bg-orangey hover:text-white bg-white border border-espressoy"
+            className="text-xl font-bold px-2 hover:text-orangey"
           >
             +
           </button>
@@ -104,22 +121,22 @@ const BookNow = ({ venue }) => {
 
       {/* Total Price */}
       <div className="text-sm font-semibold text-espressoy">
-        Total: NOK {calculateTotal().toLocaleString()}
+        Total: {formatPrice(calculateTotal())} NOK
       </div>
 
-      {/* Button */}
+      {/* Submit Button */}
       <button
-        onClick={handleProceedToCheckout}
+        type="submit"
         disabled={!startDate || !endDate}
-        className={`w-full py-2 rounded-full font-semibold transition cursor-pointer ${
+        className={`w-full py-3 rounded-full font-semibold transition ${
           !startDate || !endDate
-            ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-            : "bg-sunny hover:bg-orangey hover:text-white text-espressoy"
+            ? "bg-lightyellow text-gray-500 cursor-not-allowed"
+            : "bg-espressoy text-white hover:bg-orangey cursor-pointer"
         }`}
       >
         Continue to Checkout
       </button>
-    </div>
+    </form>
   );
 };
 

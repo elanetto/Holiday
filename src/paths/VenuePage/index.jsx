@@ -12,6 +12,16 @@ import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import { getCountryCoordinates } from "../../utilities/countryCoordinates";
 import BookNow from "../../components/Booking/BookNow";
+import {
+  FaMoneyBillWave,
+  FaWifi,
+  FaParking,
+  FaDog,
+  FaCalendarAlt,
+} from "react-icons/fa";
+import { GiCroissant } from "react-icons/gi";
+import StarRating from "../../components/StarRating";
+import { formatPrice } from "../../utilities/formatPrice";
 
 const getTextContentLength = (html) => {
   const temp = document.createElement("div");
@@ -127,12 +137,22 @@ const VenuePage = () => {
 
   return (
     <div className="p-4 max-w-5xl mx-auto">
-      <h1
-        className="text-3xl font-bold text-espressoy mb-4 truncate"
-        title={venue.name}
-      >
-        {venue.name}
-      </h1>
+      <div className="flex items-start justify-between mb-4 gap-4 flex-wrap">
+        <h1
+          className="text-3xl font-bold text-espressoy truncate"
+          title={venue.name}
+        >
+          {venue.name}
+        </h1>
+
+        {venue.rating ? (
+          <div className="mt-1">
+            <StarRating rating={venue.rating} />
+          </div>
+        ) : (
+          <p className="text-sm text-gray-400 mt-1">No rating yet</p>
+        )}
+      </div>
 
       {validImages.length > 0 && (
         <div className="relative">
@@ -276,32 +296,37 @@ const VenuePage = () => {
         </div>
       )}
 
-      <div className="flex flex-col lg:flex-row gap-8 mt-8">
+      <div className="flex flex-col lg:flex-row gap-8 mt-8 items-start">
         {/* LEFT SIDE – Description, Map, etc. */}
-
         <div className="lg:w-2/3 space-y-6">
           <div className="flex flex-wrap gap-2 items-center text-sm mb-4">
-            <span className="px-4 py-2 rounded-full bg-lightyellow text-espressoy">
-              💰 {venue.price} NOK/night
+            <span className="flex items-center gap-1 px-4 py-2 rounded-full bg-lightyellow text-espressoy">
+              <FaMoneyBillWave className="w-4 h-4" />
+              {formatPrice(venue.price)}
             </span>
+
             {venue.meta?.wifi && (
-              <span className="px-4 py-2 rounded-full bg-lightyellow text-espressoy">
-                📶 WiFi
+              <span className="flex items-center gap-1 px-4 py-2 rounded-full bg-lightyellow text-espressoy">
+                <FaWifi className="w-4 h-4" />
+                WiFi
               </span>
             )}
             {venue.meta?.parking && (
-              <span className="px-4 py-2 rounded-full bg-lightyellow text-espressoy">
-                🄹 Parking
+              <span className="flex items-center gap-1 px-4 py-2 rounded-full bg-lightyellow text-espressoy">
+                <FaParking className="w-4 h-4" />
+                Parking
               </span>
             )}
             {venue.meta?.breakfast && (
-              <span className="px-4 py-2 rounded-full bg-lightyellow text-espressoy">
-                🥐 Breakfast
+              <span className="flex items-center gap-1 px-4 py-2 rounded-full bg-lightyellow text-espressoy">
+                <GiCroissant className="w-4 h-4" />
+                Breakfast
               </span>
             )}
             {venue.meta?.pets && (
-              <span className="px-4 py-2 rounded-full bg-lightyellow text-espressoy">
-                🐶 Pets allowed
+              <span className="flex items-center gap-1 px-4 py-2 rounded-full bg-lightyellow text-espressoy">
+                <FaDog className="w-4 h-4" />
+                Pets allowed
               </span>
             )}
           </div>
@@ -362,30 +387,30 @@ const VenuePage = () => {
                 )}
               </MapContainer>
             </div>
+            {venue.owner && (
+              <Link
+                to={`/profile/${encodeURIComponent(venue.owner.name)}`}
+                className="flex items-center gap-2 mt-4 group"
+              >
+                <img
+                  src={venue.owner.avatar?.url?.trim() || PLACEHOLDER_AVATAR}
+                  alt={
+                    venue.owner.avatar?.alt?.trim() ||
+                    `${venue.owner.name}'s avatar`
+                  }
+                  className="w-14 h-14 rounded-full object-cover group-hover:brightness-90 transition"
+                />
+
+                <span className="text-espressoy font-medium hover:underline">
+                  Hosted by {venue.owner.name}
+                </span>
+              </Link>
+            )}
           </div>
         </div>
 
         {/* RIGHT SIDE – Booking Summary + BookNow */}
-        <div className="lg:w-1/3 space-y-4">
-          {venue.owner && (
-            <Link
-              to={`/profile/${encodeURIComponent(venue.owner.name)}`}
-              className="flex items-center gap-2 mt-4 group"
-            >
-              <img
-                src={venue.owner.avatar?.url?.trim() || PLACEHOLDER_AVATAR}
-                alt={
-                  venue.owner.avatar?.alt?.trim() ||
-                  `${venue.owner.name}'s avatar`
-                }
-                className="w-14 h-14 rounded-full object-cover group-hover:brightness-90 transition"
-              />
-
-              <span className="text-espressoy font-medium hover:underline">
-                Hosted by {venue.owner.name}
-              </span>
-            </Link>
-          )}
+        <div className="lg:w-1/3 space-y-4 self-start mt-[-6px]">
           <BookNow venue={venue} />
           <div className="bg-lightyellow rounded-xl shadow p-4">
             <h2 className="text-xl text-gray-900 pb-2 font-bold">
@@ -396,17 +421,45 @@ const VenuePage = () => {
               alt={validImages[0]?.alt || "Venue image"}
               className="w-full h-40 object-cover rounded-md mb-3"
             />
+            {venue.rating ? (
+              <div className="mt-1">
+                <StarRating rating={venue.rating} />
+              </div>
+            ) : (
+              <p className="text-sm text-gray-400 mt-1">No rating yet</p>
+            )}
             <h3 className="text-lg font-bold text-espressoy mb-1">
               {venue.name}
             </h3>
             <p className="text-sm text-gray-600 mb-2">
-              💰 {venue.price} NOK/night pr. person
+              <FaMoneyBillWave className="inline mr-1" />
+              {formatPrice(venue.price)} per person per night
             </p>
             <ul className="grid grid-cols-2 gap-2 text-sm text-gray-700 mb-4">
-              {venue.meta?.wifi && <li>📶 WiFi</li>}
-              {venue.meta?.parking && <li>🄹 Parking</li>}
-              {venue.meta?.breakfast && <li>🥐 Breakfast</li>}
-              {venue.meta?.pets && <li>🐶 Pets allowed</li>}
+              {venue.meta?.wifi && (
+                <li>
+                  <FaWifi className="inline mr-1" />
+                  WiFi
+                </li>
+              )}
+              {venue.meta?.parking && (
+                <li>
+                  <FaParking className="inline mr-1" />
+                  Parking
+                </li>
+              )}
+              {venue.meta?.breakfast && (
+                <li>
+                  <GiCroissant className="inline mr-1" />
+                  Breakfast
+                </li>
+              )}
+              {venue.meta?.pets && (
+                <li>
+                  <FaDog className="inline mr-1" />
+                  Pets allowed
+                </li>
+              )}
             </ul>
           </div>
           {venue.bookings?.length > 0 && (
