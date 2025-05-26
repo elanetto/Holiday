@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useSearch } from "../../contexts/useSearch";
 import DatePicker from "react-datepicker";
+import { FaMapMarkerAlt, FaCalendarAlt, FaUser } from "react-icons/fa";
 import "react-datepicker/dist/react-datepicker.css";
 
 export const SearchBar = () => {
@@ -20,7 +21,7 @@ export const SearchBar = () => {
       checkIn: startDate ? startDate.toISOString() : "",
       checkOut: endDate ? endDate.toISOString() : "",
       guests,
-      _timestamp: Date.now(), // 🧠 force useEffect to run on every search
+      _timestamp: Date.now(),
     });
   };
 
@@ -30,57 +31,74 @@ export const SearchBar = () => {
         e.preventDefault();
         handleSearch();
       }}
-      className="flex flex-col md:flex-row gap-2 md:gap-4 p-4 rounded-2xl shadow bg-sunny items-center"
+      className="flex flex-col md:flex-row justify-center items-center gap-4 bg-sunny px-4 py-6 md:p-4 rounded-2xl shadow-md w-full max-w-2xl mx-auto"
     >
       {/* Location */}
-      <input
-        type="text"
-        placeholder="Where to?"
-        value={location}
-        onChange={(e) => setLocation(e.target.value)}
-        className="p-2 rounded-xl w-full md:flex-1 text-center bg-white cursor-pointer"
-      />
+      <div className="bg-white flex flex-col items-start px-4 py-2 rounded-2xl w-full md:w-auto">
+        <label
+          htmlFor="location"
+          className="text-xs font-semibold text-espressoy flex items-center gap-1"
+        >
+          <FaMapMarkerAlt />
+          Location
+        </label>
+        <input
+          type="text"
+          id="location"
+          placeholder="Where to?"
+          value={location}
+          onChange={(e) => setLocation(e.target.value)}
+          className="bg-transparent text-sm font-medium focus:outline-none placeholder:text-gray-400"
+        />
+      </div>
 
       {/* Date Range */}
-      <div className="w-full md:flex-1">
+      <div className="flex flex-col bg-white items-start px-4 py-2 rounded-2xl w-full md:w-auto">
+        <label className="text-xs font-semibold text-espressoy flex items-center gap-1">
+          <FaCalendarAlt />
+          Dates
+        </label>
         <DatePicker
           selectsRange
           startDate={startDate}
           endDate={endDate}
           onChange={(update) => setDates(update)}
-          placeholderText="Select dates"
-          className="p-2 rounded-xl w-full cursor-pointer text-center bg-white"
-          calendarClassName="bg-white rounded-lg shadow-lg p-4"
+          placeholderText="Add dates"
+          className="bg-transparent text-sm font-medium focus:outline-none w-[130px]"
           minDate={new Date()}
-          inline={false}
-          dateFormat="d MMM"
-          popperClassName="z-[9999]"
+          dateFormat="MMM d"
         />
       </div>
 
       {/* Guests */}
-      <div className="flex items-center gap-2 p-2 rounded-xl">
-        <button
-          type="button"
-          onClick={() => setGuests((g) => Math.max(g - 1, 1))}
-          className="px-3 py-1 rounded-full hover:bg-orangey hover:text-white bg-white cursor-pointer"
-        >
-          -
-        </button>
-        <span>{guests}</span>
-        <button
-          type="button"
-          onClick={() => setGuests((g) => g + 1)}
-          className="px-3 py-1 rounded-full hover:bg-orangey hover:text-white bg-white cursor-pointer"
-        >
-          +
-        </button>
+      <div className="flex flex-col bg-white items-start px-4 py-2 rounded-2xl w-full md:w-auto">
+        <label className="text-xs font-semibold text-espressoy flex items-center gap-1">
+          <FaUser />
+          Guests
+        </label>
+        <div className="flex items-center gap-3">
+          <button
+            type="button"
+            onClick={() => setGuests((g) => Math.max(g - 1, 1))}
+            className="text-xl font-bold px-2 hover:text-orangey"
+          >
+            −
+          </button>
+          <span className="text-sm font-medium">{guests}</span>
+          <button
+            type="button"
+            onClick={() => setGuests((g) => g + 1)}
+            className="text-xl font-bold px-2 hover:text-orangey"
+          >
+            +
+          </button>
+        </div>
       </div>
 
       {/* Search Button */}
       <button
         type="submit"
-        className="bg-espressoy text-white px-4 py-2 rounded-xl hover:bg-orangey transition cursor-pointer"
+        className="bg-espressoy cursor-pointer text-white font-semibold px-8 py-4 rounded-full hover:bg-orangey transition"
       >
         Search
       </button>
