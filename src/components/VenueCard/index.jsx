@@ -5,6 +5,12 @@ import { PLACEHOLDER_VENUE } from "../../utilities/placeholders";
 import StarRating from "../StarRating";
 import { formatPrice } from "../../utilities/formatPrice";
 
+const stripHTML = (html) => {
+  const tempDiv = document.createElement("div");
+  tempDiv.innerHTML = html;
+  return tempDiv.textContent || tempDiv.innerText || "";
+};
+
 const truncateText = (text, maxLength) =>
   text?.length > maxLength ? text.slice(0, maxLength) + "…" : text;
 
@@ -73,7 +79,10 @@ const VenueCard = ({
           {truncateText(location?.country, 8)}
         </p>
 
-        <p className="text-sm text-gray-600">{truncateText(description, 45)}</p>
+        {/* ✅ Strip HTML tags before truncating */}
+        <p className="text-sm text-gray-600">
+          {truncateText(stripHTML(description), 45)}
+        </p>
 
         <div className="flex justify-between items-center">
           <span className="flex items-center gap-1 text-sm text-espressoy font-semibold">
