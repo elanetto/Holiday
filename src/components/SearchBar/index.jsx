@@ -1,7 +1,13 @@
 import { useState } from "react";
 import { useSearch } from "../../contexts/useSearch";
 import DatePicker from "react-datepicker";
-import { FaMapMarkedAlt, FaCalendarAlt, FaUser } from "react-icons/fa";
+import {
+  FaMapMarkedAlt,
+  FaCalendarAlt,
+  FaUser,
+  FaPlus,
+  FaMinus,
+} from "react-icons/fa";
 import "react-datepicker/dist/react-datepicker.css";
 
 export const SearchBar = () => {
@@ -18,8 +24,8 @@ export const SearchBar = () => {
   const handleSearch = () => {
     setSearchFilters({
       location: location.toLowerCase(),
-      checkIn: startDate ? startDate.toISOString() : "",
-      checkOut: endDate ? endDate.toISOString() : "",
+      dateFrom: startDate ? startDate.toISOString() : "",
+      dateTo: endDate ? endDate.toISOString() : "",
       guests,
       _timestamp: Date.now(),
     });
@@ -85,16 +91,16 @@ export const SearchBar = () => {
               <button
                 type="button"
                 onClick={() => setGuests((g) => Math.max(1, g - 1))}
-                className="bg-orangey text-white w-6 h-6 rounded-full flex items-center justify-center text-lg font-bold hover:scale-110 transition"
+                className="bg-orangey text-white w-6 h-6 rounded-full flex items-center justify-center hover:scale-110 transition"
               >
-                −
+                <FaMinus className="w-3 h-3" />
               </button>
               <button
                 type="button"
                 onClick={() => setGuests((g) => g + 1)}
-                className="bg-orangey text-white w-6 h-6 rounded-full flex items-center justify-center text-lg font-bold hover:scale-110 transition"
+                className="bg-orangey text-white w-6 h-6 rounded-full flex items-center justify-center hover:scale-110 transition"
               >
-                +
+                <FaPlus className="w-3 h-3" />
               </button>
             </div>
           </div>

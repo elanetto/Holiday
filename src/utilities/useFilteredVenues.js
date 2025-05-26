@@ -1,3 +1,5 @@
+// src/utilities/useFilteredVenues.js
+
 import { useEffect, useMemo, useState } from "react";
 import { useVenueStore } from "../store/useVenueStore";
 import { useSearch } from "../contexts/useSearch";
@@ -9,8 +11,22 @@ export function useFilteredVenues({ forceShowResults = false } = {}) {
   const [results, setResults] = useState([]);
   const [error, setError] = useState(null);
 
+  const { dateFrom, dateTo } = useMemo(() => {
+    const rawFrom = searchFilters?.dateFrom;
+    const rawTo = searchFilters?.dateTo;
+    return {
+      dateFrom: rawFrom ? new Date(rawFrom) : null,
+      dateTo: rawTo ? new Date(rawTo) : null,
+    };
+  }, [searchFilters?.dateFrom, searchFilters?.dateTo]);
+
+  const { location, guests } = useMemo(() => ({
+    location: searchFilters?.location?.toLowerCase?.() || "",
+    guests: searchFilters?.guests || 1,
+  }), [searchFilters?.location, searchFilters?.guests]);
+
   const isSearchActive =
-    !!searchFilters?.location?.trim() || searchFilters?.guests > 1;
+    !!location.trim() || guests > 1 || (dateFrom && dateTo);
 
   const fuse = useMemo(() => {
     if (!Array.isArray(venues)) return null;
@@ -21,7 +37,7 @@ export function useFilteredVenues({ forceShowResults = false } = {}) {
   }, [venues]);
 
   useEffect(() => {
-    setError(null); // Clear previous errors
+    setError(null);
 
     if (!Array.isArray(venues)) {
       const errorMessage = "Invalid input: 'venues' must be an array.";
@@ -31,26 +47,44 @@ export function useFilteredVenues({ forceShowResults = false } = {}) {
       return;
     }
 
-    const { location = "", guests = 1 } = searchFilters || {};
-
     try {
       if (!isSearchActive && !forceShowResults) {
         setResults([]);
-      } else if (!isSearchActive && forceShowResults) {
-        setResults(venues);
-      } else {
-        const matches = fuse.search(location);
-        const matchedVenues = matches.map((m) => m.item);
-        const filtered = matchedVenues.filter((v) => v.maxGuests >= guests);
-        setResults(filtered);
+        return;
       }
+
+      const matchedVenues = fuse
+        ? fuse.search(location).map((r) => r.item)
+        : venues;
+
+      const enrichedVenues = matchedVenues.map((venue) => {
+        const venueBookings = venue.bookings || [];
+
+        const isBooked = dateFrom && dateTo
+          ? venueBookings.some((booking) => {
+              const bookingStart = new Date(booking.dateFrom);
+              const bookingEnd = new Date(booking.dateTo);
+              return bookingStart < dateTo && dateFrom < bookingEnd;
+            })
+          : false;
+
+        const tooSmallForGuests = venue.maxGuests < guests;
+
+        return {
+          ...venue,
+          isBookedForSelectedDates: isBooked,
+          tooSmallForGuests,
+        };
+      });
+
+      setResults(enrichedVenues);
     } catch (err) {
       console.error("Fuzzy search failed:", err);
       setError("An error occurred while searching. Please try again.");
     }
-  }, [venues, fuse, searchFilters, isSearchActive, forceShowResults]);
+  }, [venues, fuse, location, guests, dateFrom, dateTo, isSearchActive, forceShowResults]);
 
   const isReady = !isLoading && Array.isArray(venues) && venues.length > 0;
 
-  return { results, error, isSearchActive, isReady };
+  return { results, error, isSearchActive, isReady, loading: isLoading };
 }

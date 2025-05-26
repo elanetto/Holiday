@@ -159,7 +159,21 @@ const CheckoutPage = () => {
     return true;
   };
 
+  const isOverlappingBooking = () => {
+    return venue.bookings?.some((booking) => {
+      const bookingStart = new Date(booking.dateFrom);
+      const bookingEnd = new Date(booking.dateTo);
+      return startDate < bookingEnd && endDate > bookingStart;
+    });
+  };
+
   const handleConfirmBooking = async () => {
+    if (isOverlappingBooking()) {
+      toast.error(
+        "Oops! Those dates are already booked. Please choose new ones."
+      );
+      return;
+    }
     setLoading(true);
     try {
       await axios.post(
